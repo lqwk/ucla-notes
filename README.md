@@ -32,5 +32,5 @@ Qingwei Lan
 - Computer Science 111 **Operating Systems Principles** (*Reiher, P.L.*)
 - Computer Science 131 **Programming Languages** (*Eggert, P.R.*)
 - Computer Science 174A **Introduction to Computer Graphics** (*Ford, D.*)
-- Physics 1C **Physics for Scientists and Engineers: Electrodynamics, Optics, and Special Relativity** (*Coroniti, F.*)
+- Physics 1C **Physics for Scientists and Engineers: Electrodynamics, Optics, and Special Relativity** (*Corbin, B.*)
 
