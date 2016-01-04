@@ -1,0 +1,5067 @@
+
+CS131: Programming Languages
+
+==============
+Sep. 25, 2015
+==============
+
+CS131 Lab
+----------
+Seunghyun Yoo (shyoo1st@cs.ucla.edu)
+Wed 5:30 pm - 6:30 pm, Thu 1:30 pm - 2:30 pm
+
+Join [Piazza](piazza.com/ucla/fall2015/cs131)
+
+OCaml
+------
+
+Installation
+-------------
+SEASnet: 4.02.3
+Local Machine: ocaml.org
+
+Introduction
+-------------
+
+
+Functional Programming
+-----------------------
+
+# let rec fact x = if x <= 1 then 1 else x * fact (x - 1);;
+# fact 5;;
+-  : int = 120
+
+
+Using files
+------------
+  - # #use file-name.ml';; or $ ocaml < fact.ml
+
+Define Functions
+-----------------
+# let square x = x * x;;
+val square : int -> int = <fun>
+# square 3;;
+-  : int = 9
+
+# let add x y = x + y;;
+val add : int -> int -> int = <fun>
+# add 1 2;;
+-  : int = 3
+
+(cf) # let add (x, y) = x + y;;
+val add : int * int -> int = <fun>
+
+If & Match Statement
+---------------------
+# let max a b = if a > b then a else b;;
+val max : 'a -> 'a -> 'a = <fun>
+
+
+# let eval_op op v1 v1 =
+	match op with
+	| "+" -> v1 + v1
+	| "-" -> v1 - v2
+	| "*" -> v1 * v2
+	| _ -> failwith ("undefined");;
+
+List
+-----
+# [ 1; 2; 3 ] ;;
+# 1 :: (2 :: (3 :: [])) ;;
+# 1 :: 2 :: 3 [] ;;
+
+List Operators
+---------------
+- :: Operator
+
+1 :: 2 :: 3 :: []
+
+- Appending Lists
+
+List.append [1;2;3] [4;5;6];;
+[1;2;3] @ [4;5;6];
+
+* Extract Data from LIst
+
+# let rec sum l = 
+	match l with 
+	| [] -> 0
+	| h :: 5 -> h + sum t;;
+# sum [1;2;3];;
+# sum [];;
+
+* Type
+
+type name = typedef;;
+type 'a name = typedef;;
+
+- Type declarations can be parameterized by type variables
+
+# type 'param paired_with_integer = int * 'param;;
+# type age type = int;;
+# let a: age type = l;;
+# type specific_pair = float paired_with_integer;;
+# type a' my list = 'a list;;
+# type int list = int my list;;
+
+
+* Equal & Identical operator
+
+# let a = [ 1; 3 ];;
+# let b = [ 1; 3 ];;
+
+# a = b ?
+# a == b ?
+# a == a ?
+
+* Arithmetic Operators
+
+- Must specify type of number explicitly
+  * 1 + 0.5;; (not allowed)
+  * 1. + 0.5 (not allowed, only for integers)
+  * 1. +. 0.5;; (correct)
+
+* Tail Recursion
+
+# let rec make_list n = 
+	if n = 0
+		then []
+	else n :: make_list (n-1);;
+
+# let big_list = make_list 10000000;;
+Stack overflow during evaluation (looping recursion?)
+
+
+# let rec make_list n list = 
+	if n = 0
+		then list
+	else n :: make_list (n-1) (n::list);;
+
+# let big_list = make_list 10000000 [];;
+Stack overflow during evaluation (looping recursion?)
+
+
+# let rec make_list n list = 
+	if n = 0
+		then list
+	else make_list (n-1) (n::list);;
+
+# let big_list = make_list 10000000 [];;
+
+
+# let rec reverse l = match l with
+	| [] -> []
+	| h::t -> reverse t @ [h];;
+# reverse [1;3;4];;
+- : int list = [4; 3; 1]
+
+* Function Currying
+
+# let add x y = x + y;;
+
+# let add2to_x x = add x 2;;
+# let add2to_y y = add 2 y;;
+# let add2to_y  = add 2;;
+
+
+* Comments
+
+
+# (* Hello World *)
+
+* Trace function call
+
+# #trace <function name>;;
+
+Homework
+---------
+* subset
+  - a set is a subset of itself
+  - the empty set is a subset of any set
+
+* equal_sets
+  - must use set semantics
+  - it is not just "(=) a b"
+  - [3;1], [1;3], [1;3;3] are equal
+
+* fixed point
+  - point x such that f x = x
+  - computed fixed points:
+    x, f x, f (f x), f (f (f x)), ...
+
+
+let div2 x = x / 2;;
+# div2 8;;
+int = 4
+# div2 (div2 8);;
+int = 2
+# div2 (div2 (div2 8));;
+int = 1
+# div2 (div2 (div2 (div2 8)));;
+int = 0
+
+
+* periodic point
+  - point x such that f (f ... f(x)) = x
+  where there are p occurrences of f in the call
+
+* precision, infinity, and nan
+  - inf * .2 ?
+  - inf / inf ?
+  - nan = nan ?
+  - nan * .2 = nan ?
+
+* grammar
+  - symbol -> nonterminal or terminal
+  - right hand side -> a list of symbols
+  - rule -> pair of (nonterminal, right hand side)
+  - grammar -> pair of (start nonterminal syb=mbol, list of rules)
+
+* filter_blind_alleys
+  - filter out rules that are impossible to derive a terminal string
+    + some rules cannot have nonterminals completely substituted out
+
+
+==============  
+Sep. 28, 2015
+==============
+
+Administrative
+---------------
+* [Homepage](http://web.cs.ucla.edu/classes/fall15/cs131)
+
+* Syllabus
+
+**Theory**            **Practice**
+-----------------------------------------
+Syntax           <-   OCaml
+Semantics        <-   Prolog (most weird, stretch understanding of languages)
+Functions
+Names
+Types
+Control          <-   Scheme (related to Lisp)
+Objects          <-   Python
+Exceptions
+Concurrency      <-   Java
+Language Design
+               
+                  X (last week assignment)
+
+
+* Hours/Week
+
+Actual   Reported
+-----------------------------------------
+5           6           lectures, discussion
+2           2           reading
+10          4           homework
+     - 3                exams, studying
+
+
+* Grading
+
+
+40%  Homework
+     6 x 5%   homeworks
+     1 x 10%  project
+
+20%  Midterm (Wed. 5th week)
+40%  Final
+
+- Sample exams
+- Open-ended questions (intelligent discussions of the issues)
+  - combine topics that seem to be different and discuss
+
+Learn by debugging (Learning Assistance)
+Make sure program works (Robust)
+(Non-ASCII input)
+
+Quiz
+-----
+
+Input: a text file ASCII (includes '\n', '\t') plus words
+
+ex. Four score and 7 years ago score and ago and four
+
+Output: 
+3 and
+2 score
+2 ago
+1 Four
+1 four
+1 years
+
+Shell Script
+-------------
+# Transform all non-ACSII characters into newlines
+# Sort the output
+
+tr -cs [A-Za-z] [\n*] | sort | uniq -c | sort -rn
+
+Pascal + Literate       vs.     Script
+--------------------------------------------------------------------
+Better performance              Has false parallelism (not faster)
+                                Shorter
+                                Easier to maintain
+--------------------------------------------------------------------
+            Choice of Notation
+
+
+* Should have a wider choice of programming languages to choose from
+
+Programming (Notations) Languages
+----------------------------------
+* D.E. Knuth (CalTech -> Stanford)
+  - The Art of Computer Programming (TAoCP)
+  - Author of TeX (Written in Pascal in the 1970s)
+  - The TeXBook
+
+TeX the program    tex.pas
+TeX the book       tex.tex
+
+Changing one leads change to another
+Wanted a single notation that could represent both
+Created tangled file
+
+* Tangled file tex.tang
+  - Changes will be localized
+  - \pi -> 'pi'
+
+* Literate Programming
+  - Express ideas entertainingly for people to read
+  - Publicize idea for wider audience
+  - CACM --> M.D. Ilroy (Bell Labs)
+  - Instead of doing TeX, use a small problem (the quiz above)
+
+      -> machine code
+      -> CACM paper
+
+    - Invented new data structure: Hash Trie
+
+AI software too slow
+---------------------
+- in Lisp
+- rewrite into C/C++, but C/C++ is a nightmare
+  - Create objects temporaily uses (C/C++ requires explicit free operations)
+
+Can you suggest some better languages for this problem?
+
+Why are there so many programming languages?
+---------------------------------------------
+- Why can't we have just one, one that is flexible?
+
+Metaprogramming: programming environment that you can write about your code in
+the language that you are using that can be used to generate code.
+
+- Modern: Have many languages in a project & link together
+- Not practical to take python program and compile into scheme and expect to work
+
+Big backend queries in Google's data
+-------------------------------------
+- Written a lot of Ad-hoc programs to deal with this problem
+- Shell scripts (parallelized), not scalable
+
+- A function model
+  - stolen from Lisp/ML
+  - called it MapReduce
+  - efficient & parallelizable
+
+TIOBE Index Sept 2015 (most popular programming languages)
+-----------------------------------------------------------
+1.  (19.57%) Java
+2.  (15.62%) C
+3.  (6.78%)  C++
+4.  (4.91%)  #C
+5.  (3.66%)  Python
+6.           PHP
+7.           JavaScript
+8.           VB.NET
+9.           Perl
+10. (1.82%)  Objective-C
+    ......
+33. (0.51%)  Prolog
+    ......
+47. (0.21%)  ML
+
+Choose a few languages wide apart from goals & principles
+
+Philosophy of Class
+--------------------
+* Principles & Limitations of Programming Models
+* Notations for these Models, Designs, Use, Support For
+* Methods to Evaluate Strenths + Weaknesses in Various Contexts
+
+--> CHOICE OF ABSTRACTION
+
+Language Design Issues
+-----------------------
+* Orthogonality: how independent are they of each other
+
+Language: C
+------------
+int f(int g) {}
+char *f(int g) {}
+int [100] f(int g) {} (cannot work, cannot return array)
+  - violation of orthogonality (have to worry about return type)
+  - return value does not fit in register (efficiency)
+
+Java can return arrays (fixed problem, more modern language)
+
+* Efficiency
+  - space, time, power, network access
+
+* Simplicity
+  - Things should be as simple as possible (Albert Einstein)
+
+* Convenience
+  - Easy to use (write code, read code)
+
+[Simplicity & Convenience CONFLICT]
+
+Example: Convenient but not Simple
+-----------------------------------
+i = i + 1;
+i += 1;
+i++;
+++i;
+
+* Safety (Security Issues)
+  - compile-time (complier warnnings about safety)
+  - run-time (run-time good enough to handle problems)
+    - C++ (crash if lucky, undefined behavior if unlucky)
+
+==============
+Sep. 30, 2015
+==============
+
+Programming Language Catetories
+--------------------------------
+Imperative vs. Functional vs. Logic
+Objective Oriented vs. Non Objective Oriented
+Compiled vs. Scripting
+
+Imperative/Procesural Languages (most common & popular)
+--------------------------------------------------------
+COMMANDS
+
+* In sequence
+
+Functional Languages
+---------------------
+FUNCTIONS
+
+* NO commands
+* Evaluate expression
+* Calling functions
+* F1(F2(x)) (Can also use C this way)
+
+Logic Languages
+----------------
+PREDICATES
+
+* P1(x) & P2(x)
+* Don't evaluate
+* Don't execute
+* Theorem proving program (?)
+* Highest level
+
+John Backus
+------------
+* Developed Fortran
+* Discovered that imperative code had problems, buggy code
+* Hard to understand
+* Sequencing is crutial
+* Adopting the imperative style sets programmers off from the mathematics world
+* Breaking the rules of the mathematical world
+
+y = a[i];
+i++;
+x = a[i];
+
+a[i] CHANGES!!!
+
+New Habit (!)
+--------------
+* No assigning variables
+  - OCaml: variables in functions cannot change
+  - Referential transparency
+
+Functional Language Motivation
+-------------------------------
+
+Clarity
+--------
+* Build on hundreds of years of experience with **mathematical notation**
+
+Notation
+---------
+* To compute with functions rather than recipes (sequential steps)
+* Function Definition: mapping from a **domain** to a **range**
+  - Figure out what domains & ranges are
+  - Domains & ranges may include functions themselves
+  - Functional form: domain or range are functions
+    + F [o](compose) G (x) = F(G(x))
+      - [o](compose) is a function that takes functions as inputs
+
+Performance
+------------
+* von Neumann bottleneck
+
+
+  +-----+  --->  +-----+
+  | CPU |        | RAM |  (not parallel)
+  +-----+  <---  +-----+
+
+
+* Get better clarity and performance with functional style
+
+
+(1) a = f(b,c);
+i++;
+(2) x = g(y,z);
+
+Can execute (1) & (2) in parallel only if f() & g() don't look at i
+
+* Try to figure out methods to write code without assignments
+* Assignment statments lead to undefined behavior
+
+OCaml
+------
+* General-purpose
+* Object-oriented
+* Has assignment statements (but don't use)
+* OCaml (SoCal) != ML (East-coast)
+
+* Has both compiler & interpreter
+
+    OCaml                                ML
+-----------------------------------------------------------------
+x < y && y < z                 x < y and also y < z
+  3. +. 1.5                         3. + 1.5
+   [1;2;3]            [1,2,3]  can also use for tuples (1,"abc")
+-----------------------------------------------------------------
+
+
+Basic Properites
+-----------------
+* Good support for functions + functional forms (much better than in Java or C)
+* **Compile-time type checking (like C++, Java) (unlike Python, Scheme)
+* Heavy-duty type inference
+* No need to worry about storage management, has garbage collection
+  (unlike C/C++) (like Java, Python)
+
+Startup
+--------
+Start by using $ ocaml
+
+# 3 + 4 * 5;;
+-: int = 23
+# let x = 37 * 37;;
+x: int = 1369
+# if 3 < 5 then "a" else "b";; (* 3<5?"a":"b" in C *)
+-: string = "a"
+
+# if 3 < 5 then "a" else 0;;
+[error, wrong type]
+
+# (1, 2, "a");; (* tuple *)
+-: int * int * string = (1, 2, "a") (* cross product for '*' *)
+# [1; 2];;
+-: int list = [1, 2]
+
+# ();;
+-: unit = ()
+# [];;
+-: 'a list = []
+
+# [1; 3] @ [5];;
+-: int list = [1; 3; 5]
+# [1; 3] @ [];;
+-: int list = [1; 3]
+
+(* functions *)
+# let f x = x + 1
+# let f = fun x -> x + 1;;
+val f: int -> int = <fun>
+
+# let cons (a,b) = a::b;;
+val cons: 'a * 'a list -> 'a list = <fun>
+# let cons x = match x with | (a,b) -> a::b;;
+
+Patterns in OCaml
+------------------
+
+patterns        what they match
+--------------------------------------------------
+0               0
+--------------------------------------------------
+[]              []
+--------------------------------------------------
+a,b             any tuple of 2 elements
+                (binds 1st to a, 2nd to b)
+--------------------------------------------------
+h::t            binds h to 1st element, t to
+                remaining list (can be empty)
+--------------------------------------------------
+(a,b)::t        (group patterns)
+--------------------------------------------------
+a               matches anything, binds to a
+--------------------------------------------------
+_               matches anything & discards
+--------------------------------------------------
+_,b             discards first, binds second to b
+--------------------------------------------------
+
+* match expressions
+
+match x with
+  | P1 -> E1
+  | P2 -> E2
+  ...
+  | Pn -> En
+
+match l with
+  | _::_::x::_ -> x
+  | _::x::_ -> x
+  | x::_ -> x
+  | _ -> 0
+
+
+# let ccons a b = a::b;;
+val ccons: 'a -> 'a list -> 'a list = <fun> (* functional form *)
+
+(* lambda expression, don't need name *)
+# let ccons a = fun b -> a::b;;
+# let ccons = fun a -> fun b -> a::b;;
+val ccons: 'a -> 'a list -> 'a list = <fun>
+
+(* function call is left-associative *)
+# ccons "abc" ["def"; "ghi"];;
+# (ccons "abc") ["def"; "ghi"];; (* equivalent *)
+
+# let ccons0 = ccons 0
+val ccons0: int list -> int list = <fun>
+# ccons0 [1; 2];;
+-: int list = [0; 1; 2]
+
+
+# let hd h::_ = h;;
+Warning: hd is a partial function, some patterns won't match
+val hd: 'a list -> 'a <fun>
+# let hd = fun x ->
+  match x with
+  | h::_ -> h;; (* Doesn't work on empty lists *)
+
+
+* Always match all patters
+* Don't use head and tail functions
+
+Safe head function
+
+# let sfhd = function
+  | h::_ -> h
+  | _ -> 0;;
+val sfhd: int list -> int = <fun>
+
+# let safehd d = function
+  | h::_ -> h
+  | _ -> d;;
+val safehd: 'a -> 'a list -> 'a = <fun>
+
+
+Recursion
+----------
+* Always write the rec keyword
+
+
+(* buggy code *)
+# let rec reverse = function
+  | [] -> []
+  | h::t -> (reverse t) @ h
+val reverse: 'a list list -> 'a list = <fun>
+# reverse [ [1; 2]; [2; 3] ];;
+-: int list = [2; 3; 1; 2]
+# reverse [1;2;3];;
+Error: This expression has type int but an expression was expected of type 'a list
+
+
+SLOW CODE
+
+
+# let rec reverse = function
+  | [] -> []
+  | h::t -> (reverse t) @ [h]
+val reverse: 'a list -> 'a list = <fun>
+
+=============
+Oct. 5, 2015
+=============
+
+Why is this slow?
+------------------
+* Computes reverse recursively of each tail
+* Cost of O(A@B) = |A|
+* This cost is calculated at every level of recursion
+
+* O(N^2) 
+
+Idea
+-----
+* Add an accumulator by adding an argument to our function
+* Tail Recursion
+
+
+# let rec rev l [work to be done] a [work already done] =
+  match l with
+  | [] -> a
+  | h::t -> rev t (h::a);;
+val rev: a' list -> 'a list -> 'a list
+
+# let reverse l = rev l [];;
+
+
+Currying
+---------
+* Representing multiple functions by making a function that returns a function
+* higher-level-functions
+
+
+# let rec rev1 a l =
+  match l with
+  | [] -> a
+  | h::t -> rev1 (h::a) t
+
+can be changed into
+
+# let rec rev1 a = function
+  | [] -> a
+  | h::t -> rev1 (h::a) t
+
+Then we can have
+
+# let reverse = rev1 [];;
+
+
+Find minimum value in list
+---------------------------
+
+# let rec minval = function
+  | h::t -> let m = minval t in 
+                      if h < m
+                      then h
+                      else m
+  | [] -> ? (2^63-1);;
+
+pass in a less than function
+
+# let rec minval lt inf = function
+  | h::t -> let m = minval lt inf t in
+                      if lt h m
+                      then h
+                      else m
+  | [] -> inf;;
+
+Then our minval function is
+
+# let minvalint = minval (<) 2^63-1;;
+# let maxvalint = minval (>) -2^63-1;;
+
+
+Types
+------
+* Self-defined types
+  - # let color = R|G|B;;
+
+  +---+ +---+ +---+
+  | R | | G | | B |
+  +---+ +---+ +---+
+
+# let colorval = function
+  | R -> 0
+  | G -> 1
+  | B -> 2;;
+# colorval B
+-: int 2
+
+
+# type 'a option =
+  | Some of a
+  | None
+
+
+option
++------+----+
+| Some | a |
++------+----+
+| None |
++------+
+
+
+# let rec crazyminval lto inf = function
+  | [] -> inf
+  | h::t -> let m = crazyminval lto inf t in
+              match lto with
+              | None -> inf
+              | Some lt -> if lt h m
+                            then h
+                            else m;;
+
+
+crazyminval (Some (<)) 2^63-1 [3; -2; 19]
+
+* 'in' keyword
+
+# let x = 37 * 37 in x - 3
+-: 1366;;
+
+
+# type 'a mylist =
+  | Empty
+  | Cons of 'a * 'a mylist;;
+
+
+# let rec myconcat l m = 
+  match l with
+  | Empty -> m
+  | Cons (h,t) -> Cons (h, myconcat, t m);;
+
+# let rec myreverse = function
+  | Empty -> Empty
+  | Cons (h,t) -> myconcat (myreverse t) Cons (h, Empty);;
+
+
+Mutability of Languages
+------------------------
+* Successful programming languages evolve, even Fortran, C++
+
+* BASIC on the GE225 (16m^3)
+  - 40 micro-seconds to add
+  - 500 micro-seconds to divide
+  - 40 KiB RAM
+  - 20 users
+  - Rules on this machine
+    + Identifiers have 1-2 chars
+    + Strings have $[a-z]
+
+* C
+  - was developed for a 16-bit minicomputer (1974)
+  - 4 micro-seconds to add
+  - 16 KiB RAM
+  - 1.2 micro-seconds memory cycle time
+  - Rules
+    + define-before-use identifiers (small memory)
+    + *operator *p (fast) p[0] faster than p[5]
+      - add = 3x load
+      - load = 100x add (try avoiding talking to RAM)
+
+
+Evolving (Changing) C
+----------------------
+
+Obj args[7];
+args[0] = f(x);
+args[1] = g+3;
+   ...
+args[6] = malloc(19);
+Foo (7, args);
+
+// wanted to write
+Foo (f(x), g+3, ..., malloc(19));
+
+--> Define macros
+
+#define ELTS (a) (sizeof (a) / sizeof (a[0]))
+#define CALLMANY (f, args) \
+  (f) (ELTS (args), args)
+#define CALLN (f, ...) \
+  CALLMANY (f, ((Obj[]) {__VA_ARGS__} ))
+
+And get better syntax
+
+CALLMANY ((Foo, f(x), g+3, ..., malloc(19)));
+
+
+sh (Bourne shell)
+------------------
+
+if (x < y) {
+  x += y;
+} else {
+  x -= y;
+}
+
+// wanted
+
+if x < y then
+  x += y
+else
+  x -= y
+fi
+
+--> Defined macros
+
+#define IF if (
+#define THEN ) {
+#define ELSE ;} else {
+#define FI ;}
+
+Then we could write
+
+IF x < y THEN
+  x += y
+ELSE
+  x -= y
+FI
+
+
+Sapir-Wharf Hypothesis
+-----------------------
+* the language we use determines how to view the world & how we think
+
+Syntax
+-------
+* Part of the language where we talk about formalism
+* Form independent of meaning
+* "Colorless green ideas sleep furiously" (N. Chomsky)
+  - nice syntax but bogus meaning
+* "Ireland has leprechauns galore (adj. modifies leprechauns)." (P. Eggert)
+  - "galore" comes from Irish
+  - adjectives come after nouns in Irish
+
+int main (int argc, char **argv) { return argc+++argv[0][0]; }
+
+
+Ambiguity
+----------
+ 
+"Time flies."
+  N     V    (time has gone really fast)
+  V     N    (measure how fast flies fly)
+
+* syntactic & semantic
+
+{
+  int a = 10, b = 20;
+  return a++++b;
+  // can be (a++)+(+b);
+  // can be a+(+(++b));
+}
+
+=============
+Oct. 7, 2015
+=============
+
+How to choose a syntax
+-----------------------
+
+Reasons to prefer one syntax to another
+----------------------------------------
+1. It's what people are used to
+
+  - a < b, a-b
+  - -a-b, a--b, a- -b
+  - a*b-c, a-b*c
+
+2. It's simple & regular (smallest grammar)
+
+  - (< a b), (- a b), (- (- a) b)
+
+3. It's "readable"
+
+Leibniz's Criterion - a proposition's form should mirror reality
+
+  - let x = 37 * 3 in x * x
+  - (fun x -> x * x) 37 * 3 (out-of-order, right to left)
+
+  - if (x >= 0 && x < n) print ("OK");
+  - if (0 <= x < n) print ("OK"); (always use less than, not greater than)
+
+4. It's "writable"
+
+Concise
+
+  - Too prolix: Java: Thread x = new Thread(s);
+  - Too concise: APL (write-only code): z N // numbers 1 - 10, */ z N // multiply
+
+5. It's redundant
+
+Catch Stupid Mistakes
+
+  - n = (3+4)*i*(j+2); // parentheses matching
+  
+  - Violation example
+
+DO 10 I = 1,100
+// Typo: DO 10 I = 1.100
+// which becomes: DO10I = 1.1
+  code goes here, involving I
+  10 CONTINUE
+
+  - C: if (i == 0) vs. if (i = 0)
+
+# if INT_MIN < SHRT_MIN (typo: SHORT_MIN -> evaluate to 0 (not defined))
+  ... code ...
+# endif
+
+
+6. It's ambiguous
+
+* C
+
+int sum3 (int a, int b, int c) {
+  return a + b + c; 
+  // implied parentheses -> integer overflow, rounding errors
+  // standard: (a + b) + c
+}
+
+* Fortran
+
+Not defined, allows compiler to choose order (performance)
+
+At low level
+
+
+                                                          program = byte string
++-------+----+--------+------------+------------------------------------------+
+|       | 93 |        | multi-byte |                                          |
++-------+-|--+--------+------|-----+------------------------------------------+
+Phase 0   |                  |
+          |                  |
+          |                  |                       program = character string
++-------+-|-+-------------+--|--+---------------------------------------------+
+|       | a |             | 'c' |                                             |
++-------+---+-------------+-----+---------------------------------------------+
+Phase 1
+
+
+Unicode
+--------
+printf("Invalid word '%s'\n", foo);
+
+* ASCII is represented as the same in Unicode
+
+
+4 bytes/char       UTF-32
+---------------------------
+                   UTF-8
+
++---+-------------+
+| 0 | <--- 7 ---> | payload
++---+-------------+
+
++---+---------------++----+-----+---------++----+-----+---------+
+| 1 | 110 | payload || 10 | 110 | payload || 10 | 110 | payload |
++---+---------------++----+-----+---------++----+-----+---------+
+
+
+* 2 different byte representations for same character!
+
+strcmp (a,b) -> different
+
+encoding error
+
++----------+----------+--------+
+| 11100011 | 01011010 | ...... |
++----------+----------+--------+
+   UTF-8      ASCII
+
+UTF-8 & ASCII don't match -> encoding error
+
+
+* example C program
+
+int main (void) { return 42 /* the answer */; }
+
+* Phase 0: interpret
+* Phase 1: throw away spaces, newlines, comments
+* Phase 2: Tokenization or Lexical Analysis (lexing)
+
+INT(12) ID(1) ((13) VOID(19) )(16) {(26) RETURN(31) NUM(3) ;(14) }(27)
+
+  - Tokens
+    * comments
+    * white space
+    * identifiers
+      + int x;
+      + int int (?)
+        - reserved words
+        - adding reserved words will invalidate old programs
+        - noreturn - 
+          + noreturn void error (void) { printf("Error!"); exit; }
+          + C99: int noreturn = 19; // would not work in C11
+          + Added keyword _Noreturn instead
+      + int class = 12; // works in C
+      + A language with keywords but no reserved words (**PL/I**)
+        - if (if = if) THEN if(else) = if; else if(else) = else;
+        - complicates grammar & lexing
+
+
+Parse Tree
+-----------
+                    program
+                       |
+                    fn decls
+                       |
+                     fn decl
+       +-----+--------+---------------------+
+       |     |        |                     |
+     type    ID      args                  body
+       |         +----+------+    +---------+----------+
+       |         |    |      |    |         |          |
+      INT        (  arglist  )    {      stmt list     }
+                      |                     |
+                     VOID               return stmt
+                                      +---------+--------+
+                                      |         |        |
+                                    RETURN     expr      ;
+                                                |
+                                               NUM
+
+Definitions
+------------
+* Grammar
+
+formal description of a language
+
+* Language
+
+(infinite) set of strings
+Language for English is recursive
+
+* String
+
+finite sequence of tokens
+
+* Token
+
+member of a known fixed finite set
+
+==============
+Oct. 14, 2015
+==============
+
+* By next time, read Webber Chapters 1-9, 11
+
+Disambiguation of Grammar
+--------------------------
+* Makes grammar more complicated
+* Which generates more complicated parse trees & derivations
+
+Simple Grammar
+
+  E -> E + E
+  E -> E * E
+  E -> ID
+
+  a + b * c
+
+      E
+  +---+---+
+  |   |   |
+  a   +   E
+        +-+-+
+        b * C
+
+
+Unambiguous Grammar
+
+  E -> E + T
+  E -> T
+  T -> T * F
+  T -> F
+  F -> ID
+
+  a + b * c
+
+      E
+  +---+---+
+  |   |   |
+  E   +   T
+  |     +-+-+
+  a     T * F
+        |   |
+        b   c
+
+* Abstract systax parse tree
+* Settle precedence
+* Write simple grammar, let compiler settle unambiguity
+
+Really complicated syntax
+--------------------------
+* With long grammar
+* e.g. SQL variations
+* even EBNF is too prolix
+
+* Use syntax diagrams/graphs/charts/racetrack diagrams
+
+Example: Scheme 'cond'
+-----------------------
+<cond> -> (cond <cond claus>+ 
+        | (cond <cond clause>* 
+                (else <sequence>))
+
+Diagram
+--------
+
+cond
+                     +--->---->---->--+
+                     |                | 3
+  ---> ( ---> cond --+-> cond clause -+--> ( ---> else ---> sequence ---> ) -+-> )
+          1        2 | 4              |                                      |
+                     +---<----<----<--+                                      |
+                                      |                                      |
+                                      +--------->--------->---------->-------+
+
+1) for clarity
+2) for advice about parsing
+
+parse_cond () 
+{
+  parse_token ("(") &&
+  parse_token ("cond") &&
+  if (parse_cond_clause ())
+    parse_cond_clause_sequence ();
+  else
+    parse_token ("(") &&
+    parse_token ("else") &&
+    ......
+}
+
+Easy Case
+----------
+* diagrams contain only tokens
+* finite state automaton (can only parse simple languages)
+* DFA (deterministic FA) (implemented via lookup table)
+* NFA (nondeterministic FA)
+
+          input token #s
+         +----------------+
+         |                |
+         |                |
+         |                |
+state #s |         * --------> next state (FA)
+         |         |      |
+         |         +-------------> set of next states (NFA)
+         |                |
+         +----------------+
+
+   b
+0 -+--> 2
+   |    ^
+   |    | b
+   |    +
+ a +--> 1 -+
+    ^      | a
+    +------+ 
+
+
+* they can't do arbitrary recursion*
+
+  S -> b
+  S -> a S  <--- if grammar is tail recursive, you're ok
+
+arbitrary recursion: combine a  FA  +  stack (extra memory)
+                      **HW2:  match    recursive function**  
+(can do any context free grammar)
+
+HW2
+----
+* Recursive Grammar
+
+S -> a b  S  c
+
+* Concatenation
+
+S -> T U
+
+* Disjunction (OR)
+
+S -> T
+S -> U
+(S -> T|U) 
+
+HARD PART
+----------
+* Acceptor
+
+Implements OR atop concatenation
+
+I'll parse T, give the T-parse an acceptor that allows only U
+This gives the T-parser a way to do disjunction inside itself
+
+S -> T U
+T -> T1
+T -> T2
+
+S -> b
+S -> a S
+
+Worst case: 'N' tokens  ->  O(2^N)
+
+Prolog
+-------
+* Lets you define operators
+
+:-op (500,     yfx, [+,-]);
+(precedence)  (infix) (left associative)
+
+:-op (400, yfx, [*,/]);
+:-op (200, xfy, [**]);
+:-op (700, xfx, [=,\=,==, =<...]) (cannot do a = b = c)
+                                 valid in C: a == b == c
+                                             (a < b) < c
+:-op (200, fy, [+,-]);
+
+
+Bug with stack
+---------------
+double stack[100000];
+double *sp = &stack[100000];
+#define PUSH(x) (*--sp = (x))
+#define POP() (*sp++)
+
+switch (op) {
+  case '+': PUSH(POP() + POP()); break;
+  case '-': PUSH(-POP() + POP()); break;
+  case '*': PUSH(POP() * POP()); break;
+  case '/': PUSH(1/POP() * POP()); break;
+}
+
+Expand to: *--sp = *sp++ + *sp++;
+
+Java: L to R
+-------------
+C: doesn't enforce, L to R  ||  R to L  ||  mixed order (parallel)
+   undefined behavior if competing side effects, compiler can do anything
+
+Problem: Core Dump
+-------------------
+*sp++ + *sp++ **may evaluate in parallel (increment sp twice)**
+
+Try fixing it with functions
+
+void PUSH (double d) { *--sp = d; }
+double POP (void) { return *sp++; }
+
+Semantics
+----------
+Translation Steps
+
+byte strings --> char strings --> token strings --> parse tree (derivation)
+|                                             |     |                     |
++----------------------+----------------------+     +-----------+---------+
+                     lexing                                  parsing
+
+-----------------> attributed tree ---------------> simple abstract machine
+name resolution                     intermediate    +---------------------+
+type checking                        code gen       | main:               |
+                                                    |---------------------|
+                                                    |   push    getchar   |
+                                                    |   call    0         |
+                                                    |   long              |
+                                                    |   ret               |
+                                                    +---------------------+
+
+|                                                                         |
++-------------------------------------+-----------------------------------+
+                          machine independent code
+
+                           machine dependent code
++-------------------------------------+-----------------------------------+
+|                                                                         |
+
+--> machine dependent code -----> optimization ------> asm --> ld --> load
+   +---------------------+     +-----------------+      |       |      |
+   | leal  getchar, %eax |     | call getchar    |      *       |      *
+   | pushl %eax          |     | tstl %eax, %eax |   .o file    |     RAM
+   | popl  %eax          |     | sete %el        |              *
+   | call  *%eax         |     | ret             |          executable
+   | tstl  %eax, %eax    |     +-----------------+
+   | sete  %el           |
+   | ret                 |
+   +---------------------+
+
+
+Software tools approach (Unix, Linux)
+--------------------------------------
+- Easy to replace components
+
+Integrated Development Environment (IDE)
+-----------------------------------------
+* Small talk
+
+Traditionally:
+  compilers: translate Fortran to x86-64 efficient execution
+  interpreters: execute BASIC programs directly via a machine language interpreter
+
+Traditional Java
+  javac (compiler)
+  can be done on separate machines
+
+
+                           +------------------+
+Foo.java --> Foo.class --> | Java Interpreter |
+                           +------------------+
++--- databases server ---+ +----- client -----+
+
++------------------------------+
+| JIT (Just In Time) Compiling |
++------------------------------+
+
+Java Interpreter + bytecode -> machine code -> compiler
+(counts #times 
+code gets executed) --> machine code
+
+Dynamic Linking
+----------------
+A program can call the linker
+  ("Please link in a JPEG decompression library")
+ 
+f = ... (return a pointer to function)
+f (...)
+
+  Problems:
+    type checking? (How to do at run-time instead of static compile-time)
+    run-time checking?
+
+Check linking: $ ldd a.out
+
+==============
+Oct. 19, 2015
+==============
+
+What is a type?
+----------------
+
+Definition A
+-------------
+* A set of values for variables
+* A set of operations on those variables
+
+Language SETL: types are sets
+
+double + int -> double // double dominates
+int + double -> double // double dominates
+
+double + int64_t -> double
+int64_t + double -> double
+
+
+Definition B
+-------------
+A type is a set of information known about a value at compile time
+This assumes static type checking at compile checking
+
+The following do not fall into Definition A
+int const a = 27;
+int volatile v = 27;
+
+* However this definition does not work for types with dynamic type checking
+
+Primitive vs. Constructed Types
+--------------------------------
+Primitive: Built-in types
+Constructed: Built by programmer using type constructors
+
+* C Language Primitive Types
+
+long
+unsigned long
+int
+double
+char
+bool
+signed char
+unsigned char
+float
+long double
+
+
+* C Language Constructed Types
+
+T *
+T const
+T volatile
+T []
+T (*)(T1, T2, ..., Tn)
+// (they nest!)
+struct ...
+union ...
+
+
+C++: class T { ... }
+
+Example: float
+---------------
+
++---+---+----------------+
+| 1 | 8 |       23       |
++---+---+----------------+
+  s   e         f
+   
+Normalized:
+(+-) 2^(e-127) * 1.f // (0 < e < 255)
+
+Denormalized and (+-0):
+(+-) 2^(-126) * 0.f // (e = 0)
+
+(+-) 0 for reminding from which side underflow came from
+
+Infinity:
+(+-) inf // (f = 0, e = 255)
+1.0/0.0 = inf
+1.0/-0.0 = -inf
+
+NAN (Not A Number):
+(+-) NAN(f) // (f != 0, e = 255) (f gives information on nan)
+inf + inf = inf
+inf - inf = nan
+0.0/0.0 = nan(0)
+nan + 1 = nan
+nan / nan = nan
+
+if (nan == nan) ---> evaluates to false even if both nans have same value
+
+
+float a = ...;
+float b = ...;
+
+a != b && a - b == 0 // can't happen in real, but can happen in C
+
+
+Instead of using inf, nan
+Let's trap / signal an error / throw an exception
+
+Terminology
+------------
+
+abstract vs. exposed types
+---------------------------
+
+abstract          vs     exposed types
+----------------------------------------------
+ops only                 ops + details
+way to make progress     about representation
+
+
+struct complex {      +------+------+
+  double re;          |  re  |  im  |
+  double im;          +------+------+
+}
+
+
+
+strongly typed
+---------------
+all operations are type checked (compile or run-time)
+
+Java & OCaml are stronly typed
+C/C++ are not
+
+double d;
+int i;
+i = d;
+
+char c = 'a';
+char d = c (char) + 1 (int); // still strongly typed
+
+int a = 29;
+void *p = &a;
+long *q = p;
+return *q; 
+// works find on x86 (int and long are the same length)
+// undefined on x86-64, may dump core
+
+
+equivalent types
+-----------------
+* structural equivalence
+
+T1 = T2 if they have same layout in memory
+
+typedef char * t1;
+typedef char * t2;
+t1 a; t2 b;
+a = b;
+b = a; 
+// this works
+// for typedef's, C uses structural equivalence
+
+
+* Structural equivalence is important in C because
+
+typedef unsigned long size_t
+size_t n; n = n + 1; // has to be able to work
+
+struct s { double re, im; struct t * next };
+struct t { double re, im; struct s * next };
+
+* name equivalence
+
+T1 = T2 if they have the same name
+
+struct s { double re, im; };
+struct t { double re, im; };
+
+struct s = a;
+struct t = b;
+
+a = b;
+b = a; // compiler error, incompatible types, different names
+
+
+subtypes
+---------
+
+Pascal: type 'lower' = 'a' .. 'z';
+'lower' is subtype of 'char'
+
+CommonLisp: (declare (type (and integer (satisfies evenp)) x))
+
+* subtypes inherit operations of supertypes
+* subtypes have more operatison than supertypes
+
+s = char *
+t = char const *
+
+Is 's' a subtype of 't' or is 't' a subtype of 's'?
+---> 's' is a subtype of 't'
+
+
+char *p = ...;
+char const *q = ...;
+
+p = q; // not allowed because 'q' is a subtype of 'p'
+q = p; // this works
+
+'volatile' works the same as 'const'
+
+
+polymorphism
+-------------
+function that accepts many types is called "polymorphic"
+relevant mostly for compile-time checking
+
+overloading
+------------
+identify function from its operands' types
+
+C++:
+complex operator + (complex, complex);
+A + B if A and B are both complex then use the above
+
+Ada:
+also looks at the context (result type)
+
+int a = ...;
+int b = ...;
+double d =  a  +  b;
+          (int) (int)
+
+                             name mangling
+foo  int double             foo  $int $double
+foo  double int             foo  $double $int
+foo  int int                foo  $int $int
+foo  int short              foo  $int $short
+foo  float double           foo  $float $double
+
+coercion
+---------
+system converts types as need to make things work
+
+a (float) + b (int) // coerce 'b' to type float
+
+Problems:
+---------
+Coercion can lose information
+Complicates language
+
+foo (a (float), b (int)) // can have many matches
+
+==============
+Oct. 21, 2015
+==============
+
+Read Webber Ch 1-13 & "Java"
+
+Types & Polymorphism
+---------------------
+ad-hoc (put in at random) polymorphism (long-standing)
+  overloading   <---  int, double
+  coercion
+universal polymorphism (infinitely many types)
+
+IN PL/I
+leading to: 10 + 1/2 FIXED DECIMAL(1)
+            0.5000000000 FIXED DECIMAL(10,9)
+       ---> 10.5000000000 OVERFLOW!
+
+In C
+
+unsigned i;
+i = 2;
+if (i < -1) // No default comparison for unsigned and signed
+  print ("ouch");
+// -> UINT_MAX 2^32 -1   ---> print out
+
+if (-2^31 < 0) // automatically uses next type that fits (here is unsigned)
+
+
+Parametric Polymorphism
+------------------------
+types contain type variables 
+
+* runtime type checking : type variables are just variables
+* compile-time type checking : types are not objects
+
+Without parametric polymorphism
+--------------------------------
+Let's iterate through collection of strings and remove short strings
+
+Collection c;
+for (Iterator i = c.iterator;  i.hasNext(); )
+{                 *-> // collection has interator               
+  if (((String)i.next()).length() <= 1)
+    i.remove();
+}
+
+With parametric polymorphism
+-----------------------------
+Let's improve the code to remove runtime type checking & casting
+
+Collection<String> c;
+for (Iterator<String> i = c.iterator(); i.hasNext(); )
+{
+  if (i.next().length() <= 1)
+    i.remove();
+}
+
+Two basic techniques in parametric polymorphism
+-------------------------------------------------
+
+Templates (C++, Ada, ...)
+--------------------------
+something that isn't complete until you konw the type
+compile after instantiation
+
+Generics (Java, OCaml, ...)
+----------------------------
+compile them right away
+type-check them right away
+
+T x;
+T y;
+x = y;
+
+// In Jave: copy 1 word (a pointer)
+// In C++: copy an object of size 'sizeof(T)'
+
+
+List<String> ls = ...;
+List<Object> lo = ls;
+lo.add(new Thread());
+String s = ls.get();
+
+bad assignment: lo = ls
+Is List<String> a subtype of List<Object>    No it's not
+
+THIS CODE DOESN'T WORK FOR List<String>
+
+void printList(List<Object> lo) {
+  for (Object o:lo)
+    System.out.println(o);
+}
+
+THIS CODE WORKS FOR List<String>
+
+void printList(List< ? > lo) {
+  for (Object o:lo)
+    System.out.println(o);
+  lo.add(new Thread());
+}
+
+Suppose we have the following structure
+
+        Object
+          |
+        Shape
+       |     |
+ Rectangle  Elipse
+     |
+   Square
+
+
+Bounded Wildcard
+-----------------
+void printShapeList(List< ? extends Shape > ls) { ... }
+
+THIS CODE DOESN'T WORK
+
+static void convert(Object[] a, List < ? > lo) {
+  for (Object o:a)
+    lo.add(o);
+}
+
+THIS CODE WORKS
+
+static <T> void convert(T []a, List<T> lo) {
+  for (T o:a)
+    lo.add(o);
+}
+
+
+Square []a = ...;
+List<Rectangle> lr = ...;
+convert (as, lr);
+// this doesn't work, Rectangle & Square are not the same type
+
+
+THIS CODE WORKS, FIXES PROBLEM ABOVE
+
+static <S,T> void convert (T []a, List<S super T> la) {
+  for (T o:a)
+    lo.add(o);
+}
+
+Change S to ? and it becomes
+
+static <T> void convert (T []a, List< ? super T> la) {
+  for (T o:a)
+    lo.add(o);
+}
+
+
+THIS IS ALL SO COMPLICATED!!
+
+An alternate
+
+Duck Typing
+------------
+Type checking based on behavoir only
+  assumes no compile-time checking
+  assumes flexible runtime, any object allowed
+Type checking done at method call (at runtime)
+
+
+1 + o <-- some random object
+    ----> o.add(1)
+
+
+Pros & Cons of Duck Typing
+---------------------------
++ simplicity
++ flexibility -> easier to debug
+- performance
+- reliability -> runtime errors, not checked at compile-time
+
+
+Implementing Generics
+----------------------
+
+           javac
+foo.java ---------> Foo.class (bytecode) -----> JVM (run)
+
+Version Java 1.5, has generics, but want backwards compatibility, but how?
+
+Erasure
+--------
+List: bytecodes know only about list
+Insert runtime test (type cast) that will always succeed
+
+Names (Identifiers) & Bindings
+-------------------------------
+
+Properties of Names
+--------------------
+Reserved words?
+Case sensitive?
+Special characters?
+
+Addresses
+----------
+
+Bindings
+---------
+Relationship between a name & a value
+set of bindings = symbol table / environment
+
+Example bindings
+-----------------
+int i = 10;
+    value of variable: i+0
+    address of variable: &i
+'i' doesn't stand for '10' but to the variable which has value '10'
+
+sizeof(i) --> returns 4
+    representation of the variable
+typeof(i)
+    type of variable
+
+
+Binding time
+-------------
+Time value is bound to name
+    C: runtime, during assignment, can rebind variable
+Time address is bound to name
+    C: depends
+      static: at program startup
+      auto: block entry
+      instance: new
+
+struct il {
+  struct il *next;
+  int val;
+}
+
+int f (void) {
+  struct il funny = { &funny, 27 }; 
+  // works fine
+  struct il funny = { &funny, funny.val }; 
+  // doesn't work, funny.val doesn't exist yet
+}
+
+int i[100];
+
+sizeof(i) ---> 4 (when is i bound to 4?)
+// size varies by compiler
+// binding time is not when compiler is written
+// but is actually when ABI C was defined
+
+typeof(i) ---> int
+// binding time is language definition time
+
+--------------------------------
+Know who can change the binding
+--------------------------------
+
+Other examples of binding times
+    link time --> address of global variables
+(static | dynamic)
+
+
+Name Stew
+----------
+int f (void) {
+  struct f { int f; } f;
+  enum f { zero };
+  // cannot name 'zero' 'f' because 'zero' & 'f' live in same namespace
+  struct g { int f; } g;
+  #include <f>
+  #define f g
+  f: goto f;
+}
+
+
+Primitive Namespaces
+---------------------
+* curly braces
+* structures
+* enums
+
+
+
+==============
+Oct. 26, 2015
+==============
+
+Names & Bindings
+-----------------
+Labeled namespaces (partial function from names to values)
+--> Motiviation: 
+  manage complexity (for reader)
+  ability to separately compile (efficient rebuilding)
+
+
+OCaml namespace management
+---------------------------
+
+Structures
+-----------
+module qu =
+  struct
+    type 'a queue =
+      | Empty
+      | Node of int * 'a * a' queue
+    ===== IMPLEMENTATION OF PRIORITY QUEUE =====
+  end
+
+
+OCaml Signatures
+-----------------
+module type q =
+  sig
+    type 'a queue
+    (isempty decl)
+    (other decl)
+  end
+
+
+OCaml Functions
+----------------
+Done at compile time
+From structures to structures
+     signagures to signatures
+
+"parameterized module"
+
+Java Information Hiding
+------------------------
+Label each name to control visibility
++-----------+--------------+-----------+---------+------------+
+|           | within class | everyelse | package | subclasses |
++-----------+--------------+-----------+---------+------------+
+|  public   |     yes      |           |   yes   |    yes     |
++-----------+--------------+-----------+---------+------------+
+|  private  |     yes      |           |         |            |
++-----------+--------------+-----------+---------+------------+
+| protected |     yes      |    yes    |   yes   |            |
++-----------+--------------+-----------+---------+------------+
+|  (none)   |     yes      |           |   yes   |            |
++-----------+--------------+-----------+---------+------------+
+
+
+Java
+-----
+
+Sun Microsystems
+-----------------
+Early 1990s research on IoT (Internet of Things)
+Running on Workstations + Servers (SPARC, x86) (Multiple CPUs)
+  Solaris (Unix)  -->  GNU/Linux
+    Written in C (portable)
+
+Try to run on a toaster --> problems
+  C had bad abstraction
+  C had bad namespacing
+
+Try to code in C++ --> problems
+  0) Too complicated
+  1) Compile for all problems & variants (recompile-the-world)
+  2) Fat executables
+     ~1993 28 kb/s internet
+  3) Unreliable (Crash Often) [BSOD (Blue Screen Of Death) (Core Dump)]
+  4) No support at the time for multi-threading
+
+Came up with new language C+-
+  Added multi-threading
+  Removed complex functionalities
+
+Xerox PARC
+-----------
+  Smalltalk (IDE) 
+    S1) compile Smalltalk to bytecodes (only had a few instructions)
+        machine specific interpreter for bytecodes
+    S2) interpreter enforces memory safety etc.
+
+  S1) addresses 0), 1), 2), 3)
+
+  Missing from Smalltalk
+    1) "weird" syntax
+    2) bytecodes resided on a machine (not downloaded, copied across network)
+    3) runtime type-checking
+
+Oak/Java
+---------
+  Combined C+- & Smalltalk
+    C/C++ syntax + type-checking
+    + Smalltalk runtime
+    + Networking, threading
+  
+  Renamed to 'Java' before shipping
+
+  Problem: Mosaic (first web browser) (ancestor of Mozilla Firefox & IE)
+           - research program at UIUC lead by Andreessen
+             + plugins (C++) to fight Java guys
+               - won in the runtime
+               - performance
+
+  Wrote a browser with Java instead of C++, which had problems
+    Mosaic + Java bytecode downloads (applets)
+      publicity --> Android.
+
+  Big Java programs now run in servers
+
+Types
+------
+
+Primitive
+----------
+byte short int long boolean char
+ 8     16   32  64     1   Unicode
+
+two's complement
+overflow wraps around
+
+Reference
+----------
+user-defined + system-defined
+
+ <--32-->
+ <--64-->
+ +------+         +----------------+
+ |  **  |  ---->  | data in memory |
+ +------+         +----------------+
+
+Array
++---+---+---+---+---+---+---+
+| 7 |   |   |   |   |   |   |
++---+---+---+---+---+---+---+
+size
+
+arrays are objects
+arrays are allocated via new on the heap
+size determined dynamically when allocated
+runtime checking is easy (since the size is included)
+
+& address operator doesn't exist for safety reasons
+
+Java is single inheritance (runtime efficiency & simplicity of language)
+
+Multiple-inheritance example
+-----------------------------
+                Shape                            Drawable
+
+        Rectangle     Ellipse           DrawableImage   DrawableScreen
+                                              *
+     Square               Circle              |
+        *                                     |
+        |                                     |
+        +-------------------------------------*
+                                      DrawableImageSquare
+
+Suppose Rectangle & DrawableImage both have area() methods
+Compile error in C++
+
+
+Java Interfaces
+-------------------------------------------------------------------
+Interfaces                           Inheritance
+-------------------------------------------------------------------
+Obligation from Interface            Implementation from parent
+(Have to satisfy implementation)
+-------------------------------------------------------------------
+
+
+Interface Hierarchy
+--------------------
+interface X {}
+interface Runnable { void run(); }
+interface FastRunner extends Runnable
+{
+  void run();
+  void speedup(int);
+}
+
+                  I1 <------------------- C5
+              I2     I3 <------------------- C6
+                        I4 <------------------- C7
+
+abstract class
+---------------
+Ordinary class + interface
+ABSTRACT CLASSES REQUIRE SUBCLASSES TO WORK
+
+abstract class AC
+{
+  int m1() { return 0; }
+  abstract int m2();
+}
+
+(new AC()).m2(); // won't work
+
+class C3 extends AC
+{
+  int m2() { return 42; }
+}
+
+(new C3()).m2();
+
+final class
+------------
+prohibit subclasses
+
+        Object
+          |
+        Thread
+          |
+final FinalThread
+
+final class Dumb 
+{
+  int v;
+  final public int add1() { return v++; }
+  public void complicated() {
+    return add1() + add1();
+    // x = v; v += 2; return 2*x+1;
+    // compiler allowed to optimize since add1() is final
+  }
+}
+
+Object class
+-------------
+LOOK FOR DEFINITION OF Object BEFORE OCT. 28
+
+public class Object
+{
+  public Object();
+
+  // default is pointer comparisons, can overwrite
+  public boolean equals(Object obj);
+
+  // hash of address, say
+  public int hashCode();
+
+  // equals  ---->  same hashCode
+
+  // default prints out pointer value
+  public String toString();
+
+  // reflection, inspects itself
+  // final: correctness + efficiency
+  public final Class getClass(); // complicated implementation
+}
+
+Class c = o.getClass(); // c is not a 'class', it's an object of type 'Class'
+
+* Midterm covers 1-9, ML & Java
+
+
+
+=============
+Nov. 2, 2015
+=============
+
+Logic Programming & Prolog
+---------------------------
+Declarative Programming
+
+Algorithm      =       Logic     +     Control
+                  What you want       Performance
+                  Correctness
+
+Separation of concerns
+
+Example: sorting a list
+------------------------
+sort(L,S) :- perm(L,S), sorted(S)
+     | |              |
+     | |              |
+     | |              +> and
+     | +> sorted
+     |  "equivalent"
+     |
+  any list
+ of integers
+
+O(N!)  vs.  O(2^N)
+
+sorted([]).
+sorted([_]).
+sorted([x,y|L]) :-
+       x =< y,  +----->   (builtin)
+       sorted([y|L]).
+
+perm([],[]),
+perm([x|L],R) :-
+     perm(L,PL),
+     append(R1,R2,PL),
+     append(R1,[x|R2],R)
+
++---+---------+
+| x |    L    |
++---+---------+
+         |
+         |     perm            +--------+---+----+
+         +------------->   R = |   R1   | x | R2 |
+                               +--------+---+----+
+
+---------------------------------------------------------------------+
+Similar definition of 'append' in library                            |
+------------------------------------------                           |
+append([],L,L).                                                      |
+append([x|L],M,[x|LM]) :-                                            |
+       append(L,M,LM).                                               |
+                                                                     |
++---+-------+-------+                                                |
+| x |   L   |   M   |                                                |
++---+-------+-------+                                                |
+                                                                     |
+append(L,M,[3,9,2])                                                  |
+  L = [], M = [3,9,2] ;                                              |
+                                                                     |
+    L = [x1|L1], M1 = M, [x1|LM1] = [3,9,2] x1 = 3, LM1 = [9,2]      |
+    append(L1,M1,[9,2])                                              |
+      L1 = [], M1 = [9,2]                                            |
+  L = [3], M = [9,2] ;                                               |
+                                                                     |
+    L1 = [x2|L2], M1 = M2, [9,2] = [x2|LM2], x2 = 9, LM2 = [2]       |
+    append(L2,M2,[2])                                                |
+      L2 = [], M2 = [2]                                              |
+  L = [3,9], M = [2] ;                                               |
+  L = [3,9,2], M = [] ;                                              |
+    no                                                               |
+                                                                     |
+---------------------------------------------------------------------+
+
+?- sort([1,5],[5,1]).
+  no
+
+?- sort([5,1], R).
+  R = [1,5]
+
+?- perm([3,a,27], R).
+  R = [3,a,27] ; <--- user input
+  R = [3,27,a]
+
+
+Syntax
+-------
+
+* term is: 1) number
+           2) atom           a1 b%A  [a-z][a-zA-Z0-9]*
+                             'any''string'
+           3) variable       B9cA  [A-Z][a-zA-Z0-9]*  _ (don't care variable)
+           4) structure      f(3,9)  g(f(x),47)
+                             S(arg1,...,argv)   <------   args > 0
+                             |  |        |
+                             |  |        |
+                             |  |        |
+                             |  +--------+------> each is a term
+                             |
+                             |
+                             +----> atom (functor, function symbol)
+
+Logical variables
+------------------
+Start up unbound
+Can bind variable on success but cannot bind again
+Can become unbound on failure
+              *-----------------> in LIFO way
+
+
+Syntactic Sugar
+----------------
+[]       =  '[]'
+[x|L]    =  '.'(x,L)
+[x,y|L]  =  '.'(x,'.'(y,L))
+[x,y,z]  =  '.'(x,'.'(y,'.'(z,[]))))
+
+
+f(g(x,3),27)
+
++---+---+----+
+| f | * | 27 |
++---+-|-+----+
+      |
+      |    +---+---+---+
+      +--> | g | x | 3 |
+           +---+---+---+
+
+
+[5|[]]
+
++---+---+----+
+| . | 5 | [] |
++---+---+----+
+
+
+[3,9|[]]
+
++---+---+---+     +---+---+----+
+| . | 3 | *-----> | . | 9 | [] |
++---+---+---+     +---+---+----+
+
+
+x + y  =  '+'(x,y)
+-x     =  '-'(x)
+x - y  =  '-'(x,y)
+x , y  =  ','(x,y)     AND
+x ; y  =  ';'(x,y)     OR
+x :- y =  ':-'(x,y)    IF
+
+?- op
+
+Adding numbers?
+----------------
+?- x = 2+2.
+  x = 2+2
+
+'is' keyword
+-------------
+is/2
+ | |
+ | +---> arithmetic
+ +-----> function symbol
+
+
+? is integer arithmetic term
+
+?- is (4, 2+2),
+  yes
+?- is (5, 2+2),
+  no
+
+?- is (N, 2+2),
+  N = 4
+
+?- is(4, E) ---------------------------------------------+
+     (runtime error)                                     |
+     second variable cannot be a logical variable  <-----+
+     must be ground term    <----------------------------+
+
+
+?- N is 2+2,
+   N is N+1, ----->  never possible (4 is 4+1 ?)  --->  no
+   write(N).
+
+
+Prolog Clauses
+---------------
+1) facts      heads only             append([],L,L).
+2) rules      heads + bodies         head :- nonempty body
+3) goals      no head + bodies       ?- append(A,B,[]).
+
+Prolog Computation
+-------------------
+prolog computation state =
+  list of goals
+
+         G1        , ... ,      Gn
+    subsubsubgoal            main goal
+
+shrinks by finding a fact that matches G1
+grows (or stays same size) by appying a ruel whose head matches G1
+
+
+Technical Terms
+----------------
+1) backwards chaining from goals through rules to facts
+2) clauses are treated left to right to match goals
+3) goals are evaluated left to right
+   depth-first search
+
+     ?- ans(x)
+     ans(z) :- ans(z)
+     ans(42)
+
+   this will blow the stack
+   to fix:
+
+     ?- ans(X)
+     ans(42)
+     ans(z) :- ans(z)
+
+   (put base case first to ensure it will finish)
+
+
+=============
+Nov. 4, 2015
+=============
+
+Read Dybvig 1-2
+     Webber 1-15, 17, 19, 20-22
+
+
+Prolog
+-------
+member(x,[x|_]),
+member(x,[_|L]) :- member(L).
+
+?- member(a,L),
+   member(b,L).
+L = [a,b|_976] ;
+L = [a,_27,b|_293] ;
+L = [a,_29,_32,b|_473] ;
+
+
+Debugging Prolog
+-----------------
+?- trace, member(a,L), member(b,L).
+
+    +------------------------+
+    | 4-port debugging model |
+    +------------------------+
+
+ call                     succeed
+------> +-------------+ ----------->
+        | member(a,L) |
+<------ +-------------+ <-----------
+ fail                     backtrack
+    
+* lots of output by default
+
+
+Compute reverse of a list (done in OCaml)
+------------------------------------------
+
+Inefficient Method
+-------------------
+  reverse([],[]),
+  reverse([x|L],R) :-
+      reverse(L,RL)
+      append(RL,[x],R).
+
+'append' has order O(|RL|) --> O(N)
+then the inefficient method has overall complexity O(N^2)
+
+this is the classic Prolog microbenchmark
+
+Logical Inferences Per Second
+  1 step = match goal to clause head
+
+gprolog on SEASnet, how many LIPS?
+
+
+Efficient Method
+-----------------
+  reverse(L,R) :-
+      revtail(L,[],R),
+  revtail([],[],[]),
+  revtail([x|L],A,R) :-
+      revtail(L,[x|A],R).
+
+'revtail' has order O(1)
+then the efficient method has overall complexity O(N)
+
+
+Unification
+------------
+matching goals to clause heads, binds variables
+
+goal              p(f(x))
+clause head       p(f(12)) :- ......
+                  x = 12 (in the goal)   (new to Prolog)
+
+
+?- p(f(12)),                    ----+
+   p(f(x)) :- ......                +--> like OCaml
+     x1 = 12 (in the clause)    ----+
+
+* two way
+
+goal ?-   p(f(x), g(12)),
+clause    p(f(13), g(y)).
+
+?- q(f(x), f(12)),
+       ^     ^
+       |     |
+     q(A,    A)
+
+
+'equal' predicate
+------------------
+'='(x,x).
+x = x.
+
+
+infinite terms
+---------------
+?- x = f(x)
+
+  --> x = f(f(f(f(......))))
+
+      f |
+      f |
+      f |
+       ...
+
+this is an 'infinite term'
+  - how to print? (special notation, printed when flag is set)
+
+
+Peano arithmetic
+-----------------
+non-negative integers
+    +, -, *, /
+
+  z     ==   0
+  s(x)  ==   x+1
+
+add(z,x,x),
+add(s(x),y,s(x plus y)) :- add(x,y,x plus y).
+
+sub(x,y,r) :- add(y,r,x)
+
+
+lt(x,s(y)) :- unify_with_occurs_check(x,y),
+lt(x,s(y)) :- lt(x,y).
+
+unify_with_occurs_check(x,y) :-
+  "x=y, but no loops are created"
+
+?- lt(N,N)
+
+--> N = s(s(s(s(......))))
+    N = inf
+
+
+control: cut predicate (!)
+---------------------------
+
+search space
+  depth-first search
+    cuts off subtree
+
+p(x,y) :- g(x,y,z), member(z,y) t(z,y)
+
+        z = a
+        y = [b,a,c,a,a,d,e]  member will succeed mulitple times with a
+                             this is expensive if 't' is expensive
+
+New 'member' function 'memberchk'
+----------------------------------
+memberchk(x,[x|_]) :- !.
+memberchk(x,[_|L]) :- memberchk(x,L)
+
+
+'once'
+-------
+once(G) :- G, !. (standard library)
+
+
+rewrite code abve
+------------------
+p(x,y) :- g(x,y,z), memberchk(z,y) t(z,y)
+p(x,y) :- g(x,y,z), once(member(z,y)) t(z,y)
+
+
+'not' --> '\+'
+---------------
+\+(G) := G, !, fail,
+\+(_).
+
+?- x=1, \+(x=2)
+        \+(1=2)  -->  fails
+
+x=1
+?- \+(x=2), x=1,
+
+
+Example: UCLA course prerequisites
+-----------------------------------
+pr(cs32, cs131)          ------+
+pr(cs25L, cs131),              |
+                               +-----> !pr(dance101, cs131)
+...                            |       this cannot be proved
+                               |
+pr(dance101, dance120).  ------+
+
+
+* Closed World Assumption (CWA)
+  if we say something       --> it's true
+  if we don't say something --> it's false
+
+
+?- \+(pr(dance101, cs131))
+   --> couldn't find answer --> yes
+     \(x) ==> "I tried to prove x, but I failed"
+
+'\='  :  true
+'\!=' :  false
+'\-'  :  provable
+\+    :  not provable
+
+
+----------------------
+Terminology for Logic
+----------------------
+
+Propositional Logic
+--------------------
+  propositions
+    q, p
+      p = "It's raining"
+      q = "The 405 is busy"
+
+  connectives
+    &     and
+    |     or
+    ~     not
+    =     if and only if
+    -:    implies
+    :-    implies
+
+    C connectives: & (and) | (or) ! (not) == (equals) <=, >= (implies) 
+      (p==q)==(r==s)
+      (p==(q==r))==s
+      p==q==r==s
+                        +-----+-----+----------+
+                        |  p  |  q  |  p -> q  |
+                        +-----+-----+----------+
+                        |  0  |  0  |    1     |
+                        +-----+-----+----------+
+                        |  0  |  1  |    1     |
+                        +-----+-----+----------+
+                        |  1  |  0  |    0     |
+                        +-----+-----+----------+
+                        |  1  |  1  |    1     |
+                        +-----+-----+----------+
+
+  tautology
+
+    (p->q) ^ (q->r) -> p->r
+    (p->q ^ q->p) <-> (p<->q)
+
+
+First-Order Logic, Predicate Calculus
+--------------------------------------
+p(x) = "x is busy"
+
+  * for all (A) : p(x) -> q(x)
+  * exists  (E) : p(x) -> q(x)
+
+  tautology
+    Ax(p(x)) <-> !Ex(!p(x))
+
+
+Clausal Form
+-------------
+   (consequences)             (antecedents)
+B1 or B2 or ... or Bn <- A1 and A2 and ... and Am
+  A's and B's are Prolog-stype goals
+
+  Prof. Horn's simplification: n <= 1
+  ----------------------------
+    * dog(x) and cat(x) <- licenced(x)
+    |
+    +-> not a Horn clause (n = 2)
+
+    3 kinds of Horn clauses
+    ------------------------
+    n = 1,  m > 0      rule
+    n = 1,  m = 0      fact
+    n != 0, m >= 0     query (goal)
+
+      dog(x). := (nothing here)
+      ?- dog(x).
+        false <- dog(x)
+
+        ?- dog(x) == "x is not a dog"
+          system proves by contradiction
+          searches through database for facts and rules to find dog x
+          finds counter-example to your assertion
+
+
+=============
+Nov. 9, 2015
+=============
+
+Scheme (variation of Lisp, 1950s)
+----------------------------------
+Programs as data
+  
+  p1: printf("int main (void) { return 0; }");
+  p2: gcc
+  p3: ./a.out
+
+Programs as data MUST be easy --> trivial
+
+  Generate new programs
+  Self-modifying code / Code created on the fly
+
+Goals of Scheme
+----------------
+(1) Creating programs
+(2) Inspect programs (self-awareness)
+
+
+Scheme Characteristics
+-----------------------
+
+===============================================================================
+         Characteristics                     Like              Unlike
+===============================================================================
+
+objects are allocated dynamically
+and never freed, thus assume there       Java, ML, Lisp         C, C++
+is a 'heap' and a 'GC'
+
+-------------------------------------------------------------------------------
+
+types are LATENT (associated with
+values at run-time), not MANIFEST         Prolog, Lisp      ML, Java, C, C++
+(associated with names, variables,
+functions)
+
+-------------------------------------------------------------------------------
+
+static scoping (lexical binding)       ML, Java, C, Prolog       Lisp
+
++---------------------------------------------------------------+
+|                                                               |
+|  dynamic scoping                              +------+        |
+|  ----------------                             |  g   | --+    |
+|    int g (int a) { return a + b; }            +------+   |    |
+|      look at caller, caller's caller ...      |  h   | <-+    |
+|                                               +------+   |    |
+|    int main (void) { f(); }                   |  f   | <-+    |
+|    int f (void) { int b; return h(); }        +------+   |    |
+|    int h (void) { int c; return g(); }        | main | <-+    |
+|                                               +------+        |
+|                                                               |
+|  + easy to explain                                            |
+|  + lets you specify alternate environments                    |
+|      expot PATH=/usr/local/cs/bin:$PATH                       |
+|  - run-time scope checking required (variable not defined)    |
+|  - reliability                                                |
+|  - performance                                                |
+|                                                               |
++---------------------------------------------------------------+
+  
+-------------------------------------------------------------------------------
+
+call-by-value functions, evaluates
+all arguments first then evaluate   ML, Java, C, C++, Lisp   C++ (&), Prolog
+function by copying arguments
+
+-------------------------------------------------------------------------------
+
+large collection of builtin objects,
+pairs (+lists), numbers, vectors,          (none)          (all others)
+strings, procedures (including
+continuations)
+
+-------------------------------------------------------------------------------
+
+very simple syntax, data easily         Lisp, Prolog     Java, C, C++, ML
+represents program
+
++------------------------+
+|                        |
+|  Prolog                |
+|  -------               |
+|                        |
+|    data  pgm           |
+|  \+(C) :- C, ! fail,   |
+|  \+(_).                |
+|                        |
++------------------------+
+
+-------------------------------------------------------------------------------
+
+tail recursion is required of
+the implementation of Scheme
+(recursion not allowed to grow
+stack if we do only tail calls)        (mostly none)      (most others)
+(last instruction calls itself
+and returns value, implementation
+does not grow stack) reliability
+
+-------------------------------------------------------------------------------
+
+nice arithmetic, no integer
+overflow (2^31)
+exact rationals (1/3 === 1/3)          (mostly none)      (most others)
+
+  - performance (memory + CPU)
+
+-------------------------------------------------------------------------------
+
+
+Scheme Syntax
+--------------
+
+identifiers
+------------
+[a-z A-Z 0-9 +-.?/<=>:$%^&_~@] 
+  [0-9 +-.] cannot begin identifier
+
++ - ... ->(id)
+
+  (+ 2 3)
+  (f 2 3)
+
++-------------+
+| * symbols   |
+| * keywords  |
+| * variables |
++-------------+
+
+comments
+---------
+ ; this is a comment
+
+lists
+------
+(l i s t s)
+() empty list
+
++---+    +---+    +---+    +---+
+| l | -> | i | -> | s | -> | t |
++---+    +---+    +---+    +---+
+
+booleans
+---------
+#t, #f (this is the only false value, even '0' is true in Scheme)
+
+vectors
+--------
+#(v e c t o r)
+
++---+---+---+---+---+---+
+| v | e | c | t | o | r |
++---+---+---+---+---+---+
+
+strings
+--------
+"I am a string"
+
+characters
+-----------
+#\c
+
+numbers
+--------
+12, 1.2e93, 1/3
+
+quotes
+-------
+'(a b c)  ==  (quote(a b c))  won't evaluate
+'a        ==  (quote a)
+''b       ==  (quote(quote b))
+  
+     +-------+--+   +---+------+
+  -> | quote | *--> | b | NULL |
+     +-------+--+   +---+------+
+
+'(a b, c d)
+
+     +---+--+   +---+--+   +-----------+--+   +---+------+
+  -> | a | *--> | b | *--> | c's value | *--> | d | NULL |
+     +---+--+   +---+--+   +-----------+--+   +---+------+
+
+
+Basic Semantics
+----------------
+
+call
+-----
+(E0 E1 E2 ... En)  [n >= 0] call procedure E0 with arguments E1, ... , En
+
+special forms
+--------------
+  
+  (if E1 E2 E3)   evaluate E1, if true return E2, else return E3
+  (if E1 E2)      evaluate E1, if true return E2, else return random value
+  
+
+  (lambda (a b c) (+ (* a b) c))
+          formal  +-- body ---+
+    returns pointer to bytecode of procedure
+
+
+  (define abc (+ 27 39))
+
+           +---+---+
+           | a | b |
+           +---+---+
+  library
+    car     a
+    cdr     b
+    cons
+    pair
+      (pair? '())              --->  #f
+      (pair? '(cons '() '()))  --->  #t
+
+
+defining functions
+-------------------
+
+  (define cadr (lambda (x)
+                  (car (cdr x))))
+
+  (define (cadr x)
+             (car (cdr x)))
+
+
+  (define printf
+           (lambda (format . args)
+            ..................))
+
+  +--------+--+   +--------+--+   +---+------+
+  | define | *--> | printf | *--> | * | NULL |
+  +--------+--+   +--------+--+   + | +------+
+                                    |   +--------+--+   +---+------+
+                                    +-> | lambda | *--> | * | NULL |
+                                        +--------+--+   + | +------+
+                                                          |   +--------+------+
+                                                          +-> | format | args |
+                                                              +--------+------+
+  
+  (printf "%d %d\n" 19 27)
+           format   args = (19 27)
+
+
+  0 or more arguments
+  (define printf
+       (lambda args
+             .............))
+
+  (define list
+      (lambda x x))
+
+  (list 3 9 12) ==> (3 9 12)
+  '(3 9 12)     ==> (3 9 12)
+
+             vs.
+
+  (list 3 c 12) ==> (3 9 12)
+  '(3 c 12)     ==> (3 c 12)
+
+
+reverse of a list
+------------------
+(define (reverse x1) ^ (rev x1 '()))
+                     |
++--------------------+------------------------+
+| (define (rev x2 a)                          |
+|   (if (null? x2)                            |
+|         a                                   |
+|         (rev (cdr x2) (cons (car x2) a))))  |
++---------------------------------------------+
+
+let
+----
+(let ((a 37))
+    (* a a ))   ==>  1369
+
+
+named "let" (ML doesn't have this)
+-----------------------------------
+(define (reverse x1)
+   let rev ((x2  x1) (a '()))
+      (if (null? x2)
+          a
+          (rev (cdr x2) (cons (car x2) a))))
+
+
+(let ((a (* 3 5))
+      (b (- 5 7)))
+    (sqrt (- (* a a)
+             (* a b))))
+
+          vs.
+
+(lambda (a b)
+        (sqrt (- (* a a)
+                 (* a b))))
+
+(* 3 5)
+(- 5 7)
+
+
+binding
+--------
+(and E1 E2 ... En)   similar to  E1 && E2 && ... && En
+
+  returns En when all evaluates to true
+
+'and' is defined as a macro
+
+  (define-syntax and
+      (syntax-rules ()
+          ((and) #t)
+          ((and x) x)
+          ((and x1 x2 ...)
+           (if x1 (and x2 ...) #f))))
+
+'or' is also defined as a macro
+
+  (define-syntax or
+      (syntax-rules ()
+          ((or) #f)
+          ((or x) x)
+          ((or x1 x2 ...)
+           (if x1 x1 (or x2 ...)))))
+               |
+               +--> this evaluates x1 twice, inefficient
+                    x1 may have side effects, incorrect
+
+  (define-syntax or
+      (syntax-rules ()
+          ((or) #f)
+          ((or x) x)
+          ((or x1 x2 ...)
+           (let ((b x1)) (if b b (or x2 ...))))))
+
+  (or (getnv "PATH")
+      "/usr/bin:/bin")
+
+
+hygenic macros
+---------------
+puts subscripts
+
+  (let ((a1 #f)
+        (b1 #f))
+    (let ((b2 a1)) (if b2 b2 (or b1)))
+
+                * problem of capture
+
+
+define 'let' as macro
+----------------------
+(define-syntax let (syntax-rules ()
+  ((let ((name val) ...) body1 body2 ...)
+      ((lambda (name ...) body1 body2 ...)
+       val ...))
+  ((let tag ((name val) ...) body1 body2 ...)
+    ((letrec ((tag (lambda (name ...) body1 body2 ...))
+      tag)
+      val ...)))))
+
+
+==============
+Nov. 16, 2015
+==============
+
+--------------------------
+Scheme Storage Management
+--------------------------
+
+equality predicates
+--------------------
+
+
+numeric equality
+-----------------
+(= a b)        O(N) --> #bits
+
+  compare numbers
+
+    (= 0.0, -0.0) ==> #t
+    (= 0 0.0)     ==> #t
+
+
+"pointer" reference comparison
+-------------------------------
+(eq? a b)      O(1)
+
+
+"contents" comparison
+----------------------
+(eqv? a b)     O(N)
+
+  compare strings
+
+
+recursive comparision
+----------------------
+(equal? a b)   O(INF)
+
+  compare lists, data structures
+
+                              +---+---+
+    (let ((l (cons 0 1)))     | 0 | 1 |
+                              +---+---+
+
+                              +---+---+
+      (set-cdr! l l)      +-> | 0 | *---+
+                          |   +---+---+ |
+                          +-------------+
+      
+      (equal? l l))        (0, 0, 0, ...)
+
+
+
+Scheme Storage Model
+---------------------
+1) variables (can be altered via set!)
+2) objects 
+     pairs   (can be altered via set-car!, set-cdr!)
+
+
+Continuations <-- list of things for interpreter to do
+-------------------------------------------------------
+"Essence of Scheme"
+"BIG TROUBLE"
+
+
+Scheme Interpreter
+-------------------
+                       +----- what to do after 'expr' is evaluated
+(eval-form expr env future)
+            ^    ^
+            |    +---------------* environment to evaluate in
+            |                    (summary of computation so far)
+            *        
+    what needs to be evaluated (what to do next)
+
+
+* May need to call itself recursively
+  (f a b c) --> call 4 times
+
++----------------------------------------------+
+| In Prolog, we had a list of goals            |
+|                                              |
+|   ?- G1, G2, ..., Gn                         |
+|                                              |
+| In Scheme, continuation serves same role     |
+|                                              |
+|                                              |
+| In C/C++, it's the stack!                    |
+|                               +------+ <- SP |
+|   activation record records   |  h   |       |
+|   records variable values     +------+       |
+|   for loads, return addresses |  g   |       |
+|   caller's activation recored +------+       |
+|                               |  f   |       |
+|                               +------+       |
+|                               | main |       |
+|                               +------+       |
++----------------------------------------------+
+
+For Scheme
+-----------
+(eval-form expr env future)
+            +    +----> Environment Pointer (EP) (Stack)
+            |
+            +---------> Instruction Pointer (IP) (Code)
+
+
+'goto' in C
+------------
+goto L ==> ip = L (machine code level)
+
+
+"goto" in Scheme
+-----------------
+(goto k) ==> (ip, ep) = k
+
+Syntax: simply call it, alters (ip, ep)
+  (k expr)
+
+
+Creating Continuations
+-----------------------
+(call/cc (lambda (k) do anything including 'k'))
+                                               ^
+       relatively cheap operation              |
+                                               +-- 'k'
+
+Example Usage
+--------------
+Suppose "*" is expensive
+
+(define (prod ls)
+  (call/cc (lambda (break)
+    (let proda ((ls ls) (k break)))
+      (cond ((null? ls) 1)
+            ((zero? (car ls)) (break 0))
+            (else (* (car ls)
+                     (proda (cdr ls))))))^))
+                                         |
+                                         +--- break
+
+
+In C
+-----
+#include <setjmp.h>
+
+// 'jmp_buf' is an array
+static jmp_buf j;
+
+if (setjmp (j)^) // stores 'k' into j, returns 0
+{             |
+              +--> 'k'
+}
+else 
+{
+  longjmp (j, 27); // can be anywhere
+                   // can be in deep levels of calls
+                   // unwinds/pops the C stack
+                   // causes 'setjmp' to 27
+                   // assumes '1' if you pass in '0'
+}
+
+Problems
+---------
+1) can bypasses cleanup code
+2) stack may not exist
+   * works only if 'setjmp's caller has not returned yet
+
+
+* Scheme does not have this restriction!
+
+  Scheme continuations can be used even after the
+  creating function, caller of 'call/cc' has returned.
+
+  k
+    +----+----+
+    | ip | ep |
+    +----+--+-+
+            |    +----+----+        storage is not reclaimed
+            +--> | .. | ip | g      when 'g' returns
+                 +----+----+
+                      +
+                      |     +----+----+
+                      +---> | .. | ip | f
+                            +----+----+
+                                 +
+Scheme's activation records      |     +----+----+
+are in the heap. They are        +---> | .. | ip |  main
+garbage-collected just as              +----+----+
+other objects are.
+
+Used as data structures, can build control structures
+
+
+Using continuations to implement 'green threads'
+-------------------------------------------------
+'thunk' = parameter-less procedure
+          code associated with thread
+
+(define lwp-list '())
+
+(define (lwp thunk)
+  (set! lwp-list (append lwp-list (list thunk))))
+
+; removes first thunk and runs it, returns whatever thunk returns
+(define start
+  (let ((next (car lwp-list)))
+    (set! lwp-list (cdr lwp-list))
+    (next)))
+
+; gives up CPU, puts itself at end of list
+; this scheduler takes a round-robin approach
+(define (pause)
+  (call/cc (lambda (k)
+    (lwp (lambda () (k #f))) ; workaround for thunks (no parameter)
+                             ; vs. continuations (with parameters)
+    (start))))
+
+
+(lwp (lambda () (let f () (display "h") (pause) (f))))
+(lwp (lambda () (let f () (display "i") (pause) (f))))
+(lwp (lambda () (let f () (newline) (pause) (f))))
+(lwp (lambda () (set! lwp-list '())))  ; set lwp-list to empty list
+(lwp (lambda ()))                      ; lwp-list not empty but not running
+(start)
+
+
+not true multithreading
+only one CPU, why bother?
+  1) it's cheaper
+  2) synchronization is much easier
+
+
+------------------------------------------------
+How to implement continuation without 'call/cc'
+CPS Continuation Passing Style
+------------------------------------------------
+Convention: functions take one more argument, its continuation 'k'
+
+(define (prod ls break)
+  (let proda ((ls ls) (k break))
+    (cond ((null? ls) (k 1))
+    ((zero? (car ls)) (break 0))
+    (else (proda (cdr ls)
+      (lambda (r)
+        (k (* (car ls) r)))))))) ; won't do multiplication until end
+
+(prod '(3.5 29 -6.3 0 27)
+  (lambda (r) r))
+
+; returns either E1 E2 E3, whichever makes program work, backtracking
+(arb E1 E2 E3)
+
+
+Storage Management
+-------------------
+control storage to represent all aspects of program
+  - objects of program (arrays, etc.)
+  - I/O buffers
+  - contents of variables
+  - compiler temporaries
+  - return addresses
+  - location of activation records
+  - code (program itself lives in memory)
+    + program
+    + libraries (including storage manager itself!)
+  - storage metadata
+
+
+1) static storage
+   addresses are chosen before execution starts
+     + simple (Fortran, 1956)
+     - no recursion
+
+2) stack storage
+   LIFO for function locals
+     + recursion
+     + fast (2 ins/call)
+
+3) heap storage
+   not LIFO
+     + flexible
+     - expensive (random pieces of memory floating around)
+
+activation record
+------------------
+records state of currently executing or suspended function
+  (1) - Fortran
+  (2) - C, C++, Java
+  (3) - Scheme
+
+
+For method (2), how to access non-local variables
+--------------------------------------------------
+nested functions
+
+  int f () {
+    int x;
+    int g (int y) {
+      return x + y;
+    }
+    g (27);
+  }
+
+when accessing variables outside current activation record
+
+  |      |
+  |      |
+  +------+
+  |      | g
+  +------+
+  |  x   | f
+  +------+
+  | main |
+  +------+
+
+                1) look in caller, caller's caller, etc.
+                   this is 'dynamic scoping'
+
+                2) look in definer, definer's definer, etc.
+                   look at where it was defined
+                   this is 'static scoping'
+
+  |      |
+  |      |
+  |      |
+  +------+
+  |      | k
+  | *    |
+  +------+
+  |      | i
+  | *    |
+  +------+
+  |      | h           dynamic chain
+  | *    |             static chain
+  +------+
+  |      | g
+  | *    |
+  +------+
+  |      |
+  |   x  | f
+  | *    |
+  +------+
+  | main |
+  +------+
+
+
+==============
+Nov. 18, 2015
+==============
+
+Storage Management
+-------------------
+Last time: Frames (Activation Records)
+
+
+Arrays
+-------
++ easy to use, simple
+- might be large (tend to stress storage managers)
+
+Array Storage
+--------------
+* static (Fortran~56)
+
+  figure out how many arrays, how large each arrays
+  then lay them out in memory
+
+    + fast
+    - inflexible
+
+
+* fixed stack-dynamic (C89)
+
+  array had fixed size
+  allocated dynamically on the stack
+  could declare array local to function, won't be laid out until function called
+
+    int f(int x) {    // 32 other bytes
+      int a[100];     // 400 bytes
+      if (...) {                           <-----     subl $1232, %esp   (enter)
+        int b[200];   // 800 bytes         <-----     addl $1232, %esp   (leave)
+      }
+    }
+
+  + fast allocation
+  - inflexible (array size depend on function parameters?)
+
+
+* varying stack dynamic (C99)
+
+    int f(int x) {    // 32 other bytes
+      int a[x];       // ? bytes                   no longer const, computed
+      if (...) {                           <-----     subl $1232, %esp   (enter)
+        int b[200];   // 800 bytes         <-----     addl $1232, %esp   (leave)
+      }
+    }
+
+  - dangerous (what if 'x' is negative?)      |         |
+              (what if 'x' is extra large)    |         |
+                                              +=========+
+                                              | barrier |
+                                              +=========+
+        only works if smaller than barrier    |         |
+          - check that array sizes >= 0 and   |       ^ |
+            < max (depends on stack)          |       | |
+                                              |       | |
+       runtime check (omitted by default)     |       | |
+        user programs bust beware!            |  stack  |
+                                              +---------+
+
+    int f(int x) {
+      int a[100];
+      if (...) {
+        int b[200];    // 'b' valid only in 'if'
+      } else {         // 'b' & 'c' can exist simultaneously
+        int c[300];    // 'c' valid only in 'else'
+      }
+    }
+
+  'alloca(n)' : sp -= n, return sp
+    lifetime = that of calling function
+
+  * without 'alloca' or dynamically sized arrays, we could simply add 'const'
+    to %esp and get the stack top.
+
+  * with dynamic arrays we have to represent stack size, %esp, %ebp
+
+
+Eggert fixed bug in Emacs
+--------------------------
+eval_sub(...)
+{
+  if () {
+    Lisp_Object a[8];
+    ....                                  // sometimes crashed here
+    g = a;                                // 'g' is global variable
+  } else if () {
+    Lisp_Object *b = alloca(...);
+    ....                                  // always worked here
+    g = b;                                // 'g' is global variable
+  } else {
+    List_Object *c = malloc(...);
+    ....                                  // sometimes crashed here
+    g = c;                                // 'g' is global variable
+    free(c);
+  }
+
+  call_debugger(...);                     // uses 'g'
+}
+
++------------------------+
+| extern Lisp_Object *g; |
++------------------------+
+
+Bug Report: Emacs sometimes crashes when I turn the Lisp debugger on
+
+  'b's life time is the whole function while scope is the 'else if' branch
+  'c's life time is the whole 'else' branch, while still in scope after 'free'
+
+
++-------------------------------------------------------------------------+
+| Scope vs. Lifetime                                                      |
+| -------------------                                                     |
+| Scope: set of places where variable is visible                          |
+| Lifetime: set of instances of time during execution that variable eists |
++-------------------------------------------------------------------------+
+
+
+Other Array Allocation Places
+------------------------------
+heap (Java, ...)
+
+persistent (across executions)
+  disk/flash
+    I/O is slow (but you can batch it, and do it in background)
+      not robust, may vary depending on OS
+
+
+TLS (Thread Local Storage)
+---------------------------       |       |
+                                  | stack |
+  no locking required!            +-------+
+                                  |  ...  |
+                                  |  ...  |
+                           tp --> +-------+
+
+Some more array ideas
+----------------------
+1) automatically-grown
+     a[i] is always valid!?
+       + avoid array allocation errors (array size)
+       - performance, efficiency
+       - subscript errors --> memory hogs
+
+2) associative arrays (implemented with hash tables)
+   e.g. Python dictionaries
+     - iteration through them is
+       (1) somewhat random
+       (2) a bit slower
+
+   server cache for queries
+
+   browsers --> +=======+       +-------------+
+                | Cache |       |             |
+                +=======+  -->  | Main Server |
+   (Paris)      | Paris |       |             |
+                +-------+       +-------------+
+
+   qcache[q] = a
+
+   How to exploit & attack?
+   -------------------------
+   Q1 : "xyzzyaab"
+   Q2 : "laksdjfl"
+   Q3 : "lasjflka"
+   Q4 : "sdlfkasd"
+
+   h ( ) = 273
+
+     Turns hash into O(N) operation
+     Fills bucket with irrelevant information and people cannot find 'Paris'
+
+     Defense
+     --------
+     New hash function with random bit pattern
+
+
+Strong vs. Weak Hash Associative Arrays
+----------------------------------------
+
+Strong: will get back whatever you stored into associative array
+
+Weak: will get back either value, or 'I forgot the value'
+    +- one that will spontaneously forget
+    |
+    +---> garbage collection
+
+    --> "weak references"
+
+
+Array Use (Ordinary Linear Arrays)
+-----------------------------------
+Slicing
+
++---+---+---+---+---+---+---+---+
+|   |   |   | 0 |   |   |   |   |   <----- A (2-d array)
++---+---+---+---+---+---+---+---+
+|   |   |   | 1 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | 2 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | 3 |   |   |   |   |
++---+---+---+---+---+---+---+---+    f(A(*, 3))  Fortran PL/I
+|   |   |   | 4 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | 5 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | 6 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | 7 |   |   |   |   |
++---+---+---+---+---+---+---+---+
+  0   1   2   3   4   5   6   7
+
+              ^
+              |
+
+
+Slicing via descriptors
+------------------------
+
+        12   20   ----> Used for subscript checking only
+  +---+----+----+--------+
+  | * | lb | up | stride |
+  + | +----+----+--------+
+    |    +----------+-----+-+---+-+---+-+---+-+
+    +--> | elements | ... | | . | | . | | . | |
+         +----------+-----+-+---+-+---+-+---+-+
+                          12  14 15        20
+
+C: row-major order
+Fortran: column-major order
+
+
+Heap Management
+----------------
+* without GC
+* with GC
+
+Q1: How to keep track of roots (point to heap but not part of heap)?
+
+      stored: in registers
+              on the stack in activation record or array
+      
+      these areas contain some roots and some other stuff
+
+      how to distinguish roots?
+      --------------------------
+      1) when generating code, keep track of registers & other variables,
+         if it contains pointer, compiler records which registers & stack
+         locations are roots --> languages like Java
+      
+      2) compiler doesn't bother --> languages like C++, e.g.
+         smaller programs but harder heap management
+
+      3) there's just one root, e.g. %rdx points into activation records
+         & activation records point to the heap
+
+
+Q2: How to keep track of free space efficiently?
+
++--+--+---------+----------+--------+------+--------------------------+--+----+
+|  |O1|         |    O2    |        |  O3  |                          |O4|    |
++--+--+---------+----------+--------+------+--------------------------+--+----+
+
+represent free list inside free space
+
+keep a piece of memory at start of each free block, and pointer that points to
+next free block of memory
+
+Problems
+---------
+1) external fragmentation 
+   no single free block that can satisfy request, even though
+   we have enough total memory for the request
+
+2) internal fragmentation
+   restrictions on amount of memory that can be allocated
+   for alignment, allocate wasted storage after objects
+
+
+first fit: walk through free list, carve off from end of free block
+           O(N) : # free blocks, too many leadiing runts
+
+best fit: O(N) unless fancy data structure
+
+roving pointer: make free list circular data structure
+                increase pointer each time we allocate
+
+
+How to implement free(p)?
+--------------------------
+difficulty: efficiently coalescing adjacent free blocks
+
+When allocating storage, give pointer to users, then store useful information
+in the few words before the pointer: size, pointer to previous object/free
+block, in-use flag. When freeing, we turn in-use flag off, and if off we can
+coalesce the adjacent free blocks.
+
+
+==============
+Nov. 23, 2015
+==============
+
+Memory Allocation
+------------------
+
+* stack
+
+* heap
+-------
+  coalesce free blocks
+  split free blocks
+  lessen fragmentation via roving pointer
+
+problem
+--------
+performance: 'malloc' is expensive
+
+
+quick lists
+------------
+implement 'cons' quickly
+
+  malloc (sizeof(void *) * 2)
+          <-----8----->
+          <--------16------->
+
+  struct cons *free_cons; 
+
+    check this first when 'cons'ing
+    when freeing, don't call 'free', just put on this list
+
+    this bypasses 'malloc' (in normal case) & 'free'
+
+  
+  Suppose 80% of 'malloc' is 16 bytes &
+          18% of 'malloc' is 48 bytes
+
+  then we keep a free list for each independent 'size'
+
+  Downside
+  ---------
+    may chew up extra memory that we won't use,
+    but we don't care about memory these days as we care about speed
+
+
+Heap management hassles
+------------------------
+
+(1) dangling pointers
+    pointers into free'd storage
+
+(2) memory leak
+    allocate'd memory but never free'd
+    
+    roots (in stack or registers) that points to heap
+    1. memory leak occurs when a block of memory is unreachable from a 'root'
+    
+    2. memory leak occurs when a block of memory is never accessed by program
+
+      (!) performance issue only  -->  correctness issue
+
+
+Garbage Collector
+------------------
+
+Handle the above issues automatically
+
+  compiler tells you where the roots are
+  compiler tells you the object layout
+
+    C/C++ compilers don't help the memory manager (no GC)
+    let's implement a GC for C,C++ (Emacs, GCC)
+
+
+  Conservative Garbage Collector (run-time)
+  ------------------------------------------
+  doesn't know where the pointers are
+  inspects entire stack and all registers looking for pointers
+    has meta data on heap since it is memory manager
+
+  assumes any bit pattern looking like a pointer is a pointer (may be wrong)
+  if we see an object in a heap, we look for bit patterns recursively
+    * it does leak memory but not significant to be worried about
+
+
+  Typical Garbage Collector
+  --------------------------
+  
+  (1) Mark     finds roots
+    O(#inuse)  find all objects reachable
+
+  (2) Sweep    go thru all objects
+    O(#all)      clear mark bit
+               or free object
+
+  Is this going to work for multithreaded programs?
+  Can we put the GC in a separate thread?
+
+    (!) pause computation, do GC, then resume
+        not real-time
+        not scalable, larger the program, longer it freezes
+
+    (!) 'malloc' is still slow
+
+
+  Generation-Based Copying Collectors
+  ------------------------------------
+
+  heap
+                      +--------------+--------------+
+  +----------------+  | +---+  +---+ | +---------+  |
+  | oldest objects |<-+ |   |  |   +-+ | nursary +--+
+  +----------------+    +---+  +---+   +---------+
+
+
+  old objects tend to not point to new ones
+  
+  GC rarely looks at old objects
+  GC focuses on 'nursary'
+
+
+  fast malloc via nursary
+  ------------------------
+
+  +-------------+--------+----------------------------+
+  | new objects |        | <--------- free ---------> |
+  +-------------+--------+----------------------------+
+  ^                  ^   ^                            ^
+  |                  |   |                            |
+  bp                 |   hp                           lp
+                     |
+                  new obj
+  
+  increment 'hp' and we get new obj
+
+  'malloc' is fast
+
+
+  copying collector
+  ------------------
+
+  <----cacheline----><----cacheline----><----cacheline---->
+  +--+--+-----------+-------+--------+--------------------+ old nursary
+  |  |  |     *     |       |    *   |        free        |
+  +--+--+-----|-----+-------+----|---+--------------------+
+              |                  |
+        +-----+    +-------------+
+        |          |
+  +-----|-----+----|---+----------------------------------+ new nursary
+  |     *     |    *   |               free               |
+  +-----------+--------+----------------------------------+
+  <----cacheline----><----cacheline----><----cacheline---->
+
+
+  copy 'non-garbage' to new nursary
+
+    - update all pointers to objects
+    + fast 'new'
+    + O(#inuse)
+    + using cache more efficiently
+      cache is much faster than RAM
+
+
+-------------------------
+Python Memory Management
+-------------------------
+
+CPython
+--------
+does garbage collection atop lower level
+finds garbage, then calls 'free' on C level
+
+via. reference counting
+------------------------
+each object has extra word that counts #references to obj
+
+  +---+
+  | p |----+
+  +---+    |
+           |        +---+---------+
+           +---+--> | 2 | "hello" |
+               |    +---+---------+
+  +---+---+    |
+  | c | q |----+
+  +---+---+
+
+every assignment     decrements reference count of old object
+                     increments reference count of new object
+
+
+Issues
+-------
+
+- assignment is >= 3x expensive
++ garbage collection is easier
+  when reference count is 0, then it is garbage, reclaim it immediately
+- room for reference counter
+    how large?
+      convention: use 16 bits
+        if reference count is (2^16 - 1), object lives forever
+- circular references
+
+    +-------------------+
+    |   +---+         +-|-+
+    +-> | q |   +---> | p |
+        +-|-+   |     +---+
+          +-----+
+
+  write program carefully
+
+    def f(x):
+      d1["a"] = d2
+      d2["b"] = d1
+
+      <--- computation --->
+
+      d1["a"] = null  # basically same to 'free'
+
+
+  Currently CPython has two-level garbage collector
+    reference count regularly
+    mark + sweep fall back
+
++ finalization
+  
+  Java
+    finalize called before your object becomes garbage
+
+  for a reference-count-based approach where you have no cycles
+  finalzie is called immediately
+    free any resources & close any connections
+
+
+JPython
+--------
+built atop JVM
+
+(1) finalize isn't called immediately
+(2) JVM has two heaps
+    "copying heap"        (contains most objects)
+    "mark + sweep heap"   (finalization-needing objects)
+
+
+Multithreaded Allocators
+-------------------------
+
+still want 'new' to be fast
+
++-------+---+---------------+
+|       | ^ |               |
++-------+-|-+---------------+
+   old hp | hp              lp
+          |
+       new obj
+
+for multithreaded we may get two objects at same location
+
+(1) lock around 'malloc'
+
+    1. heap bottlenecks
+       give each thread same heap (nursary), still retain locality
+    
+    2. real-time garbage collector
+       need hard upperbound on each operation
+       'new x()' takes at most '10000' instructions (have instruction budget)
+
+       incremental garbage collector
+       ------------------------------
+       for each time calling 'new', do some more work (some garbage collection)
+         way slower than nursary version
+
+
+Performance Tricks (that don't always work, have become obsolete)
+------------------------------------------------------------------
+
+(1) quick lists
+
+    assume 'malloc' is slow, want to become fast
+    keeping individual 'size list'
+
+      obsolete if we have copying collector --> becomes slow list
+      (!) copying collector copies the 'free list'
+
+(2) explicit nulling
+
+    def f(x):
+      # d1 using
+      # not using d1 (GC can free d1 here)
+
+      # cannot free 'd1' because we will 'use' it later
+
+      d1["b"] = null  # break cyclic data structure to find garbage
+                      # maintain 'd1' because we are 'using' it
+      d2 = null       # tell garbage collector we don't need 'd2'
+
+
+    (!) pain to maintain
+    (!) slows program down
+        increase storage use if assume copying collector
+
+    while (true) {
+      # do work
+      System.GC()   # greatly slows down larger applications
+    }               # expensive to do GC if we have many objects
+
+
++--------+
+| Python |
++--------+
+
+indentation
+------------
+
+x = y + z
+
+x = y + \
+    z
+
+x = (y +
+     z)
+
+if a == b:
+  x = y
+else:
+  y = z
+  q = w
+
+
+Python grew out of teaching language
+
+started off with BASIC teaching language (not Fortran)
+
+~ 1980
+  CWI (Amsterdam)
+  students wrote bad code
+
+  Invented ABC
+
+    development environment on PCs
+    IDE programmed at high level
+      - had sets, dictionaries
+      - auto-indented
+        have to indent, otherwise won't work
+
+  Python is the decedent of ABC
+
+    context-free grammars don't apply to Python
+
+values
+-------
+
+every value in Python is an object (not for Java e.g. int, bool)
+and every object has
+
+  - identity  --+
+  - type      --+->   cannot be changed
+  - value        ->   can be changed if 'mutable'
+  - attributes
+  - methods
+
+
+predicates
+----------
+
+---------------------------
+Python           Scheme
+---------------------------
+a is b        (eq? a b)
+a == b       (equal? a b)
+---------------------------
+
+-----------------------------------------
+Python                       Java
+-----------------------------------------
+type(a)                  a.getClass()
+id(a)                  a.hashCodeClass()
+isinstance(a,c)         a.intanceOf(C)
+-----------------------------------------
+
+Python is a run-time language
+
+
+==============
+Nov. 25, 2015
+==============
+
+Object-Oriented Languages (summary of stuff already known)
+-----------------------------------------------------------
+
+Java, C++ is not totally object-oriented (primitive types)
+
+object-oriented style  !=  object-oriented language
+object-oriented style in C & non object-oriented style in OCaml
+
+
+Variations on the Theme of Object-Oriented Programming
+-------------------------------------------------------
+
+
+TYPING
+--------------------------------------------------------------------------
+static typing              vs.             dynamic typing
+--------------------------------------------------------------------------
+
+ Java, OCaml                              Python, JavaScript
+
+--------------------------------------------------------------------------
+
+
+CLASS
+--------------------------------------------------------------------------
+  class-based              vs.             prototype based
+--------------------------------------------------------------------------
+
+C++, Java, OCaml, Python                 (have no classes)
+
+    o = new C()                              p.clone()
+    o.clone()
+
+(new is a packaging of clone)                (simpler)
+
+                                        use prototypes (just objects)
+                                        in place of classes
+
+                                        + simpler (need clone() anyway)
+                                        + can help performance
+                                        - easy to become disorganized
+                                        + more flexible
+                                        - can't easily use static typing
+                                          (buggier, slower)
+
+--------------------------------------------------------------------------
+
+
+MULTIPLE INHERITANCE
+--------------------------------------------------------------------------
+multiple inheritance                vs.       no multiple inheritance
+--------------------------------------------------------------------------
+   C++, Python                                        Java
+
++ combine independent classes into        + no tricy structures (duplicated
+  one that shares both behaviors            function names)
+
+--------------------------------------------------------------------------
+
+
+OTHER INHERITANCE ISSUES
+-------------------------
+
+(1) can a subclass omit a parent's methods?
+      - define a no-op method
+      - remove method entirely (e.g. Python)
+
+(2) what do child classes inherit?
+      - methods
+      - instance variables
+      - interfaces (obgligations)
+      - invariants (Eiffel) (better for software reliability)
+
+
+ENCAPSULATION / POLYMORPHISM ISSUES
+------------------------------------
+
+Java: interfaces, generic classes
+
+Collection<Collection<?super GreenThread>>
+
+
++----------------+
+| Python Classes |
++----------------+
+
+class hierarchy well thought out
+partly responsible for Python's success
+
+time commitment
+----------------
+
+    CS131            Real World
++----------+        +----------+
+|          |        | Language |
+|          |        +----------+
+| Language |        |          |
+|          |        |          |
+|          |        | Library  |
++----------+        |          |
+| Library  |        |          |
++----------+        +----------+
+
+
+classic Python builtin types
+-----------------------------
+
+(1) None (null pointer) (OCaml unit())
+
+(2) numbers :   Int       Long     Float Complex Boolean (1, 0)
+               bounded  unbounded
+                fast     slower
+                       no overflow
+
+(3) sequences : String    Unicode     XRange    Tuple   List Buffer
+                 byte    character   sequence             Mutable
+               strings    strings      with
+                                     pattern
+
+                        1,5,9,13,17,21,...,1000000
+                        
+                           +---+---------+---+
+                           | 1 | 1000000 | 4 |
+                           +---+---------+---+
+
+Sequence Operations
+--------------------
+
+(1) s[i]  ( -1 <= i < n )
+      0th-origin indexing
+
+    s[-1]
+
+(2) s[i:j]
+      sub-sequence from 'i' (inclusive) to 'j' (non-inclusive)
+
+    s[i:]
+      defaults to 'n'
+
+    s[:j]
+      defaults to '0'
+
+  +--------------------+
+  | Python     Scheme  |
+  +--------------------+
+  |  s[0]      (car s) |
+  | s[1:]      (cdr s) |
+  +--------------------+
+
+(3) s[i] = v (mutable sequences only)
+    
+    s[i:j] = s1
+      copy sequence into subsequence
+      can change length of 's'
+    
+    del s[i:j]
+      delete subsequence s[i:j]
+
+    del s[i]
+      delete s[i]
+
+
+List Operations
+----------------
+
+(1) s.append(v)
+      1) append 1 item 'v' to 's'
+      2) fast, O(1) on average
+      
+      +---+---+-----+
+      | * | n | max |
+      +-|-+---+-----+
+        |
+        |   +-+-+-+-+-+-+-+-----+-+
+        +-> | | | | |/|/|/| ... |/|
+            +-+-+-+-+-+-+-+-----+-+
+            0       n             max
+
+(2) s.extend(s1)
+
+(3) s.insert(i,v)
+      insert 'v' before 'i'-th element of 's'
+
+(4) s.pop(i)
+    s.pop() == s.pop(-1)
+
+(5) s.reverse()
+
+(6) s.sort()
+      assumes generic comparison
+
+
+Mappings: Dictionary Operations
+--------------------------------
+
+(1) d[k]
+    d[k] = v
+      'k' can be any immutable object
+      makes multithreading practical
+      
+      use h(k) (hash function for finding key-object relationship)
+
+(2) del d[k]
+
+(3) d.has_key(k)
+      check if 'd' has 'key' to prevent subscript errors
+
+(4) d.get(k[,v]) ('v' is optional)
+      returns 'd[k]' if 'v' is defined
+      otherwise return 'None'
+
+
+Callables
+----------
+
+Function, BuiltinFunction
+Class 
+Method  ----------->  (class, object, function)
+UnboundMethod ----->  (class,         function)
+Generator ----------> can 'yield', not 'return' (coroutines)
+
+
+
+def f(x):                      (define (f x)
+    return x + 3                   (+ x 3))
+
+f = lambda x : x + 3           (define f
+g = f                              (lambda (x) (+ x 3)))
+f(2)
+g(12)
+
+
+arctan(x = 2.9, y = 1.7)
+  do a function call with names matching formal parameters
+
+
+def printf(format, *args, **namedargs):
+    ......
+
+printf("%d, %s\n", 29, "abc", quoting_style = 3, output = stdout)
+
+-> {'quoting style': 3, 'output': stdout}
+
+
+Internals
+----------
+
+File
+Code
+Frame
+TraceBack
+Slice s[i:j]
+
+
+Duck typing
+------------
+you can define your own numbers, sequences, etc.
+you have to implement the basic operations, e.g. n.__add__(m)
+
+
+==============
+Nov. 30, 2015
+==============
+
+Parameter Passing (key notation)
+---------------------------------
+
+* correspondence issue
+
+    positional, names, variable number of arugments
+
+* implementation strategies
+
+    want something that is fast, clear
+
+    +---------------+
+    | call by value |
+    +---------------+
+      
+      - caller evaluates the expression
+      - passes a copy of value to callee
+      - callee operates on copies
+
+        + simple
+        + clear
+        + fast
+        - slow for big objects
+
+        C, C++, OCaml, Scheme
+
+    +-------------------+
+    | call by reference |
+    +-------------------+
+
+      - caller evaluates addresses of arguments
+      - callee's responsibility to dereference these pointers
+      - callee can modify arguments
+
+        + pretty simple
+        + fast for arrays
+        - aliasing
+
+        +---------------------------------------------------------------------+
+        |                                                                     |
+        |   possible solutions to alias problem                               |
+        |   ------------------------------------                              |
+        |                                                                     |
+        |   Fortran : behavior is undefined if you alias                      |
+        |                                                                     |
+        |             + get performance                                       |
+        |             - lose reliability, clarity                             |
+        |                                                                     |
+        |   C/C++   : 'noalias' keyword --> same as Fortran convention        |
+        |                                                                     |
+        |   Ada     : alternate calling conventions                           |
+        |                                                                     |
+        |             +----------------+                                      |
+        |             | call by result |                                      |
+        |             +----------------+                                      |
+        |                                                                     |
+        |               - caller passes address to callee                     |
+        |               - callee operates on a copy                           |
+        |               - just as it returns, copies result back              |
+        |                                                                     |
+        |             +----------------------+                                |
+        |             | call by value-result |                                |
+        |             +----------------------+                                |
+        |                                                                     |
+        |               - callee operates on a copy                           |
+        |               - copy is copied back on return                       |
+        |                                                                     |
+        |                 int f (int vr x) {                                  |
+        |                   x++;                                              |
+        |                 }                                                   |
+        |                                                                     |
+        |                 int f (int *px) {              int f (int *px) {    |
+        |                   int x = *px;                   (*px)++;           |
+        |                   x++;                 OR      }                    |
+        |                   *px = x;                                          |
+        |                 }                                                   |
+        |                                                                     |
+        +---------------------------------------------------------------------+
+        
+        - expensive or invalid arguments
+
+        +---------------------------------------------------------------------+
+        |                                                                     |
+        |  solutions                                                          |
+        |  ----------                                                         |
+        |                                                                     |
+        |    +--------------+                                                 |
+        |    | call by name |                                                 |
+        |    +--------------+                                                 |
+        |                                                                     |
+        |      - caller passes a thunk (parameterless procedure) such that    |
+        |        when you call the thunk, it rturns the argument address      |
+        |      - callee: when it needs the value, it calls the thunk          |
+        |                                                                     |
+        |                                                                     |
+        |        void printavg (int avg, int nstudents) {                     |
+        |          if (nstudents == 0)                 sum = 0                |
+        |            print ("NA!");               ==>  sum += o[i]            |
+        |          else                                printavg (sum/n, n)    |
+        |            print("average is:", avg);                               |
+        |        }                                                            |
+        |                                                                     |
+        |                                                                     |
+        |        void printavg (int name avg, int nstudents) {                |
+        |          if (nstudents == 0)                 sum = 0                |
+        |            print ("NA!");               ==>  sum += o[i]            |
+        |          else                                printavg (sum/n, n)    |
+        |            print("average is:", avg);        (lambda()(sum n))      |
+        |        }                                                            |
+        |                                                                     |
+        |                                                                     |
+        |        + avoids unnecessary copies and executions                   |
+        |        - a bit slower than ABI                                      |
+        |        - way slower if expression is expensive (evaluate twice)     |
+        |                                                                     |
+        |    +------------------------+                                       |
+        |    | call by need (Haskell) |                                       |
+        |    +------------------------+                                       |
+        |                                                                     |
+        |      - call by name, except callee caches result of internal calls  |
+        |                                                                     |
+        |        + fixes "way slower" problem above                           |
+        |        + accesses after the first call are fast                     |
+        |        + good match for functional programming                      |
+        |        +  infinite data structures are supported                    |
+        |                                                                     |
+        |                                                                     |
+        |      lazy evaluation                                                |
+        |      ----------------                                               |
+        |      call by need for everything                                    |
+        |                                                                     |
+        |      eager evaluation                                               |
+        |      -----------------                                              |
+        |      call by value                                                  |
+        |                                                                     |
+        +---------------------------------------------------------------------+
+ 
+        C++
+
+           what you see                 code
+          --------------               ------
+          int f (int &v) {        int f (int *pv) {
+            return v+1;             return *pv+1;
+          }                       }
+
+          int a;                  int a;
+          f (a);                  f (&a);
+
+
++----------------------------------------+
+| Error Handling - ways to handle errors |
++----------------------------------------+
+
+compile-time checks
+--------------------
+static checking
+
+  + most reliable
+  - least flexible
+  - hardest to implement in general
+    e.g. dereferencing null pointers?
+
+
+precondition
+-------------
+caller's responsibility
+runtime property, partly of API's
+
+  int i, j;
+  i/j  -->  precondition: j != 0 && !(i == INT_MIN && j == -1)
+
+behavoir undefined if precondition is not satisfied
+
+  + fast
+  - reliability is a problem (preconditions not checked)
+
+
+total definitions
+------------------
+use special values for errors (IEEE floating point) (system calls)
+
+  + relatively simple
+  + relatively fast
+  - lazy programmers omit checks (requires programmers to check for errors)
+
+
+fatal errors
+-------------
+exit()
+_exit()
+abort()  -->  always crash + dump core
+
+can check preconditions and exit() or abort()
+
+  + more reliable than preconditions
+  + more flexible
+  - fatal
+
+
+exception handling
+-------------------
+be similar to fatal errors but don't crash or exit
+
+  Java
+  -----
+  (1) define exception objects that form a hierarchy
+  (2) if a function can throw an exception, it must be declared
+
+  try {
+    // some code with errors (indirectly)
+  } catch (IOException e) {
+    // code that deals with 'e'
+  }
+
+  omit all errors
+
+  try {
+    // some code
+  } catch (Exception e) { }
+
+
+argument for exception handling
+--------------------------------
+(1) makes code simpler to read (only in simple examples)
+(2) makes code more reliable
+
+argument against exception handling
+------------------------------------
+(1) makes code harder to read
+
+    a = allocate();
+    try {
+      x = f(a);
+      y = a(x);
+    } finally {
+      free (a);
+    }
+
+(2) lazy is as lazy does (lazy programmers can still ignore exceptions)
+
+
+Cost models - can dominate some apps!
+--------------------------------------
+mental models of resources needed to run
+
+  - O(n) vs tuning  (constant factor)
+  - what are you costing?
+    - time                  ---+
+    - power/energy             +--->  $$$
+    - memory                   |
+    - network use (I/O use) ---+
+
+    +------+
+    | time |
+    +------+
+
+    classic example: lists
+    -----------------------
+    Scheme:      car   O(1)
+                 cdr   O(1)
+              append   O(n)
+    Python:   append   O(1) amartized
+
+
+    more examples
+    --------------
+    Scheme:      (eq? a b)   O(1)
+                (eqv? a b)   O(min(a,b))
+              (equal? a b)   O(INF)
+    Prolog:         X = Y    O(min(X,Y))
+
+
+procedure call costs (assume call by value)
+--------------------------------------------
+
+          +---------------------+
+caller    | evaluates arguments |
+          +---------------------+
+          copies values to registers
+          save return address
+          jump to callee start
+
+callee    allocates frame
+          save registers as needed
+          +--------------+
+          | do real work |
+          +--------------+
+          copy results to return register
+          deallocate frame
+          jump back
+
+things not in box are overhead
+
+how to avoid overhead?
+
+  - inlining (removes most or all overhead)
+
+  - tail call optimization
+    - does not need to save return address
+    - can reuse frame
+    - does not need to save registers
+
+
+Escape analysis
+----------------
+compiler statically looks for what places a new's result can be
+
+  Point location() { return new Point(x,y); }
+  void showLocation {
+    Point p = o.location
+    System.out.println("@" + p.x + p.y)
+  }
+
+  compiler can put 'Point p' on the stack here since it goes out of scope
+  when function ends. It is not passed to other functions.
+
+
+COST MODELS CHANGE FASTER THAN ANY OTHER THINGS RELATED TO THE SUBJECT
+
+
+=============
+Dec. 2, 2015
+=============
+
+Semantics
+----------
+what does a program mean? (as opposed to syntax, which is "easy")
+BNF, EBNF
+
+
+static semantics (intermeddiate)
+---------------------------------
+semantics of the program before it is running
+
+  type checking
+  scope checking
+
+  attribute grammars
+  -------------------
+  basic idea
+
+    (1) symbols have attributes
+    (2) rules specify constraints on attributes
+
+        E1 -> E2 * E3
+           type(E1) = if type(E2) = int & type(E3) = int
+                      then int
+                      else float
+
+           symtab(E2) = symtab(E1)
+           symtab(E3) = symtab(E1)
+
+
+        synthesized attribute
+        ----------------------
+        parent value is defined by children
+
+
+        symtab attribute
+        -----------------
+        maps identifiers to compile-time binding (e.g. types)
+
+        suppose the dependency graph loop
+          (1) check for loops while builidng
+          (2) prove that loops are impossible (normally taken)
+
+
+        inherited attributes
+        ---------------------
+        children's attributes are function of parents
+
+        +------------------------------------------------+
+        |                                                |
+        |   int f (int y) {                              |
+        |     int x = y;                                 |
+        |     return x + y;                              |
+        |   }                                            |
+        |                                                |
+        |   body -> decl stmt                            |
+        |   symtab(stmt) = symtab(body) U newsym(decl)   |
+        |                                                |
+        |              body                              |
+        |              /  \                              |
+        |             /    \                             |
+        |          decl    stmt                          |
+        |                                                |
+        +------------------------------------------------+
+
+  +-----------------------------+
+  |                             |
+  |   BNF inspired parse tree   |
+  |                             |
+  |          a + b * c          |
+  |                             |
+  |                             |
+  |          + (type)           |
+  |        /   \                |
+  |       /     \               |
+  |      /       \              |
+  |     /         \             |
+  |    /           \            |
+  |  ID (type)      * (type)    |
+  |  |            /   \         |
+  |  a (int)    ID     ID       |
+  |             |      |        |
+  |     (float) b      c (int)  |
+  |                             |
+  +-----------------------------+
+
+
+
+dynamic semantics (hardest)
+----------------------------
+semantics of the program as it is running
+  when you run the program what does it do
+
+
++--------------------------+
+| operational (imperative) |
++--------------------------+
+
+In order to define the semantics of language L, we write an interpreter for it
+that accepts a language-L program P as input, and runs P, produces output.
+
+Problems
+---------
+  (1) some features may be unimplementable
+  (2) suppose interpreteris written in M, N, C...
+
+      define the semantics of Lisp by writing a Lisp interpreter!
+
+      could load the Lisp interpreter into machine and run the Lisp interpreter
+      to check if it had same behavior as the Lisp machine
+
+      LI : semantics of L -> semantics of L (take the fixed point!)
+
+
+ML Grammar
+-----------
+<E,C> -> V
+
+  E : expression
+  C : context -> maps names to values
+  V : value
+
++--------------------------------------------------+
+|                                                  |
+| <E1,C> -> V1 , <E2,C> -> V2                      |
+| ---------------------------                      |
+|      <E1+E2,C> -> V1+V2                          |
+|         |           |                            |
+|         |           +-----> mathematical 'plus'  |
+| 'plus' in ML source code                         |
+|                                                  |
++--------------------------------------------------+
+
++--------------------------------------+
+|                                      |
+| <K,C> -> K        'K' is a constant  |
+|                                      |
++--------------------------------------+
+
++----------------------------------------------------------------+
+|                                                                |
+| <V,C> -> C(V)     apply context to variable (context matters)  |
+|                                                                |
++----------------------------------------------------------------+
+
++------------------------------------------------------------------+
+|                                                                  |
+|                     +---> bind V1 to x and produces new context  |
+|                     |                                            |
+| <E1,C> -> V1 , <E2,bind(x,V1,C)> -> V2                           |
+| --------------------------------------                           |
+|       <let x = E1 in E2,C> -> V2                                 |
+|                                                                  |
++------------------------------------------------------------------+
+
++--------------------------------------------------------------------------+
+|                                                                          |
+| <fun x->E,C> -> D(x,E,C)                                                 |
+|                 |                                                        |
+|                 +-----> create data structure and bind (don't evaluate)  |
+|                                                                          |
++--------------------------------------------------------------------------+
+
++----------------------------------------------------------------+
+|                                                                |
+|           +---> create a function                              |
+|           |                                                    |
+| <E1,C> -> D(xf,Ef,Cf) , <E2,C> -> V2 , <Ef,bind(xf,V2,Cf) -> V |
+| -------------------------------------------------------------  |
+|                         <E1,E2,C> -> V                         |
+|                                                                |
+| dynamic scoping here if we use 'bind(xf,V2,Cf)'                |
+|                                                                |
+| ML uses static scoping so when we bind the data structure to   |
+| create function we keep the context to use later               |
+|                                                                |
++----------------------------------------------------------------+
+
+eval(call(E1,E2), C, V) :-
+  eval(E1, C, lambda(xf,Ef,Cf)),
+  eval(E2, C, V2),
+  eval(Ef, [xf=V2|Cf], V).
+
+
+
++-------------------+
+| axiomatic (logic) |
++-------------------+
+
+{P} S {Q}
+
+if propotision P is true before executing the statement S, and if S terminates
+then Q is true afterwards.
+
+
+             +--> assume no side effects here
+             |
+{Q[x/E]} x = E; {Q}
+ |
+ +--> take 'Q', and substitute all free occurrences of 'x' with 'E'
+
+
+  {x < -1}  x = x + 1;  {x < 0}
+
+  {x + 1 < 0}  x = x + 1;  {x < 0}
+               x     E        Q
+
+
++---------------------------+
+|         assingment        |
+|                           |
+| P -> Q, {Q} S {R}, R -> S |
+| ------------------------- |
+|         {P} S {R}         |
++---------------------------+
+
++-----------------------+
+|       sequencing      |
+|                       |
+| {P} S {Q} , {Q} T {R} |
+| --------------------- |
+|     {P} S ; T {R}     |
++-----------------------+
+
++--------------------------------------------+
+|                if then else                |
+|                                            |
+| {P^E} S1 {Q} , {P^~E} S2 {Q}               |
+| ----------------------------               |
+|   {P} if (E) S1 else S2 {Q}                |
+|           |                                |
+|           +--> assume no side effects here |
++--------------------------------------------+
+
++-------------------------------------------------------+
+|                    while loops                        |
+|                                                       |
+|                   {P^E} S {P}                         |
+|              ---------------------                    |
+|              {P} while(E) S {P^~E}                    |
+|               |                                       |
+|               +--> loop invariant                     |
+|                                                       |
+|                                                       |
+|          {0 < i ^ 10 < i} i = i/10 {0 < i}            |
+|   -------------------------------------------------   |
+|   {0 < i} while (10 < i) i = i/10 {0 < i ^ i <= 10}   |
+|                                                       |
++-------------------------------------------------------+
+
+
++---------------------------+
+| demotational (functional) |
++---------------------------+
+
+Lambda Calculus
+----------------
+
+
+lambda expressions
+-------------------
+
+             x         variable name
+  (lambda x).M         lambda expression
+         (F A)         both 'F' and 'A' are lambda expressions 
+
+
+lambda reduction
+-----------------
+
+((lambda x).M A) ==> M[x/A]
+-------------+-------------
+             |
+             +--> Church + Rosser (UCLA)
+
+
+(lambda(x).(x y) (lambda x).x) ==> ((lambda x).x y) ==> y
+             M         A                       M A
+
+((lambda x).(x x) (lambda x).(x x)) ==> ((lambda x).(x x) (lambda x).(x x))
+                                    ==> ... ==> ...
+
+
+((lamda y).z ((lambda x).(x x) (lambda x).(x x))) ==> ... (call by value)
+           M                  A
+  ===> z (call by name)
+
+
+
++----------------------------------+
+| History of Programming Languages |
++----------------------------------+
+
+Fortran (1956)
+---------------
+IBM engineers
+high-level programming language
+automatic programming
+write down program, machine decided what machine instruction to generate
+
+  arrays
+  subroutines
+
+
+Algol (1960)
+-------------
+BNF (formalization)
+
+
+Lisp(1959)
+-----------
+Recursion successfully
+S-expr (meta-programming)
+
+
+Cobol (1960)
+-------------
+'Understandable even to managers'
+  ADD 1 TO I.  (not a good idea though)
+
+  records
+  structs
+
+
+PL/I (1964)
+------------
+First kitchen-sink language
+
