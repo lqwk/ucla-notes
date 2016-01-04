@@ -34,3 +34,11 @@ Qingwei Lan
 - Computer Science 174A **Introduction to Computer Graphics** (*Ford, D.*)
 - Physics 1C **Physics for Scientists and Engineers: Electrodynamics, Optics, and Special Relativity** (*Corbin, B.*)
 
+## Winter 2016
+- Computer Science M51A **Logic Design of Digital Systems** (*Potkonjak, M.*)
+- Computer Science 143 **Database Systems** (*Condie, T.*)
+- Computer Science 180 **Introduction to Algorithms and Complexity** (*Sarrafzadeh, M.*)
+- Math 132 **Complex Analysis for Applications** (*Greene, R.E.*)
+- Physics 4BL **Physics Laboratory for Scientists and Engineers: Electricity and Magnetism** (*Simon, M.D.*)
+- History 3C **Introduction to History of Science: History of Modern Science, Relativity to DNA** (*Porter, T.M.*)
+
