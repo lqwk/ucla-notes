@@ -1,0 +1,165 @@
+
+CS180: Algorithm Design and Analysis
+
+Homeworks assigned noon Tue. and due 7:59am Thu.
+Office: 3532C BH
+
+=============
+Jan. 5, 2016
+=============
+
+Al Khowrazmi --> Algorithm
+
+
+Serial Model of Computation
+----------------------------
+
++------------------------+    +-----+
+|                        |    |     |
+| +-----------+  +-----+ |    |     |
+| | Registers |  | CPU | |    | RAM |
+| +-----------+  +-----+ |    |     |
+|                        |    |     |
++-----------|------------+    +-----+
+            |
+           I/O
+
+- CPU can do only basic operations
+
+
+Example
+--------
+Add n integers using this model
+    |
+    +--> 'n' means a large number in algorithm design
+
+Assume reading from I/O to CPU takes about 1 unit of time
+        saving from CPU to RAM takes about 1 unit of time
+
+--------------------
+read         ~ 2n
+RAM to CPU   ~ n
+adding       ~ n-1
+output       ~ 1
+--------------------
+total        ~ 4n
+--------------------
+
+T(n) = O(n)
+
+
+We can either improve the algorithm or prove that we cannot
+
+
+Example: Famous People
+-----------------------
+everyone knows
+he/she does not know anyone
+
+
+Model of Computation
+---------------------
+
+        know
+    A --------> B       takes 1 unit of time
+
+
+Ask 2(n-1) questions to know if one person is famous or not
+Cannot have second famous person or else contradiction
+
+We repeat for each person in class      2(n-1)  --+
+                                        2(n-1)    |
+                                        2(n-1)    +--> n times
+                                         ...      |
+                                        2(n-1)  --+
+
+n * 2(n-1) = 2n^2-2n
+           ~ 2n^2
+           ~ n^2
+
+
+Reduce size of problem, eliminate candidates
+
+
+Random vs. Arbitrary
+
+
+Pick 2 arbitrary people
+
+                   yes
+      know      +-----> A is not famous
+  A --------> B +
+                +-----> B is not famous
+                  no
+
+After n-1 questions only 1 candidate
+Ask 2(n-1) questions about the last candidate to verify
+
+3(n-1) --> ~ n
+
+
+Asymptotic Analysis
+--------------------
+
+-------------
+   n = 10
+-------------
+  n    10      --+
+ 2n    20        +---> polynomial
+n^2    100     --+
+        
+2^n    1014    --+
+ n!    4M        +---> exponential
+-------------  --+
+
+
+f(n) = O(g(n))    ---->   about or less, order of
+if there exists constants n0,c such that
+f(n) <= cg(n)    n >= n0
+
+
+f(n) = O(n^2)
+
+n^2/4
+5n^2
+logn
+2^n   is not order of n^2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,256 @@
+
+CS111: Operating System Principles (Paul Eggert)
+
+http://web.cs.ucla.edu/classes/winter16/cs111
+
+=============
+Jan. 6, 2016
+=============
+
+A bit more OS philosophy
+-------------------------
+
+tradeoffs
+scaling
+  these issues are not inherently new, occur in traditional systems
+  been with us for a long time already
+
+complexity
+  new to our entineering operating systems
+  getting worse with time 
+
+inconsmemorate scaling
+
+Moore's Law (transistors, #bits/chip)
+--------------------------------------
+exponential growth
+but looking at the most recent dots, the exponential growth seems to tail off
+the graph [!] talks only about the economic sweet spot (mass produced chips)
+
+Kryder's Law (secondary storage capacity, bytes/drive)
+-------------------------------------------------------
+disk size per unit price grows (0.0001TB -> 4TB)
+how about avg seek time?
+we are not good at making fast machines as we are with making complex objects
+
+Why exponential growth?
+------------------------
+UNIVAC I (hand designed, slow, safe)
+  used this to design UNIVAC II
+
+d(technology)/dt = K * technology (current)
+Thus according to this bogus argument
+technology is an exponential function of time
+
+
+How not to do an OS
+--------------------
+
+Why not to use an OS
+---------------------
+- simplicity
+- performance
+    speed
+    memory
+- reliability
+    as a consequence of simplicity
+- security
+    paranoia
+
+
+Application: Word Processor
+----------------------------
+count of words in an ASCII text file
+all bytes in range '\001' - '\177'
+
+~ 10 year old desktop
+Core 13-4160 (3 MiB cache, 3.6 GHz)
+4GiB dual channel DDR3, 1600 MUSDRAM
+1TB hard drive, SAIA, 2700
+Intel 4400 graphics
+
+assume file is in congiguous array of sectors
+traditional disk drive with 512 byte each sector
+
+running an old BIOS (Basic Input Output System)
+  where's the program
+  where's the data (file)
+
+  BIOS
+  -----
+  cycling power -> CPU resets, clears the RAM and cache
+    bootstrapping problem
+
+      ip = 0xffff0 (2^20 - 16)
+                                                                  Physical RAM
+      0                                                                    4GB
+      +---+---+--------------------------------------------------------------+
+      | * | * |                                                              |
+      +-|-+-|-+--------------------------------------------------------------+
+        |   +---> 0xffff0
+        +---------------------> EEPROM region <- hardwired by manufactured
+                            electronic erasable programmable read-only memory
+                            +---> non-volatile memory
+
+      word count program is on disk, we need to read it into RAM to execute it
+
+      in EEPROM we give location on disk and size of WC + loading program
+      after loading we jump to its loaded location on RAM
+
+      conventional desktop: read-only constants on EEPROM
+                            manufactures will specify location where they will
+                            run the programs and the size they will run
+
+      convention
+
+      +---+-------------------------------------------------------------------+
+      |   |                                                                   |
+      +-|-+-------------------------------------------------------------------+
+        |
+        |
+        |
+        +-+--> 1st sector Master Boot Record (MBR)            partition table
+          |                                                              |
+          |  +-------------------------------------------------------+---|--+-+
+          +> |                       x86 code                        |  64  |*|
+             +-------------------------------------------------------+------+|+
+                                    446 bytes                                |
+                                                                         0xAA55
+              copy this sector to 0x7c00
+
+        do hardware sanity check
+        checks for devices (CPU is attached via bus to many devices)
+        looks for 1st device with MBR
+          how to differentiate with random data and MBR
+             last two bytes of MBR has: 0x55 0xAA
+             still a chance to find non-MBR with same pattern
+             put MBR before all devices to eliminate this option
+
+
+        partition table
+
+        +---------------------------------------------+----+----+----+----+---+
+        |                                             |                   |   |
+        +---------------------------------------------+-|--+----+----+----+---+
+                           446 bytes                    |    64 bytes       2
+                                                        |
+                                                       32-bit
+                                                       type byte/bootable
+                                                       size of partitions
+                                                       origin
+
+        +---+-----------------------------------------------------------------+
+      +-->  |                                                                 |
+      | +---+-----------------------------------------------------------------+
+      |   origin + size
+      |
+      +-- 0 (MBR)
+          
+          chain loading
+
+          firmware -> MBR ---------> VBR---------> kernel -> run many programs
+                  OS-agnostic    OS-specific        many
+                                                   sectors
+      
+
+    subroutine to read data from disk (omit error checking due to time problem)
+
+      void read_ide_sector(int sector_no, char *address_into)
+                            4 byte         4 byte                 (x86 mode)
+      {
+        // 0x1f7: status register
+        //       +-+-+-+-+-+-+-+-+
+        //       |0|1| | | | | | |
+        //       +-+-+-+-+-+-+-+-+
+        //        +---------------------> this pattern '01' means ready
+        //
+        
+        while ((inb(0xif7) & 0xc0) != 0x40)
+          continue;
+        
+        outb(0x1f2, 1);
+        outb(0x1f3, sector_no);              // outputs low order 8 bits
+        outb(0x1f4, sector_no >> 8);
+        outb(0x1f5, sector_no >> 16);
+        outb(0x1f6, sector_no >> 24);
+        outb(0x1f7, 0x20);
+
+        while((inb(0x1f7) & 0x20) != 0x40)
+          continue;                          // wait
+
+        insl(0x1f0, address_into, 128);      // 128 = 512/sizeof(int)
+      }
+
+      'inb' subroutine: CPU send signal to disk controller via bus
+                        disk controller sends back data from disk
+                        retrieve address 'a' (bus address) from disk
+
+                        this instruction is slow because signals travel on bus
+
+
+      static inline inb(int a)
+      {
+        asm("...");
+      }
+
+        1f0: actual data
+        1f2: sector count
+        1f3: low order byte
+        1f4: sector number
+        1f5
+        1f6: high order byte
+        1f7: write : issue command
+             read  : returns status
+        
+        +------------+----------+--------------+------+
+        | status/cmd | sector # | sector count | data |
+        +------------+----------+--------------+------+
+             1f7      1f6 ~ 1f3       1f2      1f1 ~ 1f0
+
+
+    where to put this subroutine?
+
+      compile and put into RAM
+      copy and put in firmware (BIOS) at 0xffff07
+      copy into MBR at 0x7c21
+      copy into WC program
+
+        problem: have 3 copies of the same code
+        keep in firmware (BIOS) and discard the others
+      
+      nowadays we keep the copies since memory is not that of an issue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
