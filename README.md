@@ -36,6 +36,7 @@ Qingwei Lan
 
 ## Winter 2016
 - Computer Science M51A **Logic Design of Digital Systems** (*Potkonjak, M.*)
+- (Unofficial) Computer Science 111 **Operating Systems Principles** (*Eggert, P.R.*)
 - Computer Science 143 **Database Systems** (*Condie, T.*)
 - Computer Science 180 **Introduction to Algorithms and Complexity** (*Sarrafzadeh, M.*)
 - Math 132 **Complex Analysis for Applications** (*Greene, R.E.*)
