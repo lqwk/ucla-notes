@@ -221,11 +221,217 @@ running an old BIOS (Basic Input Output System)
       nowadays we keep the copies since memory is not that of an issue
 
 
+==============
+Jan. 11, 2016
+==============
+
+To output to screen, we use memory-mapped I/O, not programmed I/O (PIO)
+
+Use movb to move byte to particular region in memory to display on screen
+
+      +----+---+-------------------------+
+movb  |    | * |                         |
+      +----+-|-+-------------------------+
+             |
+             +----> not RAM in ordinary sense, but displayed
+
+display CPU: read bytes from display RAM and display on screen (60 times/sec)
+
+screen = 80 x 25 grid of chars
+
+0xb8000
+        4000 bytes
+         
+         |<------ 80 ------>|
+         +------------------+ -+
+         |          +--+    |  |
+         |      +-> |  |    |  25
+         |      |   +--+    |  |
+         +------|-----------+ -+
+                |
+                |
+               16 bits to represent
+               low order 8 bits in ASCII
+               high order bits, graphical appearance
+
+want grey on black (7 in higher bits)
+
+void output_to_screen(long n)
+{
+  short *p = (short *)0xb8000 + (80*25/2 - 80/2);
+  do {
+    *p-- = (7 << 8) | (n % 10 + '0');
+    n /= 10;
+  } while (n != 0);
+}
+
+run the program
+
+void main(void)
+{
+  int s = 1000; // choose arbitrary sector to read from
+                // '\0' = 0, means EOF
+  long nwords = 0;
+  bool inword = 0;
+  char buf[512];
+
+  for (;;) {
+    read_ide_sector(s++, buf);
+    for (int j = 0; j < sizeof(buf); j++) {
+      if (!buf[j])
+        done(nwords);
+      bool isletter = ((buf[j] >= 'a' && buf[j] <= 'z') ||
+                       (buf[j] >= 'A' && buf[j] <= 'Z'));
+      nwords += isletter & ~inword; // 1 if and only if at start of word
+      inword = isletter;
+    }
+  }
+}
+
+void done(long nwords) {
+  output_to_screen(nwords);
+  halt();
+}
+
+Issues in this program
+-----------------------
+(1) we are getting data inefficiently from disk
+    we transfer data from disk controller to CPU then from CPU to RAM
+    we would like to copy data directly from disk controller to RAM
+
+      Could use DMA (directory memory access)
+
+                 +-----+
+                 | CPU |
+                 +-----+
+    ============================================  BUS
+        +-----+          +-----------------+
+        | RAM |          | Disk Controller |
+        +-----+          +-----------------+
+
+    catch: CPU must ask the controller 'done yet?'
+           CPU can be notified somehow
 
 
+Crypto App, lots of CPU
+------------------------          0     1     2      |    0  1  2  3
+           I/O                   ---   ---   ---     |   ------------
+(wait for disk to become ready)                      |
+                                     0     1     2   |       0  1  2  3
+          ECC                       ---   ---   ---  |      ------------
+                                                     |
+time ------------------------------------------------|-------------------------->
+                                                     |   double buffering
+
+want to utilize CPU better, use double buffering
+could use multitasking and run I/O in parallel
+
+How to scale up these programs
+-------------------------------
+* fancier performance tricks without rewriting apps
+* multitasking
 
 
+Modularity
+-----------
+split up program into pieces so that each piece becomes more manageable
+cost of maintaining a module of N lines of code is O(N^2)
 
+
+How do you measure quality of modularity & abstraction in an OS?
+-----------------------------------------------------------------
+Simplicity      ease of use
+                ease of learning
+                short manual for the OS
+
+Robustness      tolerance of errors, large inputs
+                under harsh conditions, should still work
+
+Performance     modularity is going cost some performance
+                have to build module interfaces (design cost)
+                costs when jumping between modules at runtime
+                minor costs are inevitable
+                major costs are avoidable
+
+
+Flexibility
+Lack of assumptions
+Neutrality
+
+  Unix/Linux: '\n' is not a special case in a file
+
+
+Designing an interface for reading a line from input
+-----------------------------------------------------
+read a line from the input
+
+1. char *readline(FILE *f)
+
+    BAD DESIGN for an OS
+    ---------------------
+    1. Performance  unbounded work - may take forever for big lines
+                    unbatched work - overhead for small lines
+    2. Robustness   apps crash with big lines
+    3. Neutrality   forces line ending convention
+    4. Simplicity   good simplicity :)
+
+
+2. size_t read(int fd, void *buf, size_t bufsize)
+
+    int return value for indicating error values or failures
+      -> ssize_t (64-bit long) for number bytes read, -1 for all errors
+
+    bufsize for not assuming 512 byte sector, more general interface
+
+    void *buf turns off type checking on C compiler for any pointer
+
+    int bufsize 2^31 = 2GiB --> size_t for size
+      size_t: x86_64 -> unsigned long 64-bit
+              x86    -> unsigned long 32-bit
+
+    int byte_offset -> off_t (64-bit signed)
+
+    int fd specifies which file to read from (opaque file handle)
+
+    [!] removed byte_offset
+        BIG IDEA OF UNIX: everything outside the program is a file
+
+        random access    stream devices
+        --------------------------------------------
+        disk             network mouse keyboard
+        flash            display
+
+    added new system call: lseek(int fd, off_t where, int flag)
+
+    corallary: OS records current file position on read, lseek sets position
+
+
+3. pread(...)
+
+    has extra argument for random access with a 'byte_offset' argument
+
+
+Mechanisms for modularity
+--------------------------
+1. function (or method) calls
+
+   call a function in another module and wait for return
+     + simple, well understood
+     + fast
+     - robustness, things can go wrong
+       run out of stack space
+       functions stepping on each other's stack space
+       infinite loops
+
+2. client-server
+
+   + not as simple, well understood
+   + things do not go wrong as easily
+   - way too slow, client -> server -> client
+     works if clients are human beings
+     does not work for high-performance applications
+
+3. virtualization
 
 
 

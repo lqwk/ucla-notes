@@ -229,8 +229,93 @@ Buffer Control Block (BCB)
   dirty
 
 
+=============
+Jan. 8, 2016
+=============
+
+CREATE TABLE Students (
+  sid CHAR(20),
+  name CHAR(50),
+  login CHAR(30),
+  age INTEGER,
+  gpa FLOAT,
+  PRIMARY KEY (sid)
+);
+
+CREATE TABLE Grades (
+  sid CHAR(20),
+  course CHAR(50),
+  grade CHAR(2),
+  FOREIGN KEY (sid) REFERENCES Students (sid)
+)
+
+INSERT INTO Students VALUES ('123', 'ABC', 'abc', 18, 3.7);
+INSERT INTO Grades VALUES ('123', 'CS143', 'A+');
+DELETE FROM Students WHERE sid = '000';
 
 
+SELECT g.sid avg(g.gpa)
+FROM Grades g
+GROUP BY g.sid
+
+
+==============
+Jan. 11, 2016
+==============
+
+Bunny 1
+--------
+SQL queries
+Elevator Algorithm
+
+Accessing a Disk Page
+----------------------
+Time to access (read/write) a disk block
+    seek time (moving arms to position disk head on track)
+    rotational delay (waiting for block to rotate under head)
+    transfer time (actually moving data to/from disk surface)
+
+'Next' block concept
+---------------------
+blocks on same track
+blocks on same cylinder
+blocks on adjacent cylinder
+
+Disk Space Management
+----------------------
+lowest layer of DBMS, manages space on disk
+higher levels call this layer for services (allocate/read/write/deallocate)
+
+Buffer Pool
+------------
+uses main memory as a cache for disk
+copies disk page to memory
+when buffer pool fills up, uses replacement policy to evict page
+
+Files of Records
+-----------------
+A tuple is embedded in a record
+
+
+Average case for I/O operations
+--------------------------------
+B = # disk blocks in file
+
+-----------------+----------------+--------------------+-----------------------
+                 |   Heap File    |     Sorted File    |    Clustered File
+-----------------+----------------+--------------------+-----------------------
+Scan all records |       B        |         B          |
+-----------------+----------------+--------------------+-----------------------
+Equality         |      B/2       | log(B) on sort key |
+Serach           |                |    B/2 otherwise   |
+-----------------+----------------+--------------------+-----------------------
+Range Search     |       B        |      log(B) +      |
+                 |                |  selectivity * B   |
+-----------------+----------------+--------------------+-----------------------
+Insert           |       2        |     log(B) + B     |
+-----------------+----------------+--------------------+-----------------------
+Delete           |    B/2 + 1     |     log(B) + B     |
+-----------------+----------------+--------------------+-----------------------
 
 
 

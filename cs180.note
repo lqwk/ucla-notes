@@ -4,6 +4,7 @@ CS180: Algorithm Design and Analysis
 Homeworks assigned noon Tue. and due 7:59am Thu.
 Office: 3532C BH
 
+
 =============
 Jan. 5, 2016
 =============
@@ -126,7 +127,202 @@ logn
 2^n   is not order of n^2
 
 
+=============
+Jan. 7, 2016
+=============
 
+Develop general methodologies that can be applied to general cases
+
+---------------------
+The Matching Problem
+---------------------
+In a group, match two people with each other
+one-to-one, one person can only match with another single individual
+
+two groups: male and female, each with n people
+match one male with one female
+
+    M1        W1
+
+    M2        W2
+
+    M3        W3
+
+    M4        W4
+
+assume each person has an ordering list (preference list)
+
+    (W', W)
+        M ---- W
+         /\
+           \
+            \      double arrow as shown means unstable
+             \
+              \/
+        M' --- W'
+            (M, M')
+
+
+generic step for inductive algorithm
+-------------------------------------
+if M is not matched, M will pick the highest woman on his list and propose
+  if W is not matched, she will accept the proposal
+  otherwise she will look in her list
+    if M has higher priority, she will discard current match, and match with M
+    otherwise, she will not accept the match
+
+
+M will get worse matches eventually (down priority list)
+W will get better matches eventually (up priority list)
+
+
+how to prove that this is stable?
+----------------------------------
+assume by contradiction that we get an unstable result as follows
+
+    M ---- W
+     /\
+       \
+        \
+         \
+          \/
+    M' --- W'
+
+case 1 :  M did not propose to W'
+          contradiction to algorithm because W' is higher on M's list
+          so M must have proposed to W' first before matching W
+
+case 2 :  M did propose to W'
+          since M is higher on priority list of W' and M proposed to W'
+          W' should be matched with M, so contradiction
+          M" > M > M', so W' is matched to M", not M', so contradiction
+
+How to show perfect match?
+
+
+==============
+Jan. 12, 2016
+==============
+
+For every given problem we do not want a totally new algoritm
+so we will study algorithmic paradigms
+
+But let's start with a few examples
+
+-----------------------
+The Scheduling Problem
+-----------------------
+Given set of intervals, want to find a subset
+We cannot overlap tasks, and cannot do tasks partially
+
+      S     E
+      +-----+        +---+
+         a             b
+           +-----------+
+                 c
+       +---+       +-----+
+         d            e
+            +-----+   +---+
+               f        g
+
+Sa <= Ea
+
+Want to maximize the NUMBER of intervals
+Length of interval does not matter
+
+    +-----------------+ +---------------+
+             a                  d
+
+        +---+ +---+
+          b     c
+
+    Can pick 'a' or 'b', both have same cardinality |a| = |b|
+    However, we should pick 'b' and 'c' instead of 'a'
+    Then we should pick 'b' and 'c' and 'd', which has cardinality 3
+
+
+exhausive search algorithms vs. greedy algorithms
+
+
+Solve first using exhausive search
+-----------------------------------
+Pick every subset
+write the solution as a binary number
+
+  10110   means that for each bit turned on, we pick corresponding interval
+  abcde   in this case, we pick 'acd'
+
+This algorithm takes o(2^n Tn), which is too slow
+
+
+Solve using greedy algorithm
+-----------------------------
+Pick one and stick with it, will not change it later
+Pick according to length of time interval (E - S)
+
+Pick the shortest interval, exclude any other that overlap with it
+Pick the next, and exclude any other that overlap with it
+Repeat the process
+
+This does not work
+                       a     b
+    +--------------------+ +--------------------+
+                       +-----+
+                          c
+
+
+What if we choose the interval that has the fewest number of conflicts
+This does not work either (try to prove it)
+
+
+Solve using plane sweep
+------------------------
+Starting point is an event, ending point is an event
+
+Start from -inf to inf, choose first starting event
+Whenever we encounter an event, decide what to do
+  Encounter a Start, include it and exclude any overlapping intervals
+  Repeat the process until we are out of choices
+
+This does not work
+
+               a
+    +---------------------+
+            b     c
+          +---+ +---+
+
+
+What if we choose the first ending event
+We cannot find counter example, let's try proving that it works
+
+Proof by Induction
+-------------------
+Assume that we have an optimal solution all the way up to the 'i'th selection
+
+Base case: Choose the first interval, it is optimal
+Inductive Step:
+
+------------+---------------------
+     i      |        i + 1
+------------+---------------------
+            |
+     x      |    a
++---------+ | +-----+
+            |
+     x      |         b
++---------+ |      +-----+
+            |
+
+Ea <= Eb
+Sb >= Ex
+Sa >= Ex
+
+
+Runtime analysis
+-----------------
+1. sort the endpoints                  O(nlogn)
+2. pick the first ending interval
+   remove the overlapping ones         O(n)
 
 
 
