@@ -301,21 +301,42 @@ Average case for I/O operations
 --------------------------------
 B = # disk blocks in file
 
------------------+----------------+--------------------+-----------------------
-                 |   Heap File    |     Sorted File    |    Clustered File
------------------+----------------+--------------------+-----------------------
-Scan all records |       B        |         B          |
------------------+----------------+--------------------+-----------------------
-Equality         |      B/2       | log(B) on sort key |
-Serach           |                |    B/2 otherwise   |
------------------+----------------+--------------------+-----------------------
-Range Search     |       B        |      log(B) +      |
-                 |                |  selectivity * B   |
------------------+----------------+--------------------+-----------------------
-Insert           |       2        |     log(B) + B     |
------------------+----------------+--------------------+-----------------------
-Delete           |    B/2 + 1     |     log(B) + B     |
------------------+----------------+--------------------+-----------------------
+-----------------+----------+--------------------+-----------------------
+                 |   Heap   |     Sorted File    | Index-Organized File
+                 |   File   | (100% Occcupancy)  |   (67% Occupancy)
+-----------------+----------+--------------------+-----------------------
+Scan all records |    B     |         B          |         1.5B
+-----------------+----------+--------------------+-----------------------
+Equality         |   0.5B   | log(B) on sort key |      logF(1.5B)
+Serach           |          |    B/2 otherwise   |
+-----------------+----------+--------------------+-----------------------
+Range            |    B     |      log(B) +      |     logF(1.5B) +
+Search           |          |  selectivity * B   |      #match pgs
+-----------------+----------+--------------------+-----------------------
+Insert           |    2     |     log(B) + B     |    logF(1.5B) + 1
+-----------------+----------+--------------------+-----------------------
+Delete           | 0.5B + 1 |     log(B) + B     |    logF(1.5B) + 1
+-----------------+----------+--------------------+-----------------------
+
+
+==============
+Jan. 13, 2016
+==============
+
+Clustered vs. Unclustered Index
+--------------------------------
+A file can be clustered on at most 1 search key
+Index-organized implies clustered but no vice-versa
+  alt-1 is always clustered
+  alt-2 and alt-3 may or may not be clustered
+
+  Clustered 
+  ----------
+  + more efficient for range searches
+  + may be able to do some types of compression
+  - maintenance cost
+  - can only cluster according to single search key
+
 
 
 

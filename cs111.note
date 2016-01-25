@@ -434,26 +434,812 @@ Mechanisms for modularity
 3. virtualization
 
 
+==============
+Jan. 13, 2016
+==============
+
+OS Organization
+----------------
+
+Booting
+--------
+get good interfaces between modules
+
+UEFI
+  want to organize booting process and split up what firmware (BIOS) does
+  and what's on the disk with better line between the two
+
+GUID (Globally Unique Idendifier for disk partition)
+  128-bit quantity
+  without these IDs, firmware won't know if it changed or not
+
+GUID partition table (GPT)
+
+Standard layout in partition
+-----------------------------
+File system formats   FAT12
+                      FAT16
+                      FAT32
+
+Firmware is in EEPROM
+Firmware can understand file format on disk
+
+Have a kernel with well-known name sitting as a file
+Firmware will load kernel into memory and run it
+
+Firmware --> configuration variables, nvram
+
+
+If firmware does not like config, may not boot
+Once booted, OS is in charge
+
+
+We could put OS in read-only memory, does not work because we may want to
+change it before we boot
+
+
+How to enforce modularity after booting?
+-----------------------------------------
+use function calls as the way of interfacing into OS
+
+  char buf[2000];
+  read(3, buf, 1000);
+
+why is this terrible?
+
+  use toy function
+  -----------------
+
+  int fact(int n) {
+    if (!n)
+      return 1;
+    return n * fact(n-1);
+  }
+
+gcc compiled this into a loop with optimization
+after turning off optimization
+  
+  fact: pushq  %rbp
+        movq   %rsp, %rbp
+        subq   $16, %rsp
+        movl   %edi, -4(%rbp)
+        cmpl   $0, -4(%rbp)
+        jne    .L2
+        movl   $1, %eax
+        jmp    .L3
+
+  .L2:  movl   -4(%rbp), %eax     # move 'n' into %eax
+        subl   $1, %eax           # 'n-1'
+        movl   %eax, %edi         # %edi holds first argument
+        call   fact               # calls the 'fact' function
+        imull  -4(%rbp), %eax     # have fact(n-1) in %eax
+                                  # n * fact(n-1), store in %eax
+
+  .L3:  leave     # rsp = rbp; rbp = *rsp++;
+        ret       # rip = *rsp++;
+
+[!] things that chould go wrong
+
+    fact(-1)        # negative numbers
+    
+    fact(10000000)  # same logic as INT_MAX
+                    # stack will grow inifinitely
+                    # stack overflow, dump core if lucky
+                    # may mess with other structures
+    
+    fact(INT_MIN)   # will compute fact(INT_MAX)
+    
+    fact(50)        # will do 50 multiplications
+                    # get bottom 32 bits of correct answer
+
+
+    what to do with stack overflow?
+    --------------------------------
+    (1) we could check stack everytime we grow the stack
+
+        fact: # check for stack overflow here
+              pushq %rbp
+    
+    (2) use virtual memory with guard page on stack
+        trap when encounters guard page
+
+
+    suppose the 'fact' calls 'fact2', what can 'fact2' do to mess up 'fact'
+    ------------------------------------------------------------------------
+    (1) can modify 'fact's activation record
+
+          modify return address -> return to wrong place
+          can make 'fact' multiply wrong number
+          can loop forever
+          jump to any other location in program
+
+    how can fact mess up fact2?
+    ----------------------------
+    (1) put a random number value into %edi
+
+    (2) movl $0, %esp
+        jmp fact2
+
+        set stack pointer to 0, which is a forbidden region
+
+
+WE HAVE SOFT MODULARITY HERE
+-----------------------------
+requires that program trusts each other
+does not scale to large applciations
+
+[!] WE WANT HARD MODULARITY
+----------------------------
+(1) virtualization
+
+    + cheaper modularity
+    - unidirectional hard modularity
+      kernel is protected against application
+      application is not protected against kernel
+    - not as reliable as client-server approach
+
+(2) client server (hard modularity in both directions)
+
+    + client and server are both insulated from each other
+      not allowed to look into each others' memory
+    - expensive for small software, need something cheaper
+
+
+How to get virtualization to work?
+-----------------------------------
+operating system is the master program
+wants to run application under the kernel's control
+
+  simplest way to get virtualization to work
+  -------------------------------------------
+  write simulator for machine the applciation runs on
+    simulator can execute instructions under it controls
+    it carefully checks the instructions
+    refuses to execute any dangerous instructions
+
+    we could count instructions, when it reaches a limit --> return
+
+  simulators cane be useful for debugging programs on machines that
+  are not available or does not exist yet
+
+  THIS IS USUALLY TOO SLOW FOR PRODUCTION!
+
+  [!] We need a virtualizable processor
+      run in sandbox
+
+
+Second way of doing virtualization
+-----------------------------------
+throw application out and let it run
+but stop the program before it causes trouble
+
+app:            kernel:
++---------+     +----------+
+|  could  |     |          |
+|  cause  |     | reliable |
+| trouble |     |          |
++----|----+     +-----^----+
+     |                |   -----> not allowed
+     +----------------+
+
+kernel can mess around the application
+but application cannot mess around with the kernel
+
+divide instructions into safe and dangerous instructions
+---------------------------------------------------------
+safe instructions can be executed by application
+but if an application wants to execute dangerous (privileged) instruciton
+hardware executes a 'protected transfer of control'
+%rip becomes in the kernel!
+  need extra bit in processor that tells if in kernel or not (privileged bit)
+privileged instructions should be rare
+if they are rare enough, then we will run at almost full speed
+
+we have to protect memory with virtual memory techniques
+
+'movl' should work in most circumstances, unless it accesses privileged memory
+
+Layered architecture
+---------------------
+
+  +-------------+
+  | application |
+  +--------+    |
+  | kernel |    |
+  +--------+----+
+  |   hardware  |
+  +-------------+
+
+Classic way to enter the kernel
+--------------------------------
+execute a privileged instruction with a standard convention
+
+  int 128      # interrupt function
+               # execute system call
+
+x86 version
+------------
+  push ss      # stack segment
+  push esp
+  push eflags
+  push cs      # code segment
+  push eip
+  push error code
+
+trap vector : contains the value 128
+
+               kernel
+ trap vec     +------+
+  +-----+     |      |
+  |     |     |      |
+  |     |     +------+
+  | 128 ----> |      | <-- ip
+  |     |     +------+
+  |     |     |      |
+  |     |     |      |
+  |     |     |      |
+  |     |     |      |
+  +-----+     |      |
+              +------+
+
+  rti          # return from interrupt
+
+
+nowadays with x86 & x86-64
+---------------------------
+syscall instruction
+  
+  enters kernel
+  returns
+  looks as if we have new instruction to do wonderful stuff
+
+each system call has unique system call number
+we have no system call with more than 6 arguments
+6 arguments to system call:  rax     rdi  rsi  rdx  r10  r8  r9
+                           syscall #
+
+                   destroys rcx, r11
+                   result in rax
+                   returns a number between [-4095, -1] to indicate failure
+
+ssize_t read(int fd, void *buf, size_t s) { ... }
+
+Assume mechanism works, now what does user app developer see?
+--------------------------------------------------------------
+Model
+
+  processes: applications running in virtual machine atop operating system
+             each process thinks it has control of the whole computer
+
+Operating systems need to support this notion of processes
+  how to create processes and how to destroy them?
+-----------------------------------------------------------
+    create    pid_t fork(void);
+
+                  clones current process
+                  returns 0 to the child
+                  returns child process id in the parent
+                  returns -1 on failure (not enough resources)
+
+                    while(1) fork();  // fork bombs
+                                      // everybody starts creating
+                                      // children as fast they can
+
+              void _Noreturn _exit(int);
+
+                  this bypasses cleanup methods with 'void exit(int)'
+                  _Noreturn specifies that this method does not return
+                  changes calling convention, goes faster
+
+                   process object
+                  +--------------+
+                  |      pid     |
+                  |   fd-table   |
+                  |  exit status |
+                  +--------------+
+
+    destroy   pid_t waitpid(pid_t pid, int *status, int flags)
+                                                          0
+                                                       WNOHANG
+
+
+==============
+Jan. 20, 2016
+==============
+
+OS goals
+---------
+protection
+robustness
+utilization
+performance
+flexibility
+simplicity
+
+apply modularity
+  split into pieces
+
+apply abstraction
+
+  layered modularity
+
+    simple layers
+      kernel can access privileged instructions --> hardware
+      invoke kernel through system calls
+
+    can have more layers
+      apps
+      paging
+      I/O drivers
+      kernel
+
+    x86 supports 4 levels of abstraction in hardware!
+    Linux supports 2 layers, for simplicity and performance
+    OS X supports more than 2 layers
+
+    microkernel     small and efficient
+                    build abstractions atop of that
+
+
+  Unix applications
+
+  +------+ +------+ +------+
+  | app1 | | app2 | | app3 |
+  +------+ +------+ +------+
+  +------------------------+
+  |         kernel         |
+  +------------------------+
+
+
+Some types of system calls
+---------------------------
+fork()    clone a process
+          copy of process identical to original EXCEPT FOR
+
+            1. two processes have different process IDs
+               use   pid_t getpid(void)   to get the pid
+            
+            2. they have different parent pids
+               use   pit_t getppid(void)  to get the parent pid
+            
+            3. have different file descriptor tables
+               process has file descriptor table (maintained by kernel)
+               containing pointers to other parts of system
+
+                 /dev/urandom   not exactly random
+                                keeps entropy pool (scarce resource)
+                                random bits seed psuedo-random number generator
+
+                somewhere in system contains file description
+                file description is shared
+
+            4. accumulated execution time, CPU time info
+               counter of CPU time is reset to 0
+
+                 $time make
+
+            5. pending signals are not cloned
+               the pending signal belongs to the original process
+               child does not get the signal
+
+            6. file locks
+               file locks are advisory not mandatorily enforced
+
+execvp(char const *, char *const*)
+    file to execute  arguments
+
+          destroy/reuse a process
+          destroy everything except the above listed
+          destroy all variables, all program, instruction pointer, registers
+          we also have to destroy signal handlers
+
+            sample program
+            ---------------
+
+            bool printable(void) {
+              // run /bin/date
+              pid_t pid = fork();
+              switch (pid)
+              {
+                case -1: error(); // fork() fails, OS out of resources
+                
+                case 0: {
+                  static char const date[] = "/bin/date";
+                  if (execvp(date, (char const *){date, NULL})) {
+                    error();
+                  } 
+                }
+
+                default: {
+                  int status;
+                  if (waitpid(p, &status, 0) != p)
+                    error();
+                  return WIFEXITED(status) && WEXITSTATUS(status) == 0;
+                }
+              }
+            }
+
+
+            what if we pass in a file that we want the date to be printed in
+            -----------------------------------------------------------------
+
+              bool printable(char const *outfile) {
+                pid_t pid = fork();
+                switch (pid)
+                {
+                  case -1: error(); // fork() fails, OS out of resources
+                  
+                  case 0: {
+                    int fd = open(outfile, OWRONLY);
+                    if (fd < 0)
+                      error();
+                    if (dup2(fd, 1) < 0)
+                      error();
+                    if (fd != 1)
+                      close(fd);
+                    static char const date[] = "/bin/date";
+                    if (execvp(date, (char const *){date, NULL})) {
+                      error();
+                    } 
+                  }
+
+                  default: {
+                    int status;
+                    if (waitpid(p, &status, 0) != p)
+                      error();
+                    return WIFEXITED(status) && WEXITSTATUS(status) == 0;
+                  }
+                }
+              }
+
+
+other system call to spawn process
+-----------------------------------
+
+This idea was put into POSIX because fork and cloning processes take too much
+overhead beacause people think that we do not need to copy all data from a
+process for a simple operation.
+POSIX spawning processes are fast on Windows system POSIX emulator
+
+
+int posix_spawnvp(pid_t * restrict pid,
+                  char const * restrict file,
+                  posix_spawn_file_actions_t const * restrict file_acts,
+                  posix_spawn_attr_t const * restrict attr,
+                  char * const * restrict envp)
+
+nice(3) : 3 degrees nicer, less greedy, less CPU time, important for scheduling
+
+restrict keyword   all pointers have to point into different parts
+                   of memory in order to prevent aliasing
+                      char *strcpy(char * restrict dest,
+                                   char const * restrict src)
+
+Fun thing to try on SEASnet
+----------------------------
+# on one shell
+$echo $$
+  9731
+$kill -STOP $$
+
+# on another shell
+$kill -CONT 9731
+
+
+Orthogonality
+--------------
+system calls should be orthogonal to each other
+meaning that system calls should not be dependent to each other
+
+  posix_spawnvp      violates this on the grounds that there are two ways to
+                     set niceness, namely the call will do that and we could
+                     manually call nice();
+
+Files   are slow & unreliable
+        robustness & performance are essential
+
+          network
+          mouse                vs.           flash
+          keyboard                           disk
+---------------------------------------------------------------
+           strean                          random access
+ spontaneous data generation          request/response quickly
+          infinite                           finite
+
+
+Unix BIG IDEA     everything is a file
+                  use same system calls to access file
+                  less operations that apply to wide range of applications
+
+                    open      open("/dev/tty", O_RDONLY)
+                              open("dev/rdisk/b", O_WRONLY)
+                    close
+                    read
+                    write
+                    dup2
+                    lseek     lseek(fd, 27000, SEEK_SET)
+                                this does not make sense for stream devices
+                                this will return -1 and set errno
+
+                    locking
+
+
+Inter-Process Communication (IPC)
+----------------------------------
+want IPC that doesn't store data on files
+
+Pipes   bounded buffers
+        kernel allocates 4KiB buffer
+
+            process A     write("xyz");
+
+                          +-----+---+---+---+-----------+
+                          |     | x | y | z |           |
+                          +-----+---+---+---+-----------+
+
+            process B     read()
+
+        read/write directly from/to buffer, not involving disk
+        buffer is bounded so we do not need to worry about memory
 
 
 
+Race conditions
+----------------
+race conditions can occur when the behavoir of program can be dependent on
+when things get scheduled
+
+  inside sort.c
+  --------------
+  int create_temp_file(void) {
+    while (1) {
+      char name[1000];
+      sprintf(name, "/tmp/sort.%d", random());
+      if (open(name, O_RDWR | O_CREAT | O_TRUNC | O_EXCL, 0600) > 0)
+        return ;
+    }
+  }
+
+  int create_tmp_file(void) {
+    for(;;) {
+      sprintf(name, some_random_string());
+      if (open(name, O_RDONLY) < 0)
+        n = read(fd, buf, 100);
+      return open(name, O_WRONLY, 0600);
+    }
+  }
+
+  STILL HAS RACE CONDITIONS
 
 
+==============
+Jan. 25, 2016
+==============
+
+OS Organization Revisited
+How is this done internally?
+
+Processes & Files     these are all "fakes" (abstractions)
+                      "pretend" to have the following major resources
+                      
+                 ALU  <=====>  ALU
+           registers  <=====>  registers* (when running)
+        memory (RAM)  <=====>  physical memory**  (when running
+                                                   and when accessing it)
+                 I/O  <=====>  emulated/simulated
+      ---------------------------------------------------------------------
+              pretend          on real machine
+              syscalls         kernel implementation
+
+  Kernel Memory
+
+    +-----------------------------+
+  0 |                             |
+    +-----------------------------+
+  1 |                             |
+    +-----------------------------+
+  2 |                             |
+    +-----------------------------+  <----------  process table
+  3 |                             |               process descriptors
+    +-----------------------------+                   |
+  4 |                             |     +--+--+--+-|+--+--+--+--+--+--+--+--+
+    +-----------------------------+     |  |  |  || |  |  |  |  |  |  |  |  |
+  5 |                             |     +--+--+--+--+--+--+--+--+--+--+--+--+
+    +-----------------------------+        |     |           |     |
+                                           +--+--+           +--+--+ 
+                                              |                 |
+                                          copy of user-   file descriptors
+                                       visible registers
+                                           rsp rip
+
+                                  Handles
+                                    Linux/Unix: int is a handle for open file
+                                    Other OSes: pointer rather than int
+                                                struct filedes *
+
+------
+Pipes
+------
+contains file descriptor with indicator that it is a pipe
+along with a pointer to a bounded buffer used for communication
+
+What can go wrong with pipes?
+------------------------------
+
+(1) write to a pipe, it's fill, all readers are busy with something else
+
+    1. make buffer bigger (can exhaust kernel memory)
+    2. discard new data (cheapest method)
+    3. discard the old data currently in the pipe and substitute (loses data)
+    4. suspend writer until there is space (Linux/Unix)
+       try this shell script:  cat /etc/passwd | less   # will suspend
+
+(2) write to a pipe, but there are no readers
+
+    1. use solution to (1), writer may suspend forever
+       try this shell script:  cat /etc/passwd | :      # ':' is 'true'
+    2. kill the writer (SIGPIPE)
+       we could, optionally, ignore SIGPIPE
+       then 'write' fails with errno ESPIPE
+       then we have to check exit status of 'write'
+         
+(3) read from empty pipe with writers
+
+    1. make the reader hang and wait for writer
+
+(4) read from empty pipe with no writers
+
+    1. 'read' returns 0 (EOF)
+
++-----------------------------------------------------------------------+
+|                                                                       |
+| Pipe Notes                                                            |
+| -----------                                                           |
+| 1. cannot look into a pipe randomly                                   |
+|    if nobody is looking at a pipe, then nobody can ever look at it    |
+|                                                                       |
+| 2. named pipe in Linux                                                |
+|    similar to ordinary pipe with a name                               |
+|    $ mkfifo /tmp/pipe                                                 |
+|    anyone can connect to the pipe whenever they feel like it          |
+|    $ cat /tmp/pipe > out &                                            |
+|    $ echo Hello > /tmp/pipe                                           |
+|                                                                       |
+| 3. leaking pipes                                                      |
+|      int ok = pipe("fd") == 0;                                        |
+|      for (;;) {                                                       |
+|       something else                                                  |
+|      }                                                                |
+|                                                                       |
+| 4. while : ; do ; done | cat                                          |
+|      cat will hang                                                    |
+|                                                                       |
++-----------------------------------------------------------------------+
+
+Orthogonality Question
+-----------------------
+$ (
+    rm bigfile
+    grep interesting
+  ) < bigfile
+              ^
+              |
+      data removed here
+
+file descriptors access files at lower level than file names
+a file does not necessary need a name to be accessed in Linux
+
+take pipe() as an example, when we are creating a pipe
+we are creating a nameless file on the system
+a file won't be removed until all file descriptors pointing at are gone
 
 
+--------
+Signals
+--------
+
+Why do we need signals?
+------------------------
+
+(1) asynchronous I/O
+      aread()
+        returns right away and kernel keeps going with handling the data
+        get a SIGIO signal later
+
+(2) error in your code
+      divide by zero
+      floating point overflow
+      invalid instruction
+
+(3) impatient user of infinite loop (SIGINT)
+      ^C to end program
+
+(4) impending power outage (SIGPWR)
+      to do any saving before shutdown
+
+(5) to check for dying children (SIGCHLD)
+      p = waitpid(-1, &status, WNOHANG)
+      now we don't have to call this method every 100 milliseconds
+
+(6) user went away (SIGHUP)
+
+(7) kill the program SIGKILL
+    cannot be caught or ignored
+
+    while (fork())
+      continue;
+    $ kill -KILL 29316       # does not kill children
+    however this does not kill the shell bomb
+    $ kill -KILL -29316      # kills all children as well
+
+    int kill (int,       pid_t)
+            signal#   process descriptor
+                  if negative, then kill all descendentsas well
+
+(8) alarms
+    alarms are not inherited by fork() but by execvp()
+
+    alarm(20);
+    execvp("/bin/emacs", ...);     // this is inherited
+
+(9) suspending a process
+    $ kill -STOP 29
+    $ kill -CONT 29
 
 
+Siganl usage summary
+---------------------
+1. break out of a loop
+2. kill a process or suspend it
+3. timeouts
+4. important, unusual, unexpected events
 
 
+How to recieve signals?
+------------------------
+system call    sighandler_t signal (int,  sighandler_t)
+                                   signal   signal
+                                   number   handler <--+
+                                                       |
+                                          void (*sighandler_t) (int)
+                                        
+                                          int -> void
+                                         signal
+                                         number
 
+signals can introduce race conditions
 
+Example: gzip.c
+---------------
+$ gzip foo
+foo.gz
 
+  fd = open("foo", O_RDONLY);
+  fo = open("foo.gz", O_WRONLY);
+  while (compress(fd, fo))
+    continue;
+  close(fo);
+  unlink("foo");
 
+THIS CODE IS NOT ATOMIC AND CAN BE INTERRUPTED
 
+  static void cleanup (int sig) {
+    unlink("foo.gz");    // cleanup before exiting
+    _exit(1);            // exit status indicating failure
+  }
 
-
-
-
+  fd = open("foo", O_RDONLY);
+  signal(SIGINT, cleanup);
+    <-------------------------------- can have race here where we have
+                                      not created foo.gz yet
+  fo = open("foo.gz", O_WRONLY);
+  while (compress(fd, fo))
+    continue;
+  close(fo);
+  signal(SIGINT, SIG_DFL);  // use default signal handler
+    <-------------------------------- can have race here where SIGINT
+                                      and we have not removed 'foo'
+  unlink("foo");
 
 
 

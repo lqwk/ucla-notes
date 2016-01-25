@@ -325,22 +325,348 @@ Runtime analysis
    remove the overlapping ones         O(n)
 
 
+==============
+Jan. 14, 2016
+==============
+
+Suppose we have integers as follows, would like to sort in non-decreasing order
+
+    6 2 4 9 1 5 7 3
+
+Technique: reduce problem size
+           Famous Problem: reduce problem size from n to n-1
+
+Methodology: Divide and conquer
+             keep dividing until it is small enough
+             'glue' back together
+
+    Merging
+    --------
+    Two lists A and B
+
+      A       B
+    +---+   +----+        +----+
+  ->| 2 | ->|  6 |        |  2 |
+    | 4 |   | 10 |        |  4 |
+    | 7 |   | 11 |  --->  |  6 |
+    | 8 |   | 14 |        |  7 |
+    | . |   |  . |        |  8 |
+    | . |   |  . |        | 10 |
+    +---+   +----+        | 11 |
+      s       t           | 14 |
+                          | .. |
+                          +----+
+
+    runtime of merging O(st)
+    a better runtime analysis is O(s+t)
 
 
+    6 2 4 9   1 5 7 3               ----+
+                                        |
+    6 2   4 9   1 5   7 3               +----> divide
+                                        |
+    6   2   4   9   1   5   7   3   ----+
+
+    2 6   4 9   1 5   3 7           ----+
+                                        |
+    2 4 6 9   1 3 5 7                   +----> merge
+                                        |
+    1 2 3 4 5 6 7 9                 ----+
+
+    
+Runtime analysis of mergesort
+------------------------------
+T(1) = O(1)
+T(n) = 2T(n/2) + O(n)
+     = 2T(n/2) + cn
+     = 2[2T(n/4) + cn/2] + cn
+     = 2^2 * T(n/2^2) + 2cn
+     = 2^3 * T(n/2^3) + 3cn 
+     = 2^i * T(n/2^i) + icn
+
+find out for what values are  n/2^i = 1
+                           -> 2^i = n
+                           -> i = logn
+
+     = 2^logn * T(n/2logn) + logn * cn
+     = n + cnlogn
+
+The algorithm is O(nlogn)
 
 
+Closest pair problem
+---------------------
+Assume we have a set of points in a 2-D space
+
+Computing distances takes O(1) time
+
+Runtime
+--------
+n-1
+n-2
+ .
+ .
+ .
+ 1
+
+sum(i=1,n) i = n(n+1)/2
+
+Thus it takes O(n^2) time
+
+Find minimum value of list
+---------------------------
+12 4 1 9 11 6 18
+keep local variable min = 12
+search through each element and compare with min
+
+takes O(n) time, with n-1 comparisons
 
 
+==============
+Jan. 19, 2016
+==============
+
+Graphs
+-------
+
+G = (V, E)
+     |  |
+     |  edges (pair of vertices)
+     |
+     vertices / nodes
 
 
+Simple Graph (Basic version of graph)
+--------------------------------------
+Unweighted graphs: no weight on vertices/edges
+Undirected graphs: no direction on edge (unordered pair of vertices)
+No parallel edges (pair of vertices appearing multiple times)
+
+Using adjacency matrix to represent graph
+------------------------------------------
+each entry a(i, j) in matrix tells if there is an edge between
+vertices i and j, either 1 (there is edge) or 0 (no edge)
+
+for weighted graph: use weight instead of 0 and 1
+for directed graph: edge between i and j does not imply edge between j and i
+
+      1 2 3
+  +-----------
+1 | [ 0 0 1 ]
+2 | [ 1 0 1 ]
+3 | [ 1 1 0 ]
+  |
+
+matrix representation takes space (n^2 entries)
+fast for checking if nodes are connected
+
+Using linked list to represent graph
+-------------------------------------
+
+1 --> 2 --> 5
+2 --> 1
+3
+
+does not take as much space as adjacency
+basic operations take more time
+
+Path        Takes from vertex i to vertex j
+            simple path: no repeated edges and vertices
+
+Cycle       Path that takes vertex i back to i
+            simple cycle: no repeated edges and vertices (except first)
+
+Connected   If we can reach any vertex from any vertex
+
+Maximum number of edges: C(n 2)     dense graph
+Minimum number of edges: n - 1      sparse graph
 
 
+Breadth First Search (BFS)
+---------------------------
+search the close nodes first
+use a first in first out queue
+
+runtime: O(|E|)  -->  also O(n^2) (but not as tight)
+            |
+            number of edges
+
+'jump' between components if graph is not connected
+then runtime: O(|E|+|V|)
+
+Length of path: number of edges from beginning to end vertex
+
+Bread First Search Tree
+Connect the vertices that vertex i is searched through first
 
 
+Depth First Search (DFS)
+-------------------------
+search the nodes next first
+
+Edges that allow to see node for first time form a DFS tree
+Edges that allow to see node for second or more times are backward edges
+    - this implies cycles in the graph
+
+Give algorithm to determine if there are cycles in graph
+Run depth first search to determine backward edges
+
+runtime: O(|E|)
 
 
+Majority Problem
+-----------------
+Majority: person with more than n/2 number of votes
+either no majority or exactly one majority
+
+Count number of vote see if anyone has more n/2 votes
+
+Majority candidate must pass middle line
+runtime: O(nlogn)
+Find O(n) time algorithm to solve this problem
+
+Pick two different elements, get rid of them, until we have 2 left
+If they are different, then we have no majority
+If they are the same, then it is the majority
+In the end we should double check
+
+Keep local 'maj-candidate' variable, and count of votes
+
+2 3 2 2 2 3 2 1
+
+get rid of 2 3  -->  2 2 2 3 2 1
+
+maj-candidate: 2, 3
 
 
+* What about 1 1 2 2 2 3 3 ?
+
+
+==============
+Jan. 21, 2016
+==============
+
+Connected and Directed Graphs
+------------------------------
+this kind of graph has nodes where each node has a direction
+it may or may not have a cycle, which depends on direction
+
+Techniques for BFS and DFS are the same except the definition of 'neighbor' is
+different in that we have to follow the direction of the node instead of
+simply getting the 'adjacent' nodes.
+
+Directed Acyclic Graph      directed graph with no cycles
+                            widely studied, many applications
+                            use DFS to determine if there are cycles
+
+
+Topological Soring a Graph
+---------------------------
+must be a DAG
+there is no way to topologically sort a graph with a cycle
+
+    +-->a --> b --> c --+
+    |                   |
+    +-------------------+
+
+    no way to sort this graph topologically
+
+
+            a
+           / \
+          b   c
+          | \ |
+          |  \|
+          d   e
+
+ordering: a c b e d
+
+no precedence relationship between 'b' and 'c'
+
+In degree of vertex     ingoing edges of the vertex
+Out degree of vertex    outgoing edges of the vertex
+
+In-deg = 0  -->  Source     could have n-1 sources
+OUt-deg = 0 --> Sink        could have n-1 sinks
+
+Degree of vertex (undirected)   number of connected edges
+
+
+Topological Sorting Algorithm
+------------------------------
+for a DAG with n nodes, we can have n! (total ordering) orderings
+consider a graph with n sources and 1 sink
+
+in an ordering there is no pointer from a later node to an earlier node
+
+
+building the algorithm high-level
+----------------------------------
+generate a list of sources
+output a source
+remove the source and outgoing edges from the outputed source
+update the list of sources
+output a source
+
+... repeat ...
+
+
+details of algorithm
+---------------------
+
+(1) first go through all vertices and edges and update in-deg and out-deg
+
+          a ------------> b
+       in-deg = 0     in-deg = 0
+      out-deg = 0    out-deg = 0
+
+  whenever we find an edge, compute the in-deg and out-deg of the two vertices
+  in this case, in-deg(a)++ & out-deg(b)++
+
+  worst case analysis
+    O(n^2)       every vertex can be compared to (n-1) other nodes
+    O(|E|)       |E| = number of edges (tighter analysis)
+
+  'linear' algorithm means linear in the input size, nothing else
+  in this case we need algorithm linear in |V|+|E| (number of vertices & edges)
+
+
+(2) go through all vertices (n), check their in-deg and build list of sources
+    need data structure that inserts and extracts elements in O(1) time
+
+    since we have n nodes, this runs in O(n) time
+
+
+(3) when we look at a source, we decrement the in-deg of the pointed nodes
+    one single step could take n-1 comparisons with n-1 nodes
+    so this step would take O(n^2) time
+    or we could simply say that we make one move per edge, takeing O(1) time
+    since we have |E| edges, this takes O(|E|) time
+
+--------------------------------------------------------------------
+NP-complete problems : nobody knows how to solve it in linear time
+NP-hard problems     : also very hard (travelling salesman problem)
+--------------------------------------------------------------------
+
+Bipartite Graphs
+-----------------
+a graph is bipartite if I can take a graph and partition it into two groups
+and that the edges of the graph go only from group 1 to group 2 such that
+there are no edges between two nodes inside the same group
+
+(1) Can we draw any graph as this way? In essense are all graphs bipartite?
+    This cannot happen. Take the simplest example
+
+                        *
+                      /   \
+                     *-----*
+
+    Any graph with an odd cycle is not bipartite
+
+(2) Can we prove that any graph without an odd cycle is bipartite?
+    This is the key to this algorithm
+
+Use BFS in this case, and use its runtime analysis
 
 
 
