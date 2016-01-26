@@ -669,6 +669,87 @@ there are no edges between two nodes inside the same group
 Use BFS in this case, and use its runtime analysis
 
 
+==============
+Jan. 26, 2016
+===============
+
+f(n) = Omega(g(n))
+if there exists c, n0 such that
+f(n) >= cg(n) when n > n0
+
+    To improve the lower bound we have to increase it
+    To improve the upper bound we have to decrease it
+    Ideally we want the lower bound and upper bound to match
+
+f(n) = Theta(g(n))
+if there exists c1, c2, n0, n1 such that
+c1g(n) <= f(n) <= c2g(n) when n0 < n < n1
+
+
+Comparison Exchange Model
+--------------------------
+
+       Decision Tree
+                            a:b
+                          /     \
+                         /       \
+                        /         \
+                       /           \
+                  a > b             b > a
+                    /                \
+                 a:c                  b:c
+                /   \                /   \
+           a > c     a < c      b > c     b < c
+              /       \            /       \
+           b:c        *cab       a:c       *cba
+          /   \                 /   \
+     b > c     c > b       a > c     c < a
+        /       \             /       \
+      *abc      *acb        *bac      *bca
+
+
+# leaves >= n!
+height >= log(n!)
+       >= Omega(nlogn)
+
+T(n) = Omega(nlogn)
+     = Omega(n)
+
+
+Binary Search
+--------------
++------------+-+-----------+
+|            | |           |
++------------+-+-----------+
+1             x           n
+
+find k in the list, which is sorted
+
+Take the middle value x
+(1) x = k, done
+(2) x > k, get rid of right-half of list
+(3) x < k, get rid of left-half of list
+
+T(n) = T(n/2) + C
+     = O(logn)
+T(n) = Omega(1)    ->    trivial lower bound
+
+
+Circularly Sorted List
+-----------------------
+
+    9 11 14 2 5 7 8
+
+targets:  O(n^(1/2))  O(logn)  O(1)
+                      ^
+                      |
+                bet on this one
+
+compare middle of the list with the head and tail of the list
+if middle = target, done
+
+
+
 
 
 
