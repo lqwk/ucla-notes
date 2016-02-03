@@ -749,20 +749,86 @@ compare middle of the list with the head and tail of the list
 if middle = target, done
 
 
+==============
+Jan. 28, 2016
+==============
+
+Greedy Paradigm
+----------------
+Pick an element and stick with it, without looking at global solutions
+Usually local, not global, which takes more time to prove optimal
+Fast and efficient
+
+----------------------------------
+Example: time interval scheduling
+----------------------------------
+a set of time intervals
+any number of processors
+cannot change start/end time
+
+want to minimize number of processors
+
+Algorithm
+----------
+1. sort every interval according to start time
+
+At any random step
+
+    p3  |-----|
+    p2  |---| |-----|
+    p1  |------| |------|  <---   assgin to p1 and we're done
+                     ^
+---------------------|-------------------------------------
+                     |
+                 |------| |------|
+                    |--------| |-------|
+
+this is greedy because we assign a task to a processor and never change it
+
+How to prove this algorithm?
+-----------------------------
+Assume up to k'th step that the algorithm is correct but at k+1 step we assign
+a task to a wrong processor.
+Let's assume that we assign task i to p1 instead of p3
+Then for p1, the following assignments can be exchanged into p3 and will work
+Thus we have a contradiction and the algorithm is optimal
+
+----------------------------------
+Example: shortest path in a graph
+----------------------------------
+Suppose we have a weighted undirected connected graph with positive or
+negative numbers as edge weights
+Assume no negative cycles, because shortest path will be -INF
+Assume all weights are positive
 
 
+algorithm is greedy so we want to pick a path without changing it
 
 
+    S ------
+    | \
+    |  \
+    |   \
+    |    \
+
+Of all neighbors of S, we pick the shortest edge adjacent to S
+At any given time based on edges and vertices we have observed so far
+pick the minimum value
+Then we claim that this is the smallest
+Number of links in this algorithm is irrelevant
+
+time complexity
+----------------
+min t -> x                          n
+fix its distance                    1
+move neighbors of x to frontier     n-1
+-------------------------------------------
+total time complexity               O(n^2)
 
 
-
-
-
-
-
-
-
-
-
+Minimum Spanning Tree
+----------------------
+A tree has no cycles
+Remove edges from a graph to build a tree (span tree)
 
 
