@@ -961,15 +961,247 @@ If we do not meet deadline we will be penalized, but we still must finish
 (2) Prove that there is always one in-order solution (prove by contradiction)
 
 
+==============
+Feb. 16, 2016
+==============
+
+Divide and Conquer
+-------------------
+partition problem into two or more subsets recursively
+subsets should be balanced
+solve the subsets and combine back up into the original problem
 
 
+Problem: inverted pairs
+------------------------
+
+    3  1  2
+
+given a permutation of n numbers
+look at every pair of numbers, if not in order, count as 1, otherwise 0
+
+    1 + 1 + 0 = 2
+
+Have an obvious O(n^2) algorithm: look at each pair
+this algorithm is not necessary optimal if we simply want the count
 
 
+    1  2  3
+    \  \ /
+     \ /\
+     /\  \
+    3  1  2
+
+    count the crossings
+
+divide and conquer algorithm
+-----------------------------
+
+partitioning into two parts
+
+T(n) = 2T(n/2) + cn
+     = T(n/4) + T(3n/4) + cn
 
 
+1                                         n
++-------------------+ +-------------------+
+|        I(L)       | |        I(R)       |
++-------------------+ +-------------------+
+
++--------+ +--------+ +--------+ +--------+
+|        | |        | |        | |        | 
++--------+ +--------+ +--------+ +--------+
+
+divide into two equal parts recursively
+find internal inversions within each part
+
+    know I(L) and I(R), I(total) = I(L) + I(R) + I(LR)   --> want this fast
+
++---+-------+  +---+-------+
+| A |*      |  | B |*      |
++---+|------+  +---+|------+
+     i              j
+
+    +-----+---+---------------------+
+    | A B | * |                     |
+    +-----+---+---------------------+
+
+"merge" the two lists
+
+A and B are not ordered
+at "*", want to put i or j
+
+    +-----+---+---------------------+
+    | A B | i |  A'  i  B'          |
+    +-----+---+---------------------+
+
+i is smaller than "..." so we can count contribution of i and everything else
+i is in order with respect to A' i and B'
+
+    +-----+---+---------------------+
+    | A B | j |  A'  i  B'          |
+    +-----+---+---------------------+
+
+if j is the smaller one, j is out of order with A' and i
+so the contribution of j and everything else is |A'| + 1
 
 
+* computational geometry, relative new field but gained popularity
 
+consider a set of n points in two-dimentional space
+each point has x and y coordinate (x,y), assume L2 metric
+
+we would like to find closest set of points, and the distance
+
+we have O(n^2) pairs so finding minimum takes O(n^2) time
+
+
+Do plane-sweep, sort and sweep, O(nlogn) time
+
+Cannot do better than O(nlogn), 'element uniqueness'
+
+
+Try divide and conquer paradigm
+--------------------------------
+how to divide? distance to origin? according to x-axis?
+
+partition according to x-coordinates (start with simplest, then sophisticated)
+find x-point with half of points to left and half to the right
+
+On left and right subsets we know the closest pair delta(l) and delta(r)
+We have O(n^2) pairs for left and right subsets
+so doing exhaustive search takes O(n^2), which does not work
+
+Probably only the points close to boundary will contribute to this
+Want to consider a constant number of points
+
+
+    delta = min(delta(l), delta(r))
+
+    take line x in the middle, and take a region (x-delta, x+delta)
+    since if the points are out of the region
+      then they will be larger than delta, and will not contribute
+
+    look at generic point p on the left of x
+    there cannot be too many points within region
+      because delta is min of left and right
+
+    divide region into 8 boxes with each side delta/2
+
+         |
+         |
+         |
+         |
+         +---+---+  --+
+         |   |   |    |
+         +---+---+    +---> delta
+         |   |   |    |
+      p  +---+---+  --+
+         |   |   |    |
+         +---+---+    +---> delta
+         |   |   |    |
+         +---+---+  --+
+         |       |
+         | delta |
+         |<----->|
+         |       |
+
+         x
+
+Algorithm runs in O(nlogn)
+this does not apply for higher dimensions
+merging for high dimensions takes more time
+
+
+==============
+Feb. 18, 2016
+==============
+
+Dynamic Programming
+--------------------
+Partition problem into different groups
+groups normally overlap
+
+Generate many solutions then combine into final optimal solution
+
+
+Example: interval scheduling
+-----------------------------
+given a set of intervals
+find maximum number of intervals that we can schedule
+
+* plane-sweep (greedy)    choose first ending inverval
+
+this time each interval has a weight instead of unit weight
+find non-overlapping intervals with maximum weight
+
+
+determine if interval x is in an optimal solution or not
+assume we know the optimal solution before x
+
+case 1: x is in the solution
+        optimal solution for interval 0 ~ f(x)
+        is the optimal solution for 0 ~ s(x) + x
+
+case 2: x is not in the solution
+        optimal solution for interval 0 ~ f(x)
+        is the optimal solution for 0 ~ s(x)
+
+this time we do not need to prove because we do an complete case analysis
+
+compute value for each sub-interval using the routine described above
+
+This is an O(nlogn) algorithm if we do not assume sorting
+It is an O(n) algorithm if we assume any type of sorting
+
+
+Essential: complete case analysis & exhaustive search
+
+
+Example: Knapsack problem (fractional or integer)
+--------------------------------------------------
+Suppose we have items each with size Si and value Vi
+Suppose we have a bag with total size S
+
+
+Create table for size S
+
+                 1     2     3     .     S  
+              +-----+-----+-----+-----+-----+
+        I1    |     |     |     |     |     |
+              +-----+-----+-----+-----+-----+
+     I1 I2    |     |     |     |     |     |
+              +-----+-----+-----+-----+-----+
+  I1 I2 I3    |     |     |     |     |     |
+              +-----+-----+-----+-----+-----+
+
+
+For a generic cell in table
+
+    x
+     +-----+
+     |     | ----> j
+     +-----+
+        |
+        |
+        +---> i
+
+OPT(i, j) = max( OPT(i,j-1), OPT(i-Sj,j)+Vj )
+                  |           |
+                  |           |
+           x not in sol   x in sol
+
+runtime = O(nS)  --> n number of items
+                     S total size of bag
+
+this is not a polynomial time algorithm (called psuedo polynomial)
+S is independent of n, so it could be anything, could be n! if we wanted
+
+
+Problem:      given a collection of integers, is there a subset of these
+              numbers that add up to value S
+
+how things fit together
 
 
 
