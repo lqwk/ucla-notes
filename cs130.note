@@ -1,0 +1,267 @@
+
+Computer Science 130 - Software Engineering
+
+http://web.cs.ucla.edu/classes/spring16/cs130
+
+35%    final exam (open book/notes)
+15%    midterm (April 27) (open book/notes)
+40%    project
+2.5%   requirements homework
+7.5%   quizzes (closed book)
+
+June 5 drop-dead date, last day of instruction
+
+
+Paul Eggert background
+
+  student at UCLA
+  did not take software engineering because field did not exist
+  became faculty for 3 years and got bored
+  left university and started company -> crashed in 5 years
+  worked for second largest computer company in the world (Unisys, power of^2)
+  another startup -> 12 years (< 50 employees)
+  UCLA (after that)
+
+  back-and-forth between academia and industry
+
+==============
+Mar. 28, 2016
+==============
+
+1. real-world-ish project
+
+   build code that somebody really wants and does not have before
+   ideally it should have a client with requirements
+   interact with client and produce what client wants
+
+   outside clients, on/off campus, they will not know about software
+   ------------------------------------------------------------------
+   - IBM
+   - Aerospace
+   - Anderson School of UCLA
+   - Psychology Department
+   - Calthorp School
+
+   work in teams of 5, 2-3 teams/client
+   -------------------------------------
+   - cooperating, where two teams work on different parts of project and
+     integrate the whole project in the end
+   - competing, where different teams take different approaches to the same
+     project
+
+  student projects are also welcome
+  ----------------------------------
+
+  project open-source only, typically BSD, GNU, Apache, MIT licensed
+  -------------------------------------------------------------------
+
+2. engineering process and practice (higher-level)
+
+   how software engineering works
+   almost social-science
+   how engineers work with/against each other to build something that works
+
+   how this process works, or doesn't work
+
+   instead of dealing with software, deal with the methods and ways of
+   developing the software
+
+3. construction (lower-level)
+
+   know program you want to build, what are the methods and best practices for
+   building this piece of software
+
+   actual construction details of software
+   ----------------------------------------
+   - testing & debugging
+   - modularization techniques
+
+   may seem obvious but are actually not
+   may be confusing and have pitfalls
+
+   learn not to obvious things in 'obvious' things
+
+
+What is of software and why is it different?
+---------------------------------------------
+- set of rules a computer follows
+  
+  microcode in commercial chips is not included as software
+    hardwired into the CPU
+    cannot be changed at all
+
+  firmware is not software either
+    halfway between hardware & software
+    code that is tightly bound with hardware
+    low-level code + hard to change (ROM)
+
+    we can write very low-level code
+    this is software but very low-level code
+    calculate a random number
+
+      // x86-64 machine, includes instruction
+      // return a random number 0 ~ 2^63 - 1
+      // this works only on x86-64 Hasweller machine
+      long randnum(void) { asm ("RDRAND"); }
+
+
+  1. software is easy to change
+     ---------------------------
+     mutability of instructions
+     mutability brings forth engineering problems that make software hard
+
+  2. it's not manufactured in the traditional sense
+     -----------------------------------------------
+     don't have to worry about manufacturing
+     - type 'cp' or 'scp' to copy program and ship
+
+  3. it doesn't wear out
+     --------------------
+     don't have to worry about parts wearing out
+     parts fail -> lubrication/replacement/repair
+     can run program any number of times you want
+
+     hardware failure rate (bathtub curve)
+       break-in period: not manufactured correctly
+       wear out: finally breaks down because of time
+
+     software failure rate (spikey bathtub curve)
+       increases failure rate with each new release
+       decreases failure rate as bugs get fixed
+       failure rate increases overall as software gets bigger
+
+  4. there are no spare parts
+     -------------------------
+     if program crashes, replacing with same new copy will not fix it
+     
+     - maybe revert to previous version
+       gzip 1.7 on Solaris 10 with Oracle cc x86-64 crashes
+         configuration uses match.S  <-- machine code does not run, dumps core
+       gzip 1.6 on this platform (can be considered spare part)
+
+     - maybe substitute a different implementation
+       use pigz instead
+         different implementation of gzip compression algorithm
+         runs in parallel
+
+
+What is software engineering?
+------------------------------
+1960s: software was out of control
+       "software crisis": too many bugs in software
+       need discipline for software development
+
+F.L. Baver (1969): the [establishment] and [use] of [sound] [engineering]
+                   principles in order to obtain [economically] software that
+                   is [reliable] and works [efficiently] on [real machines]
+
+this definition did not include teamwork
+
+
+Shellshock Bug (reported 2014-09-24)
+-------------------------------------
+bug in bash
+
+  $ cp = '(){ ... }'
+  $ export cp
+
+this treated 'cp' as a function definition
+then running 'cp a b' would run the function above
+this bug had been in bash for 20 years
+
+San Diego Union (reported 1994-04-27)
+--------------------------------------
+DMV spent $44 million on software that doesn't work and will never work
+nobody was responsible
+
+wanted to convert circa 1960 database to modern relational database
+had bottleneck that could not handle the load that the DMV threw at it
+
+
+* Most software projects fail.
+
+
+Alternatives to software engineering
+-------------------------------------
+* add people to a late project
+  often not a good idea
+
+* outsourcing
+  outsource to another group
+  hire contractor, and let somebody else do the job
+  sometimes works, but 'distance' will be a problem
+  lose control of the software (intellectual rights access)
+
+* vague objectives and requirements constantly changing
+  "agile development"
+  sometimes works but often doesn't
+
+* fire and forget
+  get some code out the door by the stated deadline and never touching again
+
+* code is all there is
+  don't bother to write documentation becuase it is a hassle and probably
+  doesn't match the code either
+
+* voluminous PPM (Policies & Procedures Manuals)
+  software development process that documents everything
+  software development process takes much longer than it may take
+  good for developing reliable software
+  and proving that it is reliable
+
+
+software engineering           vs.           computer science
+----------------------------------------------------------------------
+practical problems of                        theory & methods that
+ producing software                            underly programs
+
+
+software engineering           vs.           system engineering
+----------------------------------------------------------------------
+just software plus                       software, hardware, firmware 
+ human interface                                process design
+                                                    policy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
