@@ -43,3 +43,9 @@ Qingwei Lan
 - Physics 4BL **Physics Laboratory for Scientists and Engineers: Electricity and Magnetism** (*Simon, M.D.*)
 - History 3C **Introduction to History of Science: History of Modern Science, Relativity to DNA** (*Porter, T.M.*)
 
+## Spring 2016
+- Computer Science 130 **Software Engineering** (*Eggert, P.R.*)
+- Computer Science 188 **Advanced Software Engineering** (*Eggert, P.R.*)
+- Statistics 100A **Introduction to Probability** (*Wu, Y.*)
+- Geography 2 **Biodiversity in Changing World** (*Willis, K.S.*)
+
