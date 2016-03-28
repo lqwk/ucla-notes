@@ -1204,6 +1204,199 @@ Problem:      given a collection of integers, is there a subset of these
 how things fit together
 
 
+==============
+Feb. 23, 2016
+==============
+
+Given 2 sequences, want to know how similar they are
+the ordering has to be the same
+want to align the sequences
+
+a b   a c a b d
+
+  b c a   a   d
+
+4 matches here, want to maximize matches
+
+
+    a b           a b
+     /            |
+    b a           a
+
+  one matching (optimal)
+
+   +-------------+ +-+ +----------------+
+S1 |             | |X| |                |    SIZE m
+   +-------------+ +-+ +----------------+
+                    i                   m
+
+   +-------------+ +-+ +----------------+
+S2 |             | |Y| |                |    SIZE n
+   +-------------+ +-+ +----------------+
+                    j                   n
+
+
+OPT(m,n)
+solve OPT(i,j) for every i and j
+assume we know OPT(i',j') for every i' < i and j' < j
+
+case 1: X = Y
+--------------
+OPT(i,j) = OPT(i-1,j-1) + 1
+
++-------+
+|     b | b
++-----|-+
++---+ |
+|   | b
++---+
+
+if we can match the first two b's then we can also match the second two
+b's without changing the optimial solution
+
+
+case 2: X != Y
+---------------
+
+OPT(i,j) = OPT(i-1,j)   ---+
+OPT(i,j) = OPT(i,j-1)      +--> take max of these
+OPT(i,j) = OPT(i-1,j-1) ---+
+
+do complete case analysis
+
+To find j, then we need i, i-1, and j-1
+
+      a   b   a   c
+    +---+---+---+---+
+  b | 0 | 1 | 1 | 1 |           a b a c
+    +---+---+---+---+             |   |      2 matches
+  c | 0 | 1 | 1 | 2 |             b   c
+    +---+---+---+---+
+
+runtime is O(mn) polynomial on m and n
+
+
+=============
+Mar. 3, 2016
+=============
+
+Ford-Fulkerson Algorithm (Maximum Flow Algorithm)
+--------------------------------------------------
+(1) Find s-t direct path and use the minimum capacity of the path as flow
+(2) Build a Residual Graph for every e = (u,v), f(e) => build a backward edge
+    (v,u) and same f(e)
+(3) Modify the forward edge to c'e = ce - f(e)
+
+        f(e)  <=  ce
+        *--------->*
+        u          v
+              |
+              |
+
+         ce - f(e)
+        *--------->*
+        u          v
+        
+        *<---------*
+            f(e)
+
+(4) Repeat until no more paths are available
+
+
+Bipartite Matching Problem
+---------------------------
+
+DEFINITION ONE
+
+A bipartite graph G(V,E) is an undirected graph that
+(1) nodes can be partitioned into two disjoint groups X,Y such that V = X U Y
+(2) each edge e in E has one end in X and one end in Y
+
+DEFINITION TWO
+
+Matching    a matching M is a set of edges M in E so that each node appears
+            only in one edge (at most)
+
+Problem     To find the largest matching set in G
+
+
+
+Build G' as follows
+
+(1) add edges (s,x) for all x in X
+(2) add edges (y,t) for all y in Y
+(3) assign capacity 1 to all edges
+(4) run maximum flow algorithm on G'
+
+*  the size of maximum matching in G' is equal to maximum flow in G
+*  the flow of each edge in G' after running the algorithm will
+   represent the edge values in G
+
+
+
+Airline Scheduling
+-------------------
+1 - Bos(6 AM) -> DC(7 AM)
+2 - Phil(7 AM) -> Pittsburg(8 AM)
+3 - DC(8 AM) -> LAX(11 AM)
+4 - Phil(11 AM) -> SFO(2 PM)
+5 - SFO(2:15 PM) -> Seattle(3:15 PM)
+6 - Las Vegas(5 PM) -> Seattle(6 PM)
+
+
+==============
+Mar. 10, 2016
+==============
+
+Solving element uniqueness problem
+
+transform A -> B (which we can solve)
+
+A <=p B (A is polynomial time transformable to B)
+
+  Upper bound transformation (algorithmic transformation)
+  if B can be solved in polynomial time, then A can be solved in polynomial time
+
+  Lower bound transformation
+  if A cannot be solved in polynomial time, then B cannot be solved in polynomial time
+
+
+Maximum-Clique Problem
+-----------------------
+Not solvable in polynomial time, has exponential solution
+
+
+Maximum-Independent Set
+------------------------
+independent set: set of vertices that no two of them are connected
+
+
+Graph Complement
+-----------------
+Whenever there is an edge in a graph, then there is not no such edge in the complement
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
