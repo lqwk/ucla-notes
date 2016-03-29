@@ -1,0 +1,387 @@
+
+Computer Science 188 - Advanced Software Construction
+
+http://web.cs.ucla.edu/classes/spring16/cs188-3
+
+Paul Eggert
+
+(1) Case studies of large programs
+    - learn by reading code
+    - learn by writing/changing code
+      * Eggert will supply one example: GNU Emacs
+        + Eggert knows it
+        + it has been around for some time
+        + it has multi-level abstraction
+          Elisp extensions (most of Emacs) (modify Emacs by adding modules)
+          C core (small but key part)
+      * We pick one
+        Chrome, GCC, Node.js, ...
+
+(2) One other homework, currently undecided
+    probably in micro-services area
+
+20%    GNU Emacs case study
+30%    personal case study
+10%    other homework
+15%    midterm (open book/notes)
+25%    final exam (open book/notes)
+
+June 5 drop-dead date, last day of instruction
+
+
+Eggert lectures schedule
+-------------------------
+  1  intro
+  1  Emacs tour
+  1  regular expression
+     Perl compatible regular expressions (PCRE)
+     case study involves adding PRCR to Emacs
+  5  micro-services
+  8  continuous delivery & DevOps
+  1  midterm
+  2  presentations
+  1  fun stuff (configuration + startup)
+
+
+==============
+Mar. 29, 2016
+==============
+
+--------------------------
+By next time read
+  Bug #23133
+  Cox on RE2 (parts 1-4)
+--------------------------
+
+gzip 1.7 (2016-03-28)
+
+--rsyncable: compressing files making gzip work better with program rsync
+  rsync : operates on blocks, compares and changes only the changed parts
+
+common in systems with 'deduplication'
+file system knows what is going on and does not maintain copies but keeps
+track that the copy exists
+
+  $ cp a b
+  $ ls -li a b
+
+    247963 -rw-r-r-       193261   a
+    257106 -rw-r-r-       193261   b
+
+                   inodes
+           +----+
+           |   -----------------+        actual data
++---+      +----+    +----+     |    +-----+------+----+
+| a -----> |    |    |    |     +--> |     |      |    |
++---+      +----+    +----+     |    +-----+------+----+
+| b ---------------> |   -------+
++---+                +----+
+
+
+file system will figure out that two files are the same and will not keep two
+copies in order to save space
+
+(1) since ~1990
+
+(2) gzip.c ought to parse input and invoke zlib to do the real work
+    BUT it actually has its own copy
+    should we fix this problem?
+    if we find a bug in either one, we would have to change both
+
+(3) is gzip the best compression algorithm we have?
+  
+      0. preserves data
+      1. smallest output
+      2. fastest compression
+      3. fastest decompression
+      4. doesn't leak data
+      5. uses least RAM compression
+      6. uses least RAM decompression
+
+    there isn't a single compression algorithm that dominates here
+    gzip came out at right time, was free, and good 'enough'
+
+
+GNU Bug 23133 (http://bugs.gnu.org/23133)
+------------------------------------------
+Built gzip on platform Oracle Solaris Studio 12.4 x86-64
+has its own C compiler cc
+
+  $ ./configure CC=cc CFLAGS='m64 -g'
+  $ make
+  $ make check
+
+    ./gzip < gzip.doc > t    ->    dumped core
+
+  $ dbx
+  $ (dbx) where
+
+    [1] 0x428885(--gibberish--)  <- nameless function with gibberish arguments
+    [2] deflate()
+    [3] zip()
+    [4] treat_stdin()
+    [5] main()
+
+possibilities
+  weird shared library
+  lambda functions (not directly possible in the C language)
+
+
+Eggert reproduced the same result on Oracle Solaris Studio 12.3
+
+deflate() was calling longest_match
+
+  static int
+  longest_match (IPOS cur_match) {
+    // C code here
+  }
+
+use gdb to disassemble 0x428885
+
+  pushl (----)
+  pushl (----)
+  # reasonable instructions #
+  # no ret! #
+
+looked at source code and saw guards
+
+  #ifndef ASMV
+
+  static int
+  longest_match (IPOS cur_match) {
+    // C code here
+  }
+
+  #endif
+
+tried to find where this came from
+ 
+  $ grep ASMV *
+
+    config.h #define ASMV
+
+  $ grep -r longest_match /usr/include
+
+  $ grep -r longest_match *
+
+    lib/match.c: longest_match: (no x86-64 version)
+    # this was inline assembly inside a C file
+
+      #if defined(i386) || defined(__i386) || ...
+        longest_match:
+              pushl (....)
+              pushl (....)
+              ...
+              ret
+      #endif
+
+here's what ./configure does
+
+  ./configure CC=cc CFLAGS='-m64 -g'
+  configure.ac  #Autoconfig input (automatically generates configure scripts)
+    if
+      cp lib/match.c  _match.S
+      cc -E -m64 -g _match.S > _match.S  # do macro expansion
+      cc -m64 -c _match.S &&
+      test -f _match.o
+    then
+      AC_DEFINE([ASMV])
+    fi
+
+here's the part that took the longest time for Eggert to fix
+
+  cc -m64 -E t.c
+    +--------+
+    | t.c    |
+    +--------+
+    | i386   |
+    | __i386 |
+    +--------+    output looked like input
+
+  cc -m64 -E t.S  <--  preprocessable assembler
+    +--------+
+    | t.S    |
+    +--------+
+    | i386   |  -->  1
+    | __i386 |  -->  __i386
+    +--------+
+
+here's how Eggert fixed the bug
+added '&& !defined(__x86_64__)'
+
+  #if (defined(i386) || defined(__i386) || ...) && !defined(__x86_64__)
+    longest_match:
+          pushl (....)
+          pushl (....)
+          ...
+          ret
+  #endif
+
+
+What can we learn from this bug report and fix?
+------------------------------------------------
+(1) 'make check' is your friend
+
+(2) asm version was originally important
+    maybe remove it now!
+    this has become a maintainence problem
+
+(3) gzip should use glib
+
+(4) must view your program at multiple levels down to the machine level code
+
+(5) important to also have a workaround
+    ./configure CC='cc -m64' CFLAGS=-g DEFS='-D NO_ASM'
+    # this is a hack to skip test for ASMV
+    # gcc -D NDEBUG  or  gcc -DNDEBUG
+
+(6) dump Solaris?
+         HP-UX
+         AIX
+
+
+this is common, ordinary in "real" software development
+--------------------------------------------------------
+Q: can this be taught?
+A1: yes, but only by doing, and it's not academic
+A2: yes, and there is a set of methods that survive technology change
+
+
+Central problems of software construction
+------------------------------------------
+this is not software engineering
+  one of the biggest problems here is getting requirements right
+
+(1) modularity (mechanism for dividing programs)
+    cannot keep program as one big piece, it simply doesn't scale
+    have to keep them in manageable pieces
+    we don't have a good enought handle yet on modularity
+
+(2) abstraction (good modularity)
+    not only break program into pieces but pieces are nicely orgainized
+    we can build a layer between low-level hardware and high-level machine
+    the line dividing this gives a pattern that is useful in solving problems
+
+(3) flexibility/composability (ease of building/conceiving new programs)
+    broken up program into pieces
+    other program can substitute pieces into original to build new program
+    similar to jigsaw puzzle
+    modules that plug together
+
+(4) autonomy
+    want different modules to operate on own without worrying about each other
+    want each piece to be manageable by a different crew
+    able to run each piece without worrying about other piece
+    important in cloud-based environment, keeping pieces in different 'clouds'
+    even important in monolithic applications, for multi-threading
+
+(5) portability (technology heterogeneity)
+    want code to survive changes in technology wihtout changing code too much
+    want application to work independent of technology
+
+(6) scalability
+    want system to work well regardless of problem size
+    want amount of work to grow roughly linearly O(N) with work size
+    important for scaling on the cloud
+    
+    vertical vs. horizonatal scale
+    horizontal: just add servers
+    vertical: have single server that is powerful
+
+    scaling with code size (solution, not problem here)
+    techniques to handle huge programs need to change
+
+(7) ease of replacement
+    want to avoid 'too big to fail' problem
+    which means there is one huge component that is 'too big' that if it fails
+    the whole program has to fail
+    depends too much on one single component
+
+(8) approachability/learnability
+    can easily learn the code and program structure
+    how easy to get new users
+    how easy to get developers
+    how easy to get operators
+
+(9) ease of deployment (getting improvements to users)
+    as we add new funcitonalities, how easy to push out fixes to all users
+
+(10) organizational alignment
+     not 'class boundaries map into behavior'
+     want to match developer groups to code they write, not object behavior
+     java: object hierarchy (behavior), package hierarchy (organization)
+     not just ownershp but shifting development resources
+
+(11) developers should not have to wait
+     wait to checkin a new version in order to compile
+     do not wait for a 'good build'
+     should not be waiting in order to start developing
+     give developers control over the version they use 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
