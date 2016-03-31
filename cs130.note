@@ -215,12 +215,191 @@ software engineering           vs.           computer science
 practical problems of                        theory & methods that
  producing software                            underly programs
 
-
 software engineering           vs.           system engineering
 ----------------------------------------------------------------------
 just software plus                       software, hardware, firmware 
  human interface                                process design
                                                     policy
+
+
+==============
+Mar. 30, 2016
+==============
+
+Presentations for projects
+
+1. The Aerospace Corporation (Mustafa Alammar)
+   Enterprise Information Systems/AppDev
+
+   Aerocube-7
+
+   Mission Assurance
+     making sure rockets launch successfully
+     consulting company
+     helping SpaceX certify rockets
+     launch national satellites
+
+     SpaceX, NRO Satellites, U.S. Space Systems, Cyber Security
+
+   R&D
+     space systems
+     spectral imaging
+     small satellites (micro/pico-satellites)
+
+   VAEROS
+     more on civil and commercial customers, NASA and SpaceX
+     'container inspection tests at Port of Oakland'
+     modeling and simulation
+     CI security
+
+   technology used: SQL, PHP, Java, HTML, CSS, JavaScript, AngularJS
+
+
+ Last year: orbital debris tracking
+
+   Center for Orbital Reentry & Depris Studies (CORDS)
+     tracking orbital debris
+     visualizing and tracking for all
+   
+   Junk Explorer
+     MySQL
+     Bootstrap
+     Google Earth/Maps
+     www.space-track.org
+     Digital Ocean
+
+
+ This year: cyber security
+
+   http://map.norsecorp.com/
+
+   develop site and server security intrusion detection, monitoring and more
+   develop plugins, applications, algorithms, or systems to detect and
+     defend against security vulnerabilities on pubilc-facing websites
+
+   Requirements
+   
+   (1) makes a measurable or testable difference in improving site security
+         DDoS mitigation of security vulnerabilities detected or eliminated
+         span detection/removal
+         success rate of 'hack' removal
+
+   (2) easy to use or install
+         if (application.needsConstantAttention == true)
+           application.uninstall
+
+   (3) reliable
+         if (application.falsePositiveRate > 0.1)
+           application.uninstall()       
+
+   (4) leverage existing solutions
+    
+        APIs
+          Akismet
+          ReCAPTCHA
+          CLOUDFARE
+      
+        fill in the gaps
+          usability
+          effectiveness
+          ease of installation
+          cost
+          compatibility
+      
+        remember the user
+
+
+2. Connexity
+
+   tech-driven marketing solutions company
+   connect reteailers to customers they care about
+
+   used to be called Shopzilla
+
+   Project: Publisher Challenge
+   -----------------------------
+   use the Shopzilla Catalog API to build own shopping website
+   expose shopping content
+   develop back-end and front-end components of shopping site
+   compete for most redirects and 'revenue'
+
+   Challenges
+   -----------
+   API integration
+   what data should your website use
+   determining what additional information would be useful
+   completing the flow-API -> backend logic -> front-end display
+
+   Technologies
+   -------------
+   enterprise level technologies
+     Java
+     Spring MVC
+   UI component
+   interaction with API
+
+   Logistics
+   ----------
+   mentorship from former cs130 students
+   direct experience with enterprise level engineering practices
+   setup guidelines
+   onsite development workshops
+   Git/Github
+   various methods of communication between teams and Connexity
+
+
+3. International Business Machines (IBM)
+
+   Project Lead: Gergana Markova   gmarkova@us.ibm.com
+   Dean Okamura    dean.cs130@gmail.com
+   Michael Stein   mastein@us.ibm.com
+   Neil Sahota     nsahota@us.ibm.com
+
+   team project planning
+   collaboration, networking
+   rapid decision making
+   open source community involvement
+   agile development
+   globalization awareness
+   design thinking and user experience
+   reserach and resources evaluation
+
+   Cool cs130 IBM projects
+   ------------------------
+   Barcode Wallet
+     -> Apple Pay
+   Volunteer snack delivery service
+     -> Uber
+   Jazz festival
+   Tutoring website enhancements
+
+
+4. Anderson School at UCLA
+   
+   cyber security for small businesses
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

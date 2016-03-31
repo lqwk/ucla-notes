@@ -319,34 +319,264 @@ this is not software engineering
      give developers control over the version they use 
 
 
+==============
+Mar. 31, 2016
+==============
+
+Central problems
+  modularity
+  abstraction
+  flexibility
+  autonomy
+  portability
+  scaling
+  org alignment
+  ease of deployment
+  ease of replacement
+  developers should not have to wait
+
+(12) ease of configuration
+     easy to set things up so that it operates correctly in that environment
+     should be automatic if possible
+     huge problems lie in configuration errors in practice
+
+(13) risk/stress of new releases
+     about to come up with new version and not know what to do
+     since new releases are so stressful and risky, do them more often
+
+(14) debugging
+     e.g. multithreaded applications (legendarily hard to debug due to race
+     conditions)
+     
+     1. repeating bugs
+     2. find the cause of the bug
+     3. fixing the bug
+
+(15) performance
+     performance improvement is a form of debugging
+     because bad performance is a bug
 
 
+Suppose you have a big software engineering project and it keeps growing,
+what can you do?
+
+(1) hire more programmers! (doesn't scale up)
+(2) hire better programmers!
+(3) improve the software process
+(4) improve the code itself
 
 
+construction techniques you already know
+-----------------------------------------
+;        sequencing        a = a + 1; b = a + 2;
+if       alternations
+while    iteration
+f(x)     functions & calls (recursion)
+         classes (templates, generics) encapsulate common behavior
+         protocols (derived from networking)
+         introspection ('self-aware' code, program can inspect itself)
+         serialization (converting to serial form)
+         multithreading (synchronization) break into parallel pieces
+         generators | implicit sequences
+         iterators  | implicit sequences
+         asynchronous funtion calls (callback, signals, asynchronous I/O)
+         code libraries (dynamic linking)
+         domain specific languages (mutate language to fit problem)
+         dependency tracking ('make')
+         version control + tracking ('git') (branching, merging, patching)
+
+code is closely related to data
+  sequencing is like struct { int x, double y }
+  alternations is like union {   }
+  iteration is like an array ----------
+  recursion is like a tree, stack
+  protocols match well to serialization
+  introspection such as in Java: class Class (tells the class type)
+
+other technology to cover
+--------------------------
+(1) macro processing
+    #define N 1024
+    case study in Emacs has several forms of macroprocessing
+
+(2) memory profiling and debugging
+    common problem in applications is memory hog chewing up too much memory
+    we profile it and find the cause of such huge memory use
+    Emacs has this too
+
+(3) byte-code interpreters
+    compile language into high-level byte-code
+    design particular virtual machine to run the byte-code
+    Emacs has this too
+
+(4) snapshotting/checkpointing + restarting
+    doing some computation, want snapshot of current state of computation
+    later we can start from the current snapshot
+    improve reliability of program
+    Emacs has this too
+
+(5) lazy evaluation
+    write a program but the interpreter does not execute the program eagerly
+    but it puts things off until it es 'forced' to execute (print)
+    Haskell uses this approach
+
+(6) junctions (Perl6)
+    (a | b | c | d) & (e | f | g)
+    system uses lazy evaluation
+    we have short-circuit evaluation a || b || c || d
+
+(7) static code analysis
+    gcc statically analyzes code
+    mundane but also focus of leading technology
+
+(8) metaprogramming & code generating
+    Emacs has this too
+
+(9) self-modifying code
+    Emacs has this too
+
+(10) automated testing
+     Emacs has this too
+
+(11) style checking
+     Emacs has this too
+
+what we probably won't cover
+-----------------------------
+(1) software engineering process
+(2) big data, big parallelism (don't have enough resources)
 
 
+Regular Expressions
+--------------------
+pattern   a(b|c)*bc
+string    dabbcbcbcdabc (4 different matches in same string)
+
+pattern   b(a|b|c|d)*c
+string    dabbcbcbcdabc (many more different matches in same string)
 
 
+software is instructed to find best match instead of all matches
+-----------------------------------------------------------------
+(1) leftmost
+(2) longest
+
+how to implement R.E. search
+-----------------------------
+from the theory (1960s Thompson)
+everything here predates Unix
+
+                  RE      recognizer (NFA: nondeterministic finite automaton)
+
+1 char            a       0 -a-> *1 (dot on state is a match)
+
+concat            XY        -> x0   |      -> y0
+                          0 -> x1   | -> 0 -> y1    (combine automatons)
+                            -> xn   |      -> yn
+
+alternation       X|Y     0 -> x0
+                            -> x1
+                            -> xn
+                            -> y0
+                            -> y1
+                            -> yn
+
+closure           X*
 
 
+covert NFA -> DFA (deterministic finite automaton)
+DFA has more states O(2^N)  ->  N: number of NFA states
+
+how to implement a DFA?
+------------------------
+two dimensional array
+rows are labeled by state number 
+columns are labeled by input symbols
+
+0 = no match in the array
+
+need runtime representation for accepting state
+match table of booleans indexed by state number
 
 
+interpreter loop:
+  int s = 1;
+  do {
+    c = getchar();
+    s = table[s][c];
+  } while (s);
 
 
+table is huge
+rows: O(2^N)
+cols: |SIGMA| + 1
+      number of symbols: ASCII     128
+                         UNICODE   2^20 and more
 
 
+problems in R.E. matching
+--------------------------
+(1) table can be too big
+
+    use lazy evaluation!
+    don't precompute entire table
+    just compute a row of this table only when the state is first entered
+    entries either is a state number, 0, or -1 (not yet computed)
+
+      if (s < 0)
+        s = compute(table+s)
+
+(2) getchar() might be slow
+
+    get from disk may have to wait for disk arm
+    use buffering
+    take entire string and put into RAM to access direcly
+      may run out of RAM (use finite buffer if data is large)
+
+      c = *p++  // p is ptr into string
+
+(3) code doesn't tell us where match was
+
+    if we find a success, we keep track of where that occurred
+
+      match_end = NULL;
+      match_start = p;
+      ......
+      if (match[s])
+        match_end = p;
+
+    loop continues but we have found at least one match
+    will keep track if we find a longer match
+    if match_end is non-NULL, then we have found a match
+
+(4) not addressing leftmost match problem
+
+    a. have a bigger loop that iterates over the string
+    b. prepend .* to expression X
+
+         .* X
+           ^
+           |
+           record match_begin here
 
 
+this is not efficient enough, suppose we do this
 
+  $ grep 'c' file
 
+easiest way in C:
+  
+  for (p = str; p < lim; p++) {
+    if (*p == 'c')
+      return 1;
+  }
+  return 0;
 
+faster method than this:
+  
+  return !!memchr(p, 'c', lim-p);  // C standard library
 
-
-
-
-
-
-
+    a word at a time (8 byte, say) and EXOR (^) with array of 'c'
 
 
 
