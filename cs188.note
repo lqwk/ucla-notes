@@ -579,6 +579,223 @@ faster method than this:
     a word at a time (8 byte, say) and EXOR (^) with array of 'c'
 
 
+=============
+Apr. 1, 2016
+=============
+
+Goal: add Perl REs to Emacs
+Initial hello to get started
+
+(1) searching for numbers
+(2) searching for integer ranges
+
+Emacs function (re-search-forward)
+specify a RE and will search forward until Emacs find a match
+
+  (re-search-forward "ab*c")
+
+add function 'num-search-forward'
+
+  number: [+-]?[0-9]+ (dependent on base)
+  hex digits: [a-f][A-F]
+
+  (num-search-forward 239)
+
+    xyabd239efg
+    ^  ->  ^
+
+  string representation is not necessary equal to chars in the source code
+  do matching with character matching in string, instead of matching number
+
+may want to do approximate search (number range search)
+  
+  (num-search-forward 239 [250])
+
+  (num-search-forward NUM &optional NUM2 BASE)
+  
+  two arguments will allow Emacs to search in range of two numbers, inclusive
+  BASE is between 2-16, default is 10
+  NUM2 and BASE are both optional
+  if there is overflow in text, just ignore
+
+    (num-search-forward 239)
+
+      abcd2399128928379827349822934def0239ghi
+                                      ^
+
+talking of overflow
+(this a good test case)
+
+  (num-search-forward most-negative-fixnum most-positive-fixnum)
+                      -2^62                2^62 - 1
+
+for a range search we can transform the search into the original RE functions
+
+buffers are named strings that we are editing
+buffers are big
+can change and extend buffers
+more heavy weight than strings
+
+visit a file
+takes all contents and writes to buffer
+when we modify file we are actually modifying buffer
+
+to find the current buffer position use
+
+  (point)
+
+this is where to start searching from
+searching will change points
+
+
+
+** worth 10% of Emacs grade, 2% of total grade
+   due Friday Mar. 8, 2016
+
+should be written in Emacs Lisp
+put in file num.el
+
+  (defun num-search-forward ...)
+
+this homework is inspired by 'agrep'
+
+to run the file num.el
+
+  M-x load-file RET
+  num.el RET
+
+
+RE search
+----------
+DFAs
+single-character
+fast fixed-string search
+
+  $ grep -F 'ab*c'  # simple string matching
+
+-F specifies that the string is not a RE but a fixed string
+this can be implemented faster than RE search
+
+Boyer-Moore string search algorithm
+------------------------------------
+1. searching for a string of known size
+   look at the last character of the pattern first
+
+   performance assumptions
+   (1) assume pattern is short, string is long
+   (2) matches are rare
+
+   p    abcdef
+   s    --------------------------------
+             ^
+             start from here and see if it is a 'f'
+
+2. when you see a failure, figure out where to jump to next
+   failures let you jump ahead
+
+   p    abcdef
+   s    --------------------------------
+             ^
+             suppose it's 'g', then we can jump forward 6 chars
+             suppose it's 'b', then we can jump forward 3 chars
+
+
+what can slow down regular expression searching?
+-------------------------------------------------
+bytes vs characters
+
+  BCDIC (BCD)
+    6-bit code (manufacture specific)
+    need translate table to copy from one machine to another
+  
+  EBCDIC (IBM)
+    8-bit code
+    wasn't quite standardized
+
+  ASCII (everybody else)
+    7-bit code
+    extra bit as parady bit for catching transmission errors
+    eventually 'won'
+    enough for most of English, but not all of it
+    missing "" '' with directions
+    can't do 'naive' with the i with two dots
+    not good enough for foreign languages, e.g. French
+    8-bit code (256 chars) would not work
+
+  ISO 8859-1 (8-bit ASCII extension)
+    covered many western European languages
+  ISO 8859-2
+  ISO 8859-5
+    cyrillic
+  ISO 8859-15
+    like -1, except for adding a Euro symbol
+
+  case-folded search
+    upper case and lower case dit not match in every encoding
+    case folding is encoding dependent
+    case folding is also language dependent
+
+unibyte encodings (behavior is language and encoding specific)
+  more than 256 chars
+  16-bit chars, 65536 chars (code points) (Unicode, 1990s)
+  font difference, language difference
+  the second issue is that 16-bit chars are not large enough
+  -> 32-bit chars
+
+byte-encoding for > 256 chars
+multibyte characters, single character but more than 1 8-bit char to represent
+
+(1) Shift-JIS
+    ASCII chars as themselves
+    if first byte is not ASCII, then next byte is treated as payload,
+    so this char is represented as a 2 byte char
+    however, second byte might be ASCII char, so when searching, we may not
+    have found the first byte but simply treated second byte as ASCII
+
+(2) ISO-2022-JP
+    switch character sets
+    ESC [JC]
+    have a lot of flexibility
+    still have same problem as (1) does
+    suppose we want to apply binary search to text
+    this is not possible for 2022 we have to look at all escape sequences
+    through the whole string to determine the character set
+
+(3) UTF-8
+    multibyte character has payload of trailing bytes (preceded by 10)
+    first byte preceded by 11
+    byte with leading 0 is ASCII
+    
+    +-+----+
+    |0|    |    ASCII
+    +-+----+
+
+    +--+---+--+---+--+---+
+    |11|   |10|   |10|   |  ordinary UTF-8 characters
+    +--+---+--+---+--+---+
+
+problems in UTF-8
+------------------
+(1) can be multiple representations for same character
+    strcmp doesn't work, since it works on byte level
+
+    UTF-8 simply disallows it currently
+    must use shorter version if it exists
+
+(2) encoding errors
+    +--------+
+    |10000000|   invalid encoding, not a text file!
+    +--------+
+       128
+
+** READ ABOUT mbrtowc
+
+
+
+
+
+
+
 
 
 

@@ -379,16 +379,104 @@ Presentations for projects
    cyber security for small businesses
    
 
+=============
+Apr. 1, 2016
+=============
+
+Jae Lee
+TA OH: 2-4 PM Wed.
+
+name
+skills/resume
+top 5 project preferences
 
 
+requirements gathering exercies
+--------------------------------
+Paul Eggert, senior FAA admin
+hire company with software developers to solve problem with software
+probably some hardware
 
+problem: drones
+make country air space safe, aircraft traffic
+worst: plane crash, loss of life
+dealing with drones because they are threat to air traffic safety
+report of drones within few meters of commercial aircraft
+afraid of crash and people get killed
 
+software solution to part of this problem
+manage drone issues
+in realitiy drones can be small to much larger unmanned aircraft
+want system to keep track of all of this stuff
+not too worried about large drones, who have lots of money
+most worried about small drones
 
+require drones operators to register their drones on website
+pay $5 for registration
+not every drone use has registered
+fine of operating drone without licence
 
+should be able to grab drone serial number and find owner
 
+have website with serial number with names and everything else
+really unorganized about this
+data sitting in server, which is not very useful
 
+senario: firefighters putting out fires in mountains, but spotted drones near
+facilities, so couldn't fly
+want to find the owner of the drone
 
+want software that gives information to law enforcement facilities when
+dealing with illegal drones
 
+information have to be private
+general public cannot find owner through serial number
+
+mostly concerned with airport safety but firefighting case is also important
+fire department can get FAA to establish a temporary no-fly zone
+
+make data available to LAPD if needed
+real goal to prevent drones from causing safety problems
+
+may want total control over drones in the future
+e.g. button that can safely land the drones and accessible to police
+
+should have audit trail for all accesses to data and entering of data
+
+should have images that can be matched to low quality images taken by pilots
+could try to identify the signal controlling the drone
+
+                  Wi-Fi
+cell phone   --------------->   controller  --------------->  drone
+                encrypted                      encrypted
+
+Wi-Fi (WEP) is easily crackable
+security on drones and controllers is terrible
+
+drones cannot be identified by radar
+want to add transponder so that if we point radar at them, we get signal back
+want transponder in database for indentification
+drone makers reluctant to add transponder due to weight and size
+users will take transponder down
+if this happens, will like to track down owner and quesiton why turned it off
+cannot take down the drones, which are hard
+
+will also work with custom-made drones
+such as, must install transponder
+
+priority: people goofing off flying into airports just to fool around
+
+should not lose data due to disk crashes
+
+new owner should register if bought from previous owner
+
+how to get serial number if we do not take drone down
+transponders come with serial numbers
+
+2-3 million dollars
+time frame 18 months
+
+want this to work on police laptops and cellphones
 
 
 
