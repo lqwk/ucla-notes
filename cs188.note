@@ -791,21 +791,205 @@ problems in UTF-8
 ** READ ABOUT mbrtowc
 
 
+=============
+Apr. 5, 2016
+=============
+
+#include <wchar.h>
+size_t mbrtowc (wchar_t *restrict pwc, char const *restrict s,
+                size_t n, mbstate_t *restrict ps);
+
+char const *restrict s       start of buffer
+              size_t n       number of bytes in buffer
+mbstate_t *restrict ps       multibyte conversion state
+                             converts to ISO-2-22 & etc
+ wchar_t *restrict pwc       result (16/32-bit)
+
+            s|<----------------- n ---------------->|
++------------+-+-+-+-+-+----------------------------+
+|            | | | | | |                            |
++------------+-+-+-+-+-+----------------------------+
+             |<----->|
+               bytes consumed
+
+               returns       total number of bytes consumed
+                             
+                             1-n  # bytes consumed
+                             0    NULL char (interface botch, use strlen?)
+                             -2   incomplete char
+                                  sequence of bytes that may be valid but
+                                  we have run off end of the buffer
+                             -1   encoding error (what to do?)
+                                  fall over and die
+                                  flags can say what to do with encoding errors
+
+                                  In RE matching:
+                                  (1) encoding error in string is never
+                                      matched with anything, encoding errors
+                                      in patterns are syntax errors
+                                  (2) they're always an error
+                                  (3) treating encoding errors as valid
+                                      extend to handle other encodings correct
+                                      encoding errors are characters
+                                      RE matching can match encoding errors
+
+* restrict: pointer with restrict: whenever code accesses pointer, the pointer
+  must be independent of others, that is to say, pointers should not point to
+  overlapping memory locations
+  important for performance
+
++----------+-+   +-+---------------+
+| 200 char | |   | |    300 char   |
++----------+|+   +|+---------------+
+   file1    |     |    file2
+            |     |
+         encoding error
+
+$ cat file1 file2 > file3
+
++-----------------+--+---------------------+
+|     200 char    |  |       300 char      |
++-----------------+--+---------------------+
+                  valid char    
+
+maybe file should be sequences of wchar_t? (MS-Windows)
++ simple encoding, decoding
+- more space (secondary storage, memory buffer space)
+- incompatible with ASCII, Shif-JIS, EUC
+
+mbrtowc is generic, should work for Shif-JIS or any encoding
+Locales: context for behaviors that were originally Unix English,
+         but need to be more general
+
+char *setlocale (int category, char const *locale);
+e.g. setlocale (LC_CTYPE, "en_US.utf8")
+                           language_country.encoding
+
+LC_CTYPE      iswalpha, [[:alpha:]]
+LC_COLLATE    strcoll, single letters in Spanish: ll, ch
+LC_TIME       date
+LC_NUMERIC    strtol_l (...,locale)
+LC_MESSAGES   strerror (errno)
 
 
+locale_t newlocale (int categories, char const *locale, locale_t base);
+
+CATEGORIES set of cateogry values
+starts off with BASE locale
+change the CATEGORIES in BASE to be the new LOCALE
+construct new locale that does that and return it
+
+locale_t uselocale (locale_t l);
+
+set the thread's locale to be 'l'
+assumes thread local storage (TLS)
+
+locales are heavy-weight and it would be good for the system to cache commonly
+used locales.
 
 
+different ways to specify regular expressions
+----------------------------------------------
+(1) globbing
+    
+    simple, fast, specialized for file names & directories
+
+    char        matches itself         a?b.h
+    ?           any 1 char             a?b.h
+    [abc]       a or b or c  (1 char)  a[a-z]b.h
+    *           zero or more chars     a*b.h
+
+      int glob (char const *restrict pattern, int flags,
+                int (*errfunc) (char const *, int),
+                glob_t *restrict pglob);
+
+      heavy-weight unbounded work
+
+      pattern    null terminated string, "a?b.h"
+      errfunc    error handling function callback
+      glob_t     struct {
+                   size_t gl_pathc;  //
+                   char **gl_pathv;
+                 }
+
+(2) POSIX BREs (Basic Regular Expressions)
+
+    most commonly used regular expressions
+    used by grep
+
+    BRE patterns      what they match
+    ---------------------------------------------------------------------------
+    c                 c
+    \c                always c evey if c is special (does not work in ranges)
+    .                 any char except NULL '\0'
+    [abc]             set of single chars (256 bits to represent)
+    [^abc]            negated set
+    [a-zA-Z]          ranges of characters
+    [ab\]             backslash not special
+    [ab-]             special if at beginning/end
+    [#--?]            starting with 'a' ending with '-'
+    [z-a]             * undefined behavior
+    [[:alnum:]#?:]    any alpha-numeric char, or any #?:
+    [abc^]            '^' is not special now
+    [[:alnum:]-#]     * undefined behavior
+    [[=a=]]           same equivalence class as 'a' (locale dependent set)
+    [[abc]            character set of [abc
+    [^]ab]            negated set of ]ab
+    XY                concatenations
+    \(X\)             X
+    X*                0 or more instances
+    X\{27\}           exactly 27 instances of X
+    X\{27,\}          27 or more instances of X
+    X\{27,39\}        27 to 39 instances of X
+    ^X                X but only at start of string
+    X$                X but only at end of string
+    \3                back reference to 3rd parenthesized subexpression
+    [[.a.]]           matches simply a
+
+    \([abc][def]*\)[^f]*\1
+
+    precedence: *
+                concatenation
+                anchors (^$)
+    ^ab*c
+
+    a^b  (error)
+    a\^b (valid)
+
+    
+    can be implemented with NFA-DFA
+
+    matcher implementations
+    simplest
+      backtracking matcher
+    DFA
+      must have an escape hatch to match \3
+      record earlier matches
+
+      sed s/\(a.*b\)a\(a.*b\)/\1q\2/
+
+      have to know where is the match
+      where are the submatches
+
+      longest-leftmost
+      pattern XYZ
+
+      +--+-----+-----+-----+
+      |  |  X  |  Y  |  Z  |
+      +--+-----+-----+-----+
+
+      should we maximize length of X or Y or Z
+      which alternate to return?
+      (1) X is greedy, find the longest X and apply recursively
+          leftmost first
+          "obvious"
+      (2) Z is generous, find the shortest Z
+          strange
+          most efficient
+          arguable POSFIX
 
 
-
-
-
-
-
-
-
-
-
+** READ Chapters 1-4 (Newman)
 
 
 
