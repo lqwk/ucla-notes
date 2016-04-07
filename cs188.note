@@ -988,8 +988,308 @@ different ways to specify regular expressions
           most efficient
           arguable POSFIX
 
-
 ** READ Chapters 1-4 (Newman)
+
+
+=============
+Apr. 7, 2016
+=============
+
+microservices
+--------------
+(1) small
+    so have to be focused and cohesive
+    doesn't take many programmers to develop and maintain (1-5 programmers)
+    purposely avoid the temptation to grow in complexity
+    keep it simple to keep focused and cohesive
+    can rewrite from scratch in 2 weeks
+    don't want it too small
+      we would spend time gluing together too many microservices
+
+(2) autonomous
+    have virtual CPU and all resources to run by itself
+    have separate processes or separate virtual machines
+    loosely coupled approach
+    usual software engineering practice
+
+(3) services
+    communicate via networking protocols
+    the communication/connection between microservices are called APIs
+    traditionally API is Application Programming Interface
+    in C: function signature + behavior
+    in microservices: can change to Application Protocol Interface
+    API design choice is crucial
+    API design takes most of the time
+
+(4) work together
+    hard part
+    want to break application up into pieces
+
++ can pick & choose technology
+  Java for some part
+  C++ for others
+  tricky to glue together in one process
+
++ can migrate 
+  migrate C++ to Python environment for scripting style
+
+- overhead: more development hassle
+  need more programmmers with knowledge in more than one language
+  more "ownership"
+  more operational hassle
+  more problems when it breaks down
+  operation staff has to know all the technology
+
++ service boundaries are bulkheads
+  cannot let one technology breakdown bring down other ones
+  they are not perfect
+  prevent buffer overrun in one module from directly trashing another's
+
+- networks have more forms of failure
+  adds complexity
+
++ can scale components more independently
+  suppose all parts of application live in one part of machine
+  memory management is not great and give to one component
+  other component may take it away
+  in microservices, all components can be controlled
+
+- more of a pain to monitor & manage resources
+  have more machines to keep track of
+
++ deploy more incrementally 
+  can deploy pieces one at a time
+  hard to do with monolithic version where we can deploy a new version
+
++ software architecture can match development organization
+  can split into teams and give one team one microservice to write
+  you have existing teams with existing expertise
+  you automate what you have
+
++ "lack of emotional attachment"
+  "egoless programmer"
+  for various non-technical reasons, programmers get attached to their code
+  microservices can avoid this problem
+  if you can throw away 2-week's work of microservices, it won't matter
+
+- deploying incrementally sounds good but it has more compatibility issues
+  if new service only adds to the protocol it may be good
+  but if we change the service, it may introduce new problems
+
+
+alternatives to microservices
+------------------------------
+(1) code libraries
+    standard to systems
+    formerly the principal way to glue together parts
+    (standard component of microservices)
+    microservices are built atop libaries, not replace it
+    libraries are a standard way to share code, DRY (Don't Repeat Yourself)
+    would want to keep using code libraries as much as possible
+
+(2) modules & plugins
+    someone has written a big application
+    some parts of application is essential to your application
+    application specific and/or programming language specific
+    Erlang world: reliable
+    plugins for browsers
+    in general, the coupling tends to be too tight
+    connection between modules are too picky, too many constraints imposed
+    e.g.  char const * restrict str
+    the constraint somestimes is a benefit so you would catch error at compile
+    and link time rather than run time
+
+
+software architects & microservices
+------------------------------------
+spend lots of time doing design
+famous architects design iconic buildings - which are immutable
+    Gehry    Disney Hall
+most software architects design buildings that are not perfect - mutable
+establishing the general framework for the building
+most software architects are town planners
+town planners have to design for growth since towns grow
+most software architects are editors of magazines
+articles are not written by editors but by individual authors
+
+
+architects must say
+--------------------
+(1) what are the strategic goals?
+    e.g. scale to a large number of students (some online)
+
+(2) what are your architectured principles?
+    want to reduce intertia
+    have consistent interfaces
+    don't put all your eggs in one basket
+      don't put all instances of students in one SQL instance
+
+(3) what design practices do we prefer?
+    prefer REST over HTTP
+    continuous deployment
+    minimize customization
+
+
+some benefits from standardization
+-----------------------------------
++ interface technology (APIs)
+  standardize so different pieces can talk to each other
+  not just API technology but also its spirit, the style
+
++ monitoring and logging
+  standardize so everyone can understand
+
+* write prototypes and exemplars
+  examples on how to hook stuff together
+  service template (description of a service)
+  you get to write code [!]
+
+people will want exceptions to your standardization
+you can evolve your templates
+there will always be exceptions in real-life
+
+
+build emacs from source code
+
+  $ git clone emacs
+  $ cd emacs
+  $ ./autogen.sh
+  $ ./configure [--enable-gcc-warnings]
+
+      -Wall -Wextra (gcc warning flags)
+      -Wunsafe-loop-optimizations       (issue warning if optimization on loop
+                                         if assumes integer overflow has
+                                         undefined behavior)
+      -Wno-unsafe-loop-optimizations
+
+        int i, a, b, c;
+        for (i = a; i <= b; c++)
+          x[i] = 0;
+
+        --> gcc issues warning because b can be INT_MAX
+
+        memset(x+a, 0, b-a+1)
+
+  $ make
+
+
+integration issues
+-------------------
+standard problem: how to change a service model
+advice: avoid premature decomposition
+
+API guidelines
+---------------
+(1) make things easy on the users
+    there are many advantages to have a simple API
+    it's ok to give up performance
+    it's ok to give up some features
+    JUST TO KEEP API SIMPLE
+    have as few config parameters as possible
+
+(2) hide internal details
+
+(3) changes to the service should not break uses
+
+(4) changes to the service should not add requirements to implementation
+
+
+integration options
+--------------------
+(1) shared database
+
+    relational database with particular schema, e.g architect specifies schema
+    schema changes can be a big deal
+    commited to the relational model
+    code replication among services
+
+             A   B   C   D
+            ---------------
+             |   |   |   |
+          +--+---+---+---+--+
+          | middleware code |
+          +-------+---------+
+                  |
+          +-------+---------+
+          | database server |
+          +-------+---------+
+                  |
+             +----+-----+
+             | database |
+             +----------+
+    
+    technical microservice
+    this kind of communication is slow since it has to go through whole DB
+
+(2) synchronous vs. asynchronous
+    
+    synchronous:
+    whenever you have a question to ask other part of system, you ask and block
+    the caller block until the operation is done
+
+      more traditional and natural on conventional uniprocessor
+      sequencing is easier to reason about
+      makes the code simpler
+      has signals (Ctrl-C) in production anyway
+      still have to be prepared for application to be terminated
+
+    asynchronous:
+    the caller initiates the operation but does not wait for it to be done
+    an operation can be "penidng" while the caller continues
+
+      can give better performance
+      users like it when code takes less time
+      applications don't hang!
+
+(3) decentralized vs. centralized control
+    
+    decentralized:
+    no central control
+    scales better
+    removed single point of failure
+    choreography
+      bunch of dancers dancing around stage
+    more autonomy, loose coupling here
+    harder to implement and harder too keep track of what's going on
+
+    centralized:
+    one coordinator
+    doesn't scale as well
+    orchestration
+      has conductor
+
+(4) remote procedure call (RPC)
+
+    1. technology?
+         SOAP
+         Java RMI
+    
+    2. format?
+         XML
+         JSON
+         plain text
+         binary
+
+    3. do callers know it's RPC?
+         yes, X Windows System
+         no, network file system (NFS)
+
+** READ Chapters 5-8 (Newman)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
