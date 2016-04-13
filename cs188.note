@@ -1277,7 +1277,157 @@ integration options
 ** READ Chapters 5-8 (Newman)
 
 
+==============
+Apr. 12, 2016
+==============
 
+personal project
+-----------------
+(1) survey existing projects & codebase
+(2) select one or more
+(3) read & understand their cores
+----> report (Previous work section of your paper)
+      20% project * 30% = 6% of total grade (2 weeks from today)
+
+
+regular expressions history
+----------------------------
+(1940s) McCullough & Pitts modeled neural networks as finite state machines
+(1940s-1950s) Kleene came up with idea of "regular sets"
+Implemented by K. Thompson for 'qed' before Unix (IBM 7090 assembler)
+compiled regular expression into machine code
+pattern match consisted of only running machine code
+to some extent Eggert thinks he 'cheated'
+
+How he did do it?
+------------------
+- threaded code
+    
+     ORD.  addq $3, %rax
+     ORD.  subl %rax, $rdi
+    call.  strlen
+
+  simply make functions for all ordinary operations and call it when needed
+
+    subl %rax, %rdi
+    movq (%rbx), %rax
+    addq $8, %rbx
+    jmp (%rax)
+
+  this will be slower for ordinary instructions since is costs more
+
+    Reverse Polish Notation
+
+    ostrlen (pop string, push length)
+    add1 (pops integer, push integer+1)
+          +--> use %rsp for the stack pointer 
+
+- indirect threaded code
+  
+  have extra level of indirection
+
+    strlen(s) + 932
+    postrlen --> fn descriptor --> machine code
+
+  advantage is that we can have machine code with arguments
+  generate "machine instructions" for a stack machine
+
+  advantage of bytecode
+  + can write portable ANSI C code to do this *p++
+  + smaller code & files
+  + better use of data cache
+  + portable to other instances, architectures
+
+
+Unix 'ed' = regular expressions
+'grep' same library as Thompson's library (g/re/p)
+--> BREs
+
+other regular expression needs
+awk, egrep
+--> EREs (harder to implement)
+
+POSIX ERE syntax
+-----------------
+ERE      matches
+c        itself
+.        any char except \0, \n (system dependent)
+[...]    same as BREs
+P*       0 or more instances of P
+P+       PP*, one or more instances
+P?       0 or 1 instance of P
+P{m}     exactly m instances of P
+P{m,}    m or more instances of P
+P{m,n}   m to n instances of P
+P|Q      either P or Q (key implementation of virtual machine)
+
+how to implement P|Q ?
+( --> push backtrack point (string location, machine instruction)
+P --> try to match P
+      if succeeds, jump around Q
+      if this fails, will pop and backtrack to try Q
+Q --> try to match Q
+
+((a|b)*)*(a|b) --> backtrack points grow
+
+POSIX API
+#include <regex.h>
+int regcomp regex_t *restrict preg, char const *pattern, int flags);
+
+REG_EXTENDED
+REG_ICASE
+REG_NEWLINE
+
+
+int regexc(regex_t const *restrict preg,
+           char const *restrict string,
+           size_t nmatch, // how many subexpressions interested in
+           regmatch_t pmatch[restrict], // array of matches
+           int eflags)
+
+rm_so  starting byte offset
+rm_eo  ending byte offset
+
+REG_NOTBOL
+REG_NOTEOL
+
+used for fine grain control of matches
+-1 if not participate
+
+Emacs EREs
+-----------
+X*?
+X+?   ==>  non-greedy match (shortest left-most)
+X??
+
+X\|Y
+\(X\)
+
+\(?:X\) ==> shy group (cannot be backrefered to)
+
+\`   only match beginning of string, match empty string in context
+\'   only match end of string, match empty string in context
+\=   matches point
+\b   word boundary
+\B   not a word boundary
+\<   beginning of word
+\>   end of word
+\_<  beginning of symbol
+\_>  end of symbol
+
+\sc  syntax is C
+\Sc  syntax is not C
+
+
+Emacs thinks of '\0' == 0 as just being the char NUL
+
+Emacs buffer
+
++-----------------+-------------+---------------+
+| start of buffer |     gap     | end of buffer |
++-----------------+-------------+---------------+
+                         |
+                         +---> + buffer contents
 
 
 

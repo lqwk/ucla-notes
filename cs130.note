@@ -773,29 +773,435 @@ Phases of Requirements Development
          test cases
 
 
+==============
+Apr. 11, 2016
+==============
+
+test driven development
+buggy spec, if we explore all possible test cases, we can fill in the spec
+test debug the spec before writing the code
+it is simpler to write tests than writing code
+now we can find the bugs in our spec faster
+
+do you use test driven development?
+we don't always practice what we preach. - Paul Eggert, Ph.D
+
+if we have real-time constraints, this needs plan driven development
+safety systems also requires plan driven development
+
+the development team gets bigger and more parts of the software are not under
+your control, and you can't continuously integrate.
 
 
+goals of software engineering
+------------------------------
+(1) understand your problem
+    much of the software engineering activity is devoted to finding the
+    problem that we are trying to solve, which is easiest to get wrong
+
+(2) design is crucial
+    design better be there when we are done
+    we should know how the software was designed
+
+(3) quality
+    software should always be high-quality
+
+(4) maintainability
+    software has to be something that we can fix, improve, refactor
+
+(5) work across a lot of domains
+    shouldn't be good for just one thing (web, realtime, embedded, system apps)
 
 
+software engineering principles (Hooker)
+-----------------------------------------
+(1) provide value to users
+    not always obvious
+
+(2) keep is simple stupid (KISS)
+    when in doubt, use the simpler approach
+    keep code as simple as possible
+
+(3) have an architectural vision
+    don't just look at little picture
+
+(4) plan to get hit by a bus
+    do not assume that your software project will have you on it
+    other peoples may take over it
+    somebody else may be maintaining your project
+    if it's important, always write it down
+    be ready to be replaced
+
+(5) be ready to change
+    designing and building software should not be like building the pyramid
+    it should be able to mutated
+
+(6) plan for reuse
+    when you build your code, assume that it will be successful and you
+    or other people will reuse the current code
+    write code that can be reused in other systems
+
+(7) THINK before doing
+    don't just code because it feels good to type keystrokes
+    think before you build the code, before it's too late
+
+Sommerville likes 1,4,6, and
+
+(8) worry about dependability and performance
+    obvious yet important
+    when you worry about dependability and performance, you are bringing to
+    the table software engineering strength
 
 
+Developers             Managers
+------------------------------------------------------
+I wanna code           ensure it does what user wants
+McConnell              Sommerville
+
+programming
+textbooks
+S.E. theory
 
 
+software construction
+----------------------
+
+        problem definition                 corrective maintenance
+        requirements definition
+      --------------------------------------------------------------
+                                  detailed design
+
+      construction planning          coding          integration
+
+                  unit testing     integration testing
+      --------------------------------------------------------------
+              software architecture            system testing
+
+(1) get your prerequisites right
 
 
+Plan to throw it away; you will anyhow - F. Brooks
+McConnel disagrees and thinks that we should make code work
+software is not authored in the usual way
+software is edited (like an encyclopedia)
+don't plan to throw the whole thing away
 
 
+collarborative development
+---------------------------
+(1) focus on cost-effective defect-detection
+    bugs will be the normal way of life
+    will spending more time fixing defects than writing code
+    reduce # of defects as many as possible
+
+(2) collarborative practices do best on defects resistant to traditional tests
+    can you break up the project
 
 
+pair programming
+-----------------
+pay 2 people's salaries to write one program
+  one programmer K has the keyboard and the house
+  one programmer J just kibitzes
+    find errors quickly, early when they are cheap to fix
+    if we wait to review, the cost goes up
+    reduces defect removal tests
+    have immediate feedback
+    back-and-forth is fast
+    requires 2 bus hits
+
+guidelines
+
+(1) match pairs
+    makes sure the two people are comfortable around each other
+
+(2) rotate
+    switch roles
+
+(3) Keyboard = tactics
+    Kibitzer = strategy
+
+(4) don't let the kibitzer relax
+    make pair programming sessions short
+
+(5) don't use it for everything
+    not all things are suited for pair programming
 
 
+formal inspection
+------------------
+gold standard for software review (IBM)
+
+(1) focus on defect detection not correction
+    formal inspections are expensive
+    hard part is mostly finding bugs
+    so focus on hard part
+
+(2) use a checklist to focus reviewers' attention
+    use different checklists and measure how well each checklist performs
+    checklist will depend on problem domain
+
+(3) reviewers prepare for meetings
+    have multiple reviewers for reviewing system
+    give code ahead of time to read independently and come up with questions
+    in the meeting, combine the reviews, big merge of question list
+
+(4) all participants have roles
+    moderator: requires most training, competent to organize reviewers
+    scribe: keep track of what is set
+    reviewers (2-5): reviews the code
+    author: usually doesn't participate, but also nice to have there
+    managers are not participants, inefficient
+
+(5) time and efficiency
+    100-500 lines/hour
+    < 2 hours/meeting
+    code reviews are very expensive
 
 
+code walk-through
+------------------
+code readign
+demos (dog & pony)
+"demo or die"
 
 
+software process
+-----------------
+the set of heuristics
+developers' heads (extreme approach)
+
+(lisp (code))
+lisp code in which developers are subroutines
+this doesn't work
+
+framework for what goes on in developers' heads
+dynamic perspective - phases, in some sequence
+  communications (requirements)/planning/modeling/construction/deployment
+practice perspective (umbrella activities)
+  - quality assurance
+  - reviews
+  - configuration management (how system/requirements are configured)
+  - project tracking (keep track of what's done/not done)
 
 
+plan driven vs. agile approach
 
+
+==============
+Apr. 13, 2016
+==============
+
+different engieers have:
+different terminology
+different world views on how things work
+different terforce
+  software engineers want to work software engineers get more jobs
+
+trading systems
+nobody is in charge
+if one system decides to change, others will have to deal with it
+
+conceptual desing --> procurement --> development
+
+
+software processes
+-------------------
+
+(1) plan driven
+    
+    (a) waterfall model
+
+        | requirements |
+        +--------------+
+                
+          | architecture |
+          |    design    |
+          +--------------+
+
+               | component |
+               |  design   |
+               +-----------+
+
+                     | coding |
+                     +--------+
+
+                      | unit testing |
+                      +--------------+
+
+                      | integration testing |
+                      +---------------------+
+
+                                | system testing |
+                                +----------------+
+
+                                  | acceptance testing |
+                                  +--------------------+
+
+        finish each part before doing the next part
+
+        have a strict client who knows what they want
+        then the waterfall model is suitable
+        the requirements won't change
+        it is inflexible
+        going to spend a lot of time twiddling thumbs and waiting
+
+    (b) incremental waterfall model
+
+        repeated, parallel waterfalls
+        before first version completes we start gathering requirements on next
+        version to minimize the time to release version 3
+
+    (c) spiral model
+
+        increments "spirally"
+        goes in organic way
+
+            
+              +---> plan -----> model ---------+
+              |                                |
+    +-> communication                   code <-+
+    |                                     |
+    +-----------> deliver <---- test <----+
+
+
+        intent: each level of spiral is a major rethink such that the previous
+                versions doesn't matter too much
+                do risk analysis before next spiral
+                can revert if necessary
+
+    (d) concurrent development
+
+        break task into subtasks and resolve dependencies to concurrently
+        develop on the subtask with multiple waterfalls and merges
+
+
+(2) agile developemnt
+    
+    rebellion against plans
+
+    promote: adaptability
+             self-organization (team will organize itself to get work done)
+             collaboration & communication
+             working software (new features) every two weeks
+
+    over: software processes
+          software tools
+          documentation
+          planning
+
+    developer teams need to select the work quantity
+                        
+
+XP (eXtreme Programming) framework activities/phases
+-----------------------------------------------------
+                              +---+ <- customer sets the value <-+
+planning => set of stories -> |   |                              |
+                              +---+ <- dev team sets cost        |
+                                       if > 3 weeks, split       |
+                                                                 |
+                                                                 |
+                                           can do high-value first
+                                            can do high-risk first
+                                   can make commitment to a series
+
+design => set of class designs -> CRC cards + spike solutions (running code)
+                                     |
+                       (class responsibility collaborator)
+
+            spike solutions to test out a risky part of solution early
+
+coding => code
+          unit tests
+          pair programming
+          refactoring
+          tinderboxes
+
+testing => purely to acceptance testing
+
+
+XP values
+----------
+communication - informal, verbal
+simplicity - don't over-engineer, code for today
+discipline - "courage" to say no to client to keep things simple for goals
+feedback - listen to clients, fellow developers, and software
+respect - respect for clients, fellow developers, and software
+
+downside of XP (from a plan driven guy)
+----------------------------------------
+lack of a formal design
+lack of a formal requirements
+volatile requirements (cause a lot of unnecessary work)
+
+downside of XP (from insider)
+------------------------------
+1. inertia - fighting
+2. refactoring /simplfying
+3. prioritization is hard (especially in large organizations)
+4. some developers aren't good collaborators
+5. some clients aren't good collaborators
+6. tinder boxes can't catch everything
+
+
+system engineering
+-------------------
+software engineering + everything else
+
+                        hardware
+                        networking
+                        databases
+                        documentation
+                        people
+                        procedures
+
+* systems nest
+
+figure out how to meld together components and build systems out of systems
+have multiple levels of nesting (at least 4 levels, usually 5 levels)
+
+[WORLD VIEW]
+  enterprise strategy
+  overall goal
+  how to survive for the future twenty years
+
+[Domain View]
+  business area desing
+  interested in making sure students graduate on time
+
+[Element view]
+  subsystem to help business to work
+  business system design
+  build tracking software and hardware to track students through degree
+
+[detailed view]
+  correspond to traditional values of software engineering
+  construction and integration
+
+
+system engineering phases
+--------------------------
+conceptual desing => system vision (feasibility + proposal)
+procurement => regulations, competition, budget, buy vs build
+development => e.g. waterfall
+operation => system in use, bug reports, fix things while system operates
+             flexibility + adaptability are key
+             assume mistakes will happen & system will evolve
+
+
+system modeling
+----------------
+Hatley-Pirbhai model
+
+
++------------------------------------+
+|           user interface           |
++---------+---------------+----------+
+|         |   processing  |          |
+|  input  +---------------+  output  |
+|         | maintainence  |          |
+|         |   self-test   |          |
++---------+---------------+----------+
 
 
 
