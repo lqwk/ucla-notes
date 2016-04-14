@@ -1430,6 +1430,236 @@ Emacs buffer
                          +---> + buffer contents
 
 
+==============
+Apr. 14, 2016
+==============
+
+core part of Emacs interpreter
+-------------------------------
+
+(1) central part is simple!
+(2) based on pointer tagging
+    Lisp: runtime type checking
+    C: static type checking
+
+    use a union
+           +------------+--------------+
+    ptr -> | type field |              |
+           +------------+--------------+
+
+    union {
+      struct type1 {int field; int val; } i;
+      struct type2 {int field; double val; } d;
+      struct type3 {int field; char buf[100]; } b;
+    } u;
+
+    if (u.i.field == 0) // int type
+    if (u.d.field == 1) // double type
+    if (u.b.field == 2) // buffer type
+
+    or we can use
+
+    struct {
+      int field;
+      union { int ival; double dval; }
+    } u;
+
+    +------+------+
+    | cons | flag |   bottom 3 bits flag indicates the type
+    +------+------+
+           |        +--------+--------+
+           +------> |        |        |
+                    +--------+--------+
+
+    now we can simply check the flag for type information here
+
+
+Lisp_Object type = EMACS_INT, normally
+  -DCHECK_LISP_OBJECT_TYPE
+wrong code: printf("%d", o); // Lisp_Object o
+  further checks your code, why not always do this?
+  bad performance, ABI conventions
+  gcc has a flag to bypass this and generate efficient code
+
+#undef CHECK_LISP_OBJECT_TYPE
+enum CHECK_LISP_OBJECT_TYPE { CHECK_LISP_OBJECT_TYPE = true };
+  just to not use macros
+
+sometimes we use the top 3 bits rather than the bottom 3 bits for flag
+helpful for 32-bit machines where objects can't be forced to 8-byte alignment
+limits the memory that can be allocated
+
+NaN tagging
+  Lisp_Object = double (native type for numbers)
+  use floating point to represent runtime object
+
+  +---+-------+---------------------+
+  | s |   e   |          f          |
+  +---+-------+---------------------+
+       
+       11111111 = inf, f = 0
+                  NaN, (pointer)
+
+# define lisp_h_XTYPE(a) ((enum Lisp_Type) (XLI (a) & ~VALMASK))
+# define lisp_h_XUNTAG(a, type) ((void *) (XLI (a) - (type)))
+
+XLI(l) = i
+XIL(i) = l <- Lisp_Object
+usage of this should be rare
+
+XCONS(o) -> cdr
+((struct Lisp_Cons *) (o - 2)) -> cdr
+
+struct Lisp_Cons {
+  Lisp_Object car;
+  Lisp_Object cdr;
+}
+
+# define lisp_h_XINT(a) (XLI (a) >> INTTYPEBITS) // shifts right by 2 bytes
+# define lisp_h_XFASTINT(a) XINT (a)
+
+most-positive-fixnum 2^61 - 1
+
+
+#include <stdint.h>
+#include <inttypes.h>
+
+intptr_t
+uintptr_t
+
+these two are wide enough to hold pointers
+optional
+nearly ubiquitous
+
+INTPTR_MAX
+INTPTR_MIN
+UINTPTR_MAX
+
+-DWIDE_EMACS_INT
+  then we are going to make EMACS_INT EMACS_UINT 64 bits
+  support large integers on 32-bit machines
+
+# define pI "l" // used in printf()
+
+* Use GNU Multiple Precision to make integers unlimited
+
+void *p;
+intptr_t = (intptr_t)p;
+void *q = (void *)p;    // we can get the original pointer back
+
+
+some machines have 256-bit pointers for security: more information about memory
+
+
+GCALIGNMENT = 8
+struct foo alignas(8) { } s;
+
+needs support from compiler
+                   asm
+                   linker
+                   loader
+for C11
+
+
+-DENABLE_CHECKING
+enables extra assertion
+
+# define eassert(cond) ((void) (false && (cond))) // check COND compiles
+# define eassert(cond)
+  (supporess_checking || (cond)
+  ? (void) 0
+  : die (# cond, __FILE__, __LINE__))
+
+# define eassume(cond)
+   (supress_checking
+   ? assume (cond)
+   : (cond)
+   ? (void) 0
+   : die (# cond, __FILE__, __LINE__))
+
+
+#define EXTERNALLY_VISIBLE __attribute__((externally_visible))
+to make property visible to other modules or globally (debugger)
+don't optimize away unused variables
+
+eassume(i < n)
+i < i + 1; // can be assumed to be true and can turn into true
+
+
+LISP_MACRO_DEFUN (XCONS, struct Lisp_Cons *, (Lisp_Object a), (a))
+
+a = 10006
+return 10000
+
+#define LISP_MACRO_DEFUN(name, type, argdecls, args)
+  INLINE type (name) argdecls { return lisp_h_##name args; }
+
+INLINE struct Lisp_Cons *
+(XCONS) (Lisp_Object a)
+{
+  return lisp_h_XCONS (a);
+}
+
+define an inline function same as macro XCONS
+
+#define lisp_h_XCONS(a)
+  (eassert (CONSP (a)), (struct Lisp_Cons *) XUNTAG (a, Lisp_Cons))
+
+using both functions & macros is for debugging
+we can call functions as part of program in debugger
+however we cannot call macros in the debugger
+
+  $ (gdb) p malloc(27) # allocate 27 byte and print pointer position
+  $ (gdb) p XCONS(o)
+
+
+INLINE struct Lisp_Vector *
+XVECTOR (Lisp_Object a)
+{
+  eassert(VECTORLIKEP (a));
+  return XUNTAG (a, Lisp_Vectorlike);
+}
+
+
+INLINE Lisp_Object
+make_lisp_ptr (void *ptr, enum Lisp_Type type)
+{
+  EMACS_UINT utype = type;
+  EMACS_UINT typebits = USE_LSB_TAG ? type : utype << VALBITS;
+  Lisp_Object a = XIL (typebits | (uintptr_t) ptr);
+  eassert
+}
+
+
+struct Lisp_Vector
+{
+  struct vectorlike_header header;
+  Lisp_Object contents[FLEXIBLE_ARRAY_MEMBER];
+}
+
+
+struct vectorlike_header
+{
+  ptrdiff_t size;
+};
+
+<stddef.h>
+size_t     sizeof(foo)
+
+ptrdiff_t
+holds difference between two pointers
+goes up to 2^63 - 1
+
+In C, unsigned arithmetic does not work as it intends to work
+
+unsigned u = 0;
+if (u < -1)
+  ouch();
+
+gcc -fsanitize=undefined
+
+
+
 
 
 
