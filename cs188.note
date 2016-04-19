@@ -1659,8 +1659,170 @@ if (u < -1)
 gcc -fsanitize=undefined
 
 
+==============
+Apr. 19, 2016
+==============
+
+how functions are defined in Emacs
+-----------------------------------
+
+Lisp_Subr
+
++---------------------+
+|    vector header    |
++---------------------+
+|                    *----> C function that implements
++----------+----------+
+| min_args | max_args |
++----------+----------+
+|     symbol_name     |
++---------------------+
+|   interactive spec  |
++---------------------+
+|         doc         |
++---------------------+
+
+(foo 3 4) => (foo 3 4 nil nil nil) optional arguments are filled in with nil
+
+would be nice to have generic 'apply' function  e.g. apply(f, 5, 0)
 
 
+static struct Lisp_Subr alignas(8)
+scons = {
+  (big #),
+  .a2 = "Fcons",
+  2, 2, "cons"
+  "cons", 0, 0 };
+
++---------------------+
+|    vector header    |
++---------------------+
+|                    *----> Fcons function in machine code
++----------+----------+
+|     2    |     2    |
++----------+----------+
+|                    *----> "cons"
++---------------------+
+|          0          |
++---------------------+
+|          0          |
++---------------------+
+
+DEFUN ("cons", Fcons, Scons, 2, 2, 0,
+       doc: /* Create a new cons, give it CAR and CDR as component, and return
+       it. */)
+
+interpreter eventually translates the comments into strings
+
+#define DEFSYM(sym, name)
+  do { (sym) = intern_c_string ((name)); staticpro (&(sym)); } while (false)
+
+(defun foo (a b &optional c d e)
+  (or (< i 5)
+      (> i 10)))
+
+'or' does short circuiting
+
+
+DEFSYM(Qnil, "nil")
+       (At, "t")
+
+{
+  union {
+      Lisp_Object valuel;
+      struct Lisp_Symbol *alias;
+      struct Lisp_Buffer_Local_Value *blv;
+      union Lisp_Fwd *fwd;
+    } val;
+  
+    Lisp_Object function;
+    Lisp_Object plist;
+    struct Lisp_Symbol *next;
+}
+
+
+integration options
+  
+  shared database
+  sync vs async
+  choreography vs orchestration
+  RPC
+
+Representational State Transfer (REST)
+---------------------------------------
+(1) "stateless"
+    server doesn't track the client's state
+    trying to decouple the client from the server
+    one less thing to go wrong, engineer
+
+(2) layered
+    client doens't care whether the server is primary
+
+        client
+           |
+        chache
+           |
+        server
+
+(3) chacheable
+    client able to run independently of the server
+    responses from the server state whether they're cacheable
+
+(4) code on demand (optional)
+    want the client to be easily changeable, programmable
+    JavaScript common
+
+standardish interfacce
+want to be flexible
+URIs [pointer] in HTML/XML/JSON (small set) [data]
+self-descriptive messages
+Hypertext As The Engine Of Application State (HATEOAS)
+
+  <album>
+    <name>Bachianas Briasteria</name>
+    <link rel='/artist' href='/volunteer'>
+  </album>
+
+server tells client what can happen next, via URIs in response
+efficiency is secondary
+
+(5) less automation than traditional RPC
+    RPC has more and better tools
+
+(6) some HTTP verbs not well supporteed
+    GET supported
+
+(7) performance (vs RPC)
+    latency
+    multiple requests
+
+(8) DRY (Don't Repeat Yourself)
+    have only one piece of code to do same function
+    add a user, change a password
+    for code & for data
+
+    diverging copies
+    versioning (change API)
+    - avoid it when possible (Newman)
+      changing the API is painful for all users and clients
+      + use good APIs
+      + use flexible API, can be easily extended without breaking existing uses
+
+          Old Emacs:   (current-time-string)
+      Current Emacs:   (current-time-string &optional zone)
+
+    - semantic versioning
+      major.minor.patenleve (3.5.2)
+      API that breaks old use
+      API but only extension
+
+    can be part of protocol
+    server can support multiple APIs at the same time
+    like HTTP: 1.0 -> 1.1 -> 2.0
+
+Postel's Law
+  accept liberally
+  generate conservatively
 
 
 
