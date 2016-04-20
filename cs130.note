@@ -1204,6 +1204,278 @@ Hatley-Pirbhai model
 +---------+---------------+----------+
 
 
+==============
+Apr. 20, 2016
+==============
+
+$ top
+
+  PID   CPU   CMD
+  ...   ...   ...
+
+
+describe a solution for the observer problem
+---------------------------------------------
+when a process changes, how do we notify the top program?
+notification of change efficiently
+want to decouble the observers from the doers
+
+
+AbstractSubject             AbstractObserver
+  addObserver()               notify()
+  removeObserver()
+  notify() {
+    for o in observers:
+      o.notify()
+  }
+
+ConcreteSubject             ConcreteObserver
+  getState()                  State
+
+can have serveral observers observing one subject
+
+
+what are Gang of Four of design problem
+----------------------------------------
+name
+description of problem
+description of solution
+consequence (pros & cons) of the pattern
+
+communicate with fellow software developers with short names
+
+
+what is the Liskov Substitution Principle
+------------------------------------------
+have a parent class P and child classes C1 C2 C3
+should be able to substitute C2 for C1 and the program should work the same
+
+  if (p instanceOf(C3))
+    print("got a C3!");
+
+this violates the Liskov Substitution Principle
+
+
+accidents vs. essence
+----------------------
+core of design is essence
+want to keep essence small as possible
+want as few accidents as possible
+
+
+call-and-return architectural style
+
+  subroutine calls
+  1 instruction pointer
+  more tightly coupled, fits in well with C++, Java
+
+message-passing architectural style
+
+  send message to server, eventually get a respones
+  N instruction pointers
+  loosely coupled, fits in well with Smalltalk
+  usually more advanced and fancy
+  trend is going more towards this way
+  * should write a programming language on this
+
+repository architecture (DB)
+
+  send data in to database and others can pickup whenever they want
+
+layered architecture
+
+  build applications in terms of layers on top of machine
+  each boundary gives abstraction level
+
+  +-----------------------+
+  |   Python libraries    |
+  +-----------------------+
+  |  Python interpreter   |
+  +-----------+-----------+
+  | OS Kernel | C library |
+  +-----------+-----------+
+  | machine instructions  |
+  +-----------------------+
+
+client-server architecture
+
+  may be attached to DB
+  connected to network
+  have a client attached to display, keyboard, mouse
+  clients make requests to server and get response back
+  server is in charge, responsible
+  clients can only issue requests
+
+event-processing architecture
+
+                 events
+                    +-+-+-+-+-+-+-+-+-+-+ 
+  outside world  -> | | | |*|*|*|*|*|*|*|
+                    +-+-+-+-+-+-+-+-+-+-+
+                                      event queue
+  event processing
+
+    for (;;) {
+      e = remove_queue();
+      handle(e); // this part must be fast
+    }            // could do some work, then signal an event!
+                 // to handle large events, partition and add to event queue
+
+
+distributed architecture
+-------------------------
++ increased availability & reliability & fault tolerance
+  high availability means system is up at most times (0.999 availability)
+  failures of individual components don't cause performance degradation
+  if one server crashes, system can keep running with other servers
+
++ scalability via concurrency
+  this comes up even in a non-distribute system
+  always an issue in all systems
+  common impression is that distributed systems will work better with more
+  servers, but this is not the case as systems do not always scale
+
++ openness
+  acheived through protocols
+  key way to glue together distributed architecture
+
++ resource sharing
+  can support many different kinds of services on the same platform
+  machines support many different users simultaneously
+  this saves money & resources
+  key driver behind distributed architecture
+
+BUT MUST CONSIDER THE FOLLOWING ISSUES
+
+- failure management
+  keep track which part of system is not working
+
+- quality of service (QoS)
+  how to specify quality of service
+    response time
+    requests/second
+
+- security
+  safeness of system
+  
+- transparency
+  do users know it's distributed?
+
+- how to scale
+  geogrpahy, where to put the servers?
+  manageability, a million servers -> configure by hand?
+
+- how open, really
+  specialized, proprietary protocols
+
+
+distributed architecture examples
+----------------------------------
+
+master-slave
+
+                  master
+  -------------------+-------------------
+  +-------+ +-------+ +-------+ +-------+ 
+  | slave | | slave | | slave | | slave |
+  +-------+ +-------+ +-------+ +-------+ 
+
+fat vs. thin client
+ 
+  fat clients contain lots of state, code, processing
+    less server load
+
+  thin clients have little state (stateless), code, processing (may have cache)
+    makes it easier to run on different platforms
+    makes app size smaller
+    security gets better since most of computation is done on server
+
+
+multi-tiered-client server
+  
+  layered architectur applied to client-server
+
+  browser
+   |
+  load balance
+   |       |
+  cache  cache
+   |       |
+  application server
+       |
+  database server
+
+
+peer-to-peer (P2P)
+
+  internet originally designed that there wouldn't be client or server
+  "clients" only (peers)
+  run mostly because peers need to interchange information with each other
+  without the need for central server (control catalog) to manage them
+  can have helpers (semi-centralized architecture)
+  security is a problem, trust can be issues
+
+
+software as a service (SaaS)
+
+  applications on servers controlled by other organizations
+  how to glue together lost s of little services
+  outside your control
+  rely on other services to get your service to work, what if it goes down?
+
+
+management + architecture
+--------------------------
+- buy vs. build (any architecture)
+- change management
+- risk identification
+- feasibility analysis
+- quality requirements ("over-engineering")
+
+
+construction decisions
+-----------------------
+- programming language
+  should have at command many different different languages
+  different languages are meant for different work
+
+- programming conventions
+  hard to change after initial coding
+    
+    $ foo --version  # should print version and exit
+  
+  can control this more easily than the language
+
+- programming tools
+  IDE (Eclipse)
+
+
+deisgn
+-------
+history of software design
+  modular program       1950s
+  top-down development  1960s
+  structured programming ("goto-less programming")
+    sequencing:  s;s;
+        choice:  if, case
+          loop:  while
+
+  Goto considered harmful, E.W. Dijkstra (1967)
+  first mentioned by D.ValSchorre (1962)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
