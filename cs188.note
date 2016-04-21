@@ -1825,12 +1825,254 @@ Postel's Law
   generate conservatively
 
 
+==============
+Apr. 21, 2016
+==============
+
+user interfaces
+----------------
+
++---------+  +---------+      +---------+          +---------+
+| Android |  | desktop |      | Android |          | desktop |
++---------+  +---------+      +---------+          +---------+
+      |         |                  |                    |
+------|---------|------------------|--------------------|----------------
+      |         |                  |                    |
+    +-------------+        +----------------+   +----------------+
+    | API gateway |        | mobile backend |   | mobile backend |
+    +-------------+        +----------------+   +----------------+
+
+mobile users are different class of users not just becuase they have touch
+screens but because they have different styles of using services
 
 
+stranglers & COTS (enemy) (large "legacy" systems)
+---------------------------------------------------
+
+large system
+  want little apps inside the large system
+  "SAP world"
+
+create strangler on top of large system
+  other apps talk to the strangler
+  talk to the large system
+  gradually move away from the large system
 
 
+mbrtowc
+  look at following bytes, finds out what character they represent
+  busted on MirOSBSD
+mbrlen
+  show how many bytes
 
 
+common tangle point
+--------------------
+legacy system
+  split apart into separate microservice
+
+    +---+  +---+  +---+
+    | A |  | B |  | C |
+    +-|-+  +-|-+  +-|-+
+      |      |      |
+    +-|------|------|-+
+    | database server |
+    +-----------------+
+
+shared scheme, loosely couped schema
+have table tangled together with foreign keys referencing each other
+try to partition table in a way that matches partition of application
+spend most of time on how to split up schema & data
+
+assign tables to services
+remove constraints
+migrate data to code 
+  including db procedures -> do on service side
+  including rarely changing data
+provide an API for what used to be a table
+database refactoring
+
+
+what about transactions?
+-------------------------
+modify multiple tables and see changes consistently
+
+(1) give up on traditional database guarantees of ACID
+    "eventual consistency" also called "optimistic replication"
+      some parts of data will get changs while some others won't
+    liveness but not safety
+      can query database and bogus results because not all are updated
+
+(2) compensating transactions when failures cascade
+    when a part of a transaction fails, revert the whole transaction
+
+(3) distributed transactions atop
+    unreliable substitute
+    two-phase commit
+
+(4) give up on consistency (even eventual consistency)
+    report problems to users when there's inconsistency
+
+federated databases
+--------------------
+(1) different organizations (not under our control)
+
+(2) differing efficienty properties
+
+(3) reporting
+    analyze one database, ship analysis off to other databases
+    intended nowadays for other programs to look at
+    generating an analysis of databases, to be sent to other services or
+    other parts of the applications
+
+(4) many report tools (grok SQL)
+
+(5) pulling
+    pulling data out of database
+    often slow (e.g. please give me copy of the database)
+
+(6) push changes/deltas
+    often faster
+    event logging
+      worried about changes & notifications of changes
+      intended not so much for saving but for analysis
+      low latency, summary of changes
+    backups
+      propagate replicas of database
+      want incremental backups
+      save everything efficiently
+      don't worry about analyzing data
+      high throughput
+
+
+    build microservice that combines marketing & sales department databases
+    
+    do schema translation
+    have different schemas (cust_name vs. cust_id)
+    write reporter app for each department that translates schema
+    written by third-party
+    have of reporting ecosystem with microsystems with tight coupling
+
+
+deployment of a new version
+----------------------------
+- early stages
+  test everyting
+  update everything simultaneously
+  single development team, single code repository
+
+  key questions
+
+  - what are your deployment artifacts? JAR, WAR, EAR, Python eggs, Ruby gems
+    should be an automated procedure to choose version, build & deploy
+
+    app-oriented artifacts
+      native to language
+
+    OS-based artifacts
+      application agnostic
+        RHEL: .rpm
+        Debian: .deb
+      + more mature, lower level
+      + more bulletproof
+      - must shoehorn into OS-specific form
+      - bound to OS
+
+    virtual machine artifacts
+      custom images each (for booting kernel)
+      run in a virtual machine
+      config/deployment migrations (Packer) to automate
+      "immutable server" (automatically-generated server)
+
+
+  - how to manage their operation
+    Apache configuration files
+    Nginx configuration files
+    many errors arise in configuration files errors
+    have configuration management tools
+      Puppet  'make' on steroids in Ruby
+        Chef  'sh' on steroids in Ruby
+
+
+build Emacs with optimization (on x86-64)
+Fcar   (car l)
+XCAR (in lisp.h)
+
+
+virtualization types
+---------------------
+(1)
+                        kern kern kern
+         apps      apps   vm  vm  vm
+        kernel    kernel  hypervisor
+          vm        vm        vm
+       +--------------------------+
+       |        hypervisor        |
+       +--------------------------+
+       |         machine          |
+       +--------------------------+
+
+(2)
+      app app   app   app app
+       HostOS  HostOS  HostOS       <- multiple copies of Apache, C library
+      +-----------------------+
+      |        kernel         |
+      +-----------------------+
+      |        machine        |
+      +-----------------------+
+
+(3) containers approach
+    e.g. LXC (basis for Docker)
+
+
+         app     app     app
+       guestOS guestOS guestOS
+      +-----------------------+
+      | host operating system |  <- one copy of Apache, C library
+      +-----------------------+  <- even more sharing
+      |         kernel        |     faster startup
+      +-----------------------+
+      |        machine        |
+      +-----------------------+
+
+
+services/host
+--------------
+(1) 1 service per physical host (simple, easy for ops staff target)
+(2) multiple services per physical host
+    - services interact (e.g. resource hogging)
+(3) 1 service per virtual host (more like physical, security, resource issue)
+
+PaaS
+  you specify the service
+  provider runs it, with service-level guarantee
+
+
+testing
+--------
+
+(1) test pyramid
+
+  10s       user tests
+  50s       service tests
+1000s       losts of unit test  (agile stuff)
+
+
+(2) quadrant testing
+
+                      user facing
+              +-------------+-------------+
+              |             |             |
+              |  acceptance |  expbratory |
+              |   testing   |   testing   |
+   support    |             |             |  critique
+   developer  +-------------+-------------+  prduct
+              |             |             |
+              |    unit     |   property  |
+              |   testing   |   testing   |
+              |             |             |
+              +-------------+-------------+
+                    technology facing
 
 
 
