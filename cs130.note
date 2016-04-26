@@ -1464,16 +1464,125 @@ history of software design
   first mentioned by D.ValSchorre (1962)
 
 
+==============
+Apr. 25, 2016
+==============
+
+design
+-------
+design is a heuristic process, not an algorithm
+heuristic: often works but sometimes doesn't, never works first time
+we should always have to iterate
+"wicked problem"
+you don't know statement of problem until you've solved most of it
+
+managing complexity, both essential and accidental
+keep both to a minimum to get it work
 
 
+Emacs bug
+----------
+C-x 8 RET LATIN SMALL LETTER A WITH ACUTE RET
+C-x 8 RET 201C RET
+
+but what about BED, which is "bed" and also a valid hexadecimal number
+had to find the solution first before Eggert figured out the problem
 
 
+important design concepts
+--------------------------
+(1) aspects
+    if you have something of a concern about the design scattered all over code
+      memory leaks, allocating memory all over the place
+      cache control
+      user authentication
+      internationalization
+
+(2) modularity
+    redo your process or your software or both so that you can isolate these
+    aspects/concerns into a small set of modules
+    suppose we have 1 line of code/module, then code can;t be understandable
+    should pick appropriate size for a module
+
+(3) information hiding
+    modules should not see each others' information
+    ensures functional independence
+
+(4) abstraction
+    build higher-level layers with lower-level layers
+
+(5) refinement
+    = anti-abstraction
+
+(6) patterns
+    common refinement methods
+
+(7) refactoring
+    you messed up the modularity, fix it 
 
 
+design patterns
+----------------
+high level informal relationship among
+  context -> problem + solution <- design force
+
+e.g. factory method pattern
+     context: lots of related classes need to create objects
+              not necessary the same classes
+     problem: standard framework to let each class decide on its own what
+              object to create (anytime)
+    solution: static method of a class C, returns C
+              but actual object may be a subclass of C
+design force: creation via inheritance
+              relatively simple; often evolves into fancier pattern
+              perhaps evolve into protocol pattern (prototype for delegation)
+
+              "hash-consing"
+              (hash-cons a b)
+              Java, C++ doesn't support this
 
 
+categories of design patterns
+------------------------------
+(1) creational
+    factory, prototype, singleton, abstract factory
+
+(2) structural
+    integrate existing into larger structures
+    container, adaptor, pipes & filters
+
+(3) behavorial
+    communication & responsibility
+    visitor, event listener, interpreter, model view controller (MVC)
+
+    model: entity, "business classes", modeling what's in user's head
+    view: boundary, manages how to present business to users (UI components)
+    controller: glues together model + view, manages units of work
 
 
+class + interface issue
+------------------------
+* beware erosion of abstraction
+  can often occur when cost of refactoring is too high
+  may be in environment where you have to talk to boss to add class
+
+* beware if
+    your class name is a verb
+      has only actions
+    your class has no methods (structs in C++)
+      no actions
+    your class does everything
+      not taking classes seriously
+
+class design suspicions
+------------------------
+* be supicious if you see:
+    repeated code in subclasses
+    base classes with just one subclass
+    base classes with > 10 subclasses
+    overriding methods that do less than what parent does
+    more than 7 levels of inheritance
+    multiple inheritan
 
 
 
