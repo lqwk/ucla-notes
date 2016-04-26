@@ -2075,18 +2075,253 @@ testing
                     technology facing
 
 
+==============
+Apr. 26, 2016
+==============
+
+testing & microservices
+------------------------
+lots of engineering here
+more effort on testing than on development
+still neeed even if we don't want it to be (agile, flexible)
+
+issues with testing
+--------------------
+(1) nondeterministic tests
+    multicore application, can still reproduce bug by carefully logging events
+    avoid nondeterministic tests when possible, prefer deterministic tests
+
+(2) too many, too slow, too expensive tests
+    need to prioritize tests
+      fail the most often first
+      cheapest test first
+      related to recent changes first
+      external priorities (user-driven)
+    can parallelize tests
+
+(3) maintaining losts of test cases
+    change behavior, lots of test case have to be updated
+    may be driven by tests cases
+    remember test cases are the servants
+      tail shouldn't wag the dog
+    can get rid of test cases or set low priority that they don't get executed
+
+(4) consumer-driven testing
+    client specifies its needs to the server in standard ways
+    server checks that it meets the client spec
+    can work fairly well if standardized way is supported by client & server
 
 
+testing & production
+---------------------
+in microservices, can blur into each other
+
+blue/green deployment
+client can run 1.2 or 1.3
+
+  +---------------------------+
+  |       load balancer       |
+  +---------------------------+
+      |                   |
+  +------+            +-------+
+  | blue |            | green |       <-- servers
+  +------+            +-------+
+    1.2                  1.3
+
+                     take offline
+                     for upgrade
 
 
+Netflix: canary deployment (lots of servers)
+pick one machine or a couple, run new version on that
+most of system still running old version
+measure both versions on real loads to make sure that new version works
 
 
+mean time to repare   vs.   mean time between failure
+
+   down                     up                      down
+|--------|----------------------------------------|-------|
+|<------------------------------------------------------->|
+                                                  |<----->|
+                       MTBF                          MTTR
+                     minimize           repair as quickly as possible
+                     breakage
+
+traditional: minimize breakage
+agile: repair as quickly as possbile
 
 
+testing nonfunctional requirements
+-----------------------------------
+latency, accessibility, load response, security
+- hard to write tests
+- per microservice (easier) or end-to-end (harder)?
+- performance tests are often the sore spot
+  * flaky-results in microservices area
+    this means that it may give very different results
+  * how to define "passing" the test
 
 
+monitoring microservices
+-------------------------
+S types of services on N nodes
+each with their own logs and their own monitoring APIs
+how to hook together?
+each log entry is specific to service type (and maybe to node)
+need to connect per-service IDs together
+correlation IDs = IDs generation by app, passed along to each service
+  by hook or by crook
+can end up with log silos
+  logs talk within themselves but not between themselves
+  log service notified by other logs
+    not as bad as database
+    but still have to modify service to use log service
+    microservices want to be independent
+  if we are using event routers we can "snoop" interservice messages
+
+what to monitor?
+-----------------
+CPU consumption
+RAM usage
+error rate (log actual errors)
+network traffic
+I/O (local)
+page faults (OS help needed) (program may be thrashing)
+
+* these are all app independent, can work on all applications
+* but we also need application-specific benchmarks
+
+response time
+logins
+configuration changes
+transactions
+
+monitoring & scaling
+---------------------
+(1) horizontal scaling
+    N hosts, each with S logs, how to merge?
+      timestamps not always in sync
+    scp from each host!?
+    ssh multiplexers
+
+(2) vertical scaling
+    may still have horizonatal scaling as well
+    many kinds of logs
+    want to glue them together
+
+    LinkedIn: 800 billion log entries per day
+              ~1 million per second
+              (~13 million per second at peak level)
+              3 GB/s data
+    
+    distributed publish/subscribe
+      commit log
+    Apache Kafka
+
+log visualization
+------------------
+lots of options
+daemon waiting for log event, connect to database for visualization
+
+testing your monitoring
+------------------------
+heartbeat, noop "I'm alive" event
+synthetic monitoring
+  put in fake events just to make sure monitoring approach works
+    simple, API oriented
+  semantic monitoring
+    high-level user action (still faked)
+    tests correlation IDs as well
 
 
+Conway's Law
+-------------
+Melvin Conway, rejected by HBR, published Datamation (1968)
+"How do committees invent"
+
+design tends to copy a committee communication structure
+
+~1990s Business Process Reengineering (published by HBR)
+"Don't pave the cow paths"
+
+
+    feature teams    vs.    service teams    vs.    internal open source teams
+-------------------------------------------------------------------------------
+     user-facing          technology facing         internal to organization
+Conway's original paper                                 open among teams
+
+orpahnced services
+-------------------
+not actively developed?
+don't get much use?
+Conway's Law in reverse
+
+scaling microservices
+----------------------
+should know scaling requirements
+these requirements are general (not single numbers, but some statistics)
+  latency/repsonse time
+  expected load
+  availability requirements
+  durability requirements
+    failure rate (lose data)
+    how long to keep data
+
+vertical scaling - get bigger machines
+horizontal scaling - get more machines
+  because performance
+          risk splitting (eggs in one basket problem)
+            common-mode failure (multiple virtual nodes on one physical host)
+             cloud providers know about this 
+               Amazon web services: availability zone
+          load balancing (avoid bottlenecks)
+            hardware
+            software
+
+                     +----------------+
+                     |     clients    |
+                     +----------------+
+                            HTTPS
+      -----------------------------------------------------
+            +---------------------------------------+
+            |             load balancer             |
+            +---------------------------------------+
+            +---+ +---+ +---+ +---+ +---+ +---+ +---+
+            |   | |   | |   | |   | |   | |   | |   |
+            +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+
+reliability testing for scaling
+--------------------------------
+e.g. at Netflix
+
+chaos monkey (turn off a server at random)
+latency monkey (slows dlown a router "")
+chaos gorilla (turns off all servers)
+
+antifragility toolbox
+----------------------
+timeouts
+  you need them
+  they're always "wrong"
+    too long: hang
+    too short: give up even if progress has been made
+  log & improve them
+
+circuit breaker
+  do a heartbeak to see whether service is available
+  if not, then shut off requests to "down" servers
+  we could also queue them (other issues such as queue lifetime)
+  retry service eventually
+
+bulkheads
+  circuit breakers plus partitioning
+  often times the circuit breaker should not have gone off
+
+
+MIDTERM CHAPER:  1-8, 10, 11 (up through bulkheads)
+NOT IN MIDTERM:  9 11 (idempotency on) 12
 
 
 
