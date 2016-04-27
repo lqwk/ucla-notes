@@ -1582,7 +1582,7 @@ class design suspicions
     base classes with > 10 subclasses
     overriding methods that do less than what parent does
     more than 7 levels of inheritance
-    multiple inheritan
+    multiple inheritance
 
 
 
