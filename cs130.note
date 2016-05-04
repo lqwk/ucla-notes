@@ -1585,6 +1585,184 @@ class design suspicions
     multiple inheritance
 
 
+=============
+May. 4, 2016
+=============
+
+validation tests whether code matches requirements
+  may be hard in practice because of communication problems
+verification tests whether system works correctly
+
+configuration management
+-------------------------
+baseline
+  there can be many baseline versions
+  may have many components, each comes in a version
+  have to pick version for each component
+  this is a baseline
+
+codeline
+  line of development of individual components
+  make sure it is reliable so we can build future systems on it
+  codelines aren't actually 'lines',
+  but rather acyclic graphs because of branching
+
+version control
+----------------
+not just code but also all aspects for program
+  requirements
+  tests
+this is often broken by developers
+
+pessimistic     clashes will be bad if two people work on same module
+                involves locking to avoid race conditions
+                works better with few developers & many modules
+
+optimistic      let two people edit same module, it probably works
+                if collisions happen, we do merging
+                do not avoid races, but can merge changes to resolve races
+                works better with many developers & few modules
+
+centralized     one repository, must change this repository
+                change does not exist until you change central repository
+                database-oriented
+                used by CVS ...
+
+distributed     no central repository
+                each developer has their copy of repository
+                copies are not necessary in sync with each other
+                used by git
+                problems in this approach
+                  copies are not synched, merging is needed to synchronize
+                  the patch becomes your programming element
+                  what about patches for patches
+
+git log timestamps are not in time-date order
+property of being distributed and de-centralized
+can import patch that was dated earlier than when patch was applied
+
+properties of version control
+  isolation
+  undo/revert
+  update (apply patch)
+  logs
+  backups - are key! test them!
+
+system building
+----------------
+development platform (record this in version control)
+build
+target
+
+automation is key
+shouldn't require many by-hand building
+
+
+automating builds
+------------------
+sh - Lisp - chef
+  series of commands to execute
+  special case of 'make'
+  this is easier to debug though (conventional)
+
+make [-j8]
+  dependencies
+  directed acyclic graph, explore the graph in parallel
+  different outputs every time we build
+
+* project specific
+
+autoconf
+  configure.ac (100 lines) --> configure (50000 lines)
+
+automake
+  Makefile.am (100 lines) --> Makefile (10000 lines)
+
+
+testing
+--------
+testing is unnatural!
+
+goal - success: find bugs!
+
+you typically cannot use tests to prove absence of errors
+exhaustive testing only works in small cases
+
+  bool not (bool b) { return !b; }
+  int add (int a, int b) { return a+b; }
+
+testing itself does not improve software
+it only exposes weaknesses
+
+tempting to under-test
+
+we should test everything!
+  code
+  specs
+  design
+  tests [!]
+
+testing is a strategy that you can apply to everything
+
+test-first programming
+when to test
+  late
+  early
+  often/always
+
+test driven development (TDD)
+  + unit testing
+  + converage
+  + don't need debugger! (GDB) (some truth to this)
+    small changes -> unworking program (easy to find bug)
+  + improves documentation
+    (1) the test case are the documentation!
+    (2) the act of writing down tests tells you what to write in documentation
+
+  - doesn't scale well
+  - doesn't work for graphical user interfaces (GUI)
+  - doesn't work well for non-deterministic programs
+    TDD originally was designed for single-core machine programs
+    coming from underlying system, multi-core races
+    GUI can be categorized as non-deterministic
+
+test tools
+-----------
+test data generators
+  exist to provide test data for other programs
+
+project-specific scaffolding
+  take down after building is built
+  supply tests
+  build the tester to generate tests
+
+coverage monitor
+  $ gcov on SEASnet
+  run you program and will show how many times each line of code got executed
+
+platform monitors
+  change platform in simple/complex way and see if it passes the same tests
+  $ gcc -m32 (generate code for x86 instead of x86-64)
+
+records + logs
+  log all tests you run
+  keeps a test database that keeps track of all passed/unpassed test
+  along with all its parameters and return values
+
+
+IEEE standard terminology (withdrawn)
+--------------------------------------
+error      mistake that developers make in their heads
+fault      manifestation of error, mistake in the code due to error
+failure    fault gets triggered in production and user sees it
+
+error -> fault -> failure
+error <- fault <- failure (debugging process)
+
+
+
+
+
 
 
 
