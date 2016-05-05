@@ -2324,6 +2324,262 @@ MIDTERM CHAPER:  1-8, 10, 11 (up through bulkheads)
 NOT IN MIDTERM:  9 11 (idempotency on) 12
 
 
+============
+May 5, 2016
+============
+
+software delivery
+------------------
+Deming (quality management approach in mfr)
+  build then inspect (not working)
+  build with quality in, then inspections should be trivial (sanity check)
+  believes second is cheap and gets production out fast
+  complicates model in order to bring cost down
+
+goals
+------
+high quality
+  value to users
+low cycle time
+  delay between you decide to make change and time users see the change
+  want to get feedback as fast as possible
+
+methods: frequent releases <-- automated releases
+
+feedback as soon as possible (must be acted on)
+------------------------------------------------
+each change triggers feedback
+early pipeline stages should be faster and more automated
+commit tests (first stage)
+  fast is first goal
+  critical (failure means rollback or revert)
+  portable & comprehensive (secondary goals)
+later tests can releax the above
+  tend to be closer to production environment
+
+continuous delivery
+--------------------
++ practice makes perfect
++ encourages flexible deployment
++ less stress, fewer errors
++ empower teams
+  testers can look at how system is built and come up with test cases
+  dive into code and fool around with it
+
+configuration management (CM)
+------------------------------
+prerequisites
+  version control
+  depenencies
+configuration management proper
+environment management
+  managing the environment the configuration runs upon
+
+goals
+------
+reproducibility
+  code, tests
+  operating system, patches
+  software stack (libraries)
+  applications
+small change in code
+  easy to immediately deploy
+track changes easily in both directions
+everybody gets it
+  don't need specialized training
+  this goal is not being reached ...
+
+version control
+----------------
+Git, Bitbucket, Perforce, Subversion, Hg
+
+map IDs to contents (actual data/code)
+  contents should be everything
+  put everything under version control
+    Makefile
+      obvious to version control
+    .gitconfig
+      dangerous to get wrong
+    .git/hooks/scripts
+      dangerous to version control
+      can break version control system beyond fix
+      can be used to enforce commit message structures
+    passwords
+      never include passwords in version control
+
+history
+
+metadata (data outside data/code) for changes
+  timestamps
+  commit message
+    arbitrary text
+    can be highly structured on per project basis
+  "meta VC"
+
+
+arguments against branching
+
+  defers integration problems until you merge
+  leads to combinatorial explosion with # of branches
+    can have many different merge trees O(2^N)
+  automated merging works "85%" of time
+  discourages refactoring
+   incompatible with merging
+
+arguments for branching
+
+  complex changes
+    add arbitrary precision arithmetic to Emacs
+    not just about Fadd(), Fsub() functions,
+      but about data structure on how integers are represented
+    struct Lisp_Bignum
+    change from EMACS_INT to XINT(0)
+    also have code out there that assumes integer overflow
+
+    break up big change into small changes
+    each a no-op normally
+    compile-time flag (normally off)
+    builds a broken system
+
+dependencies
+-------------
+third party libraries
+  /usr/lib64/libtiff-3.4.so
+  http:/redhat.com/.../
+  if redhat goes bankrupt or they change their url, then this will break
+
+git subprojects
+  projects in directory that does not belong to current project
+  specify source-code dependencies
+
+there is a tendency to use latest version (unreproducible)
+
+messy secure system
+--------------------
+(1) keep it all secret!
+
+(2) separate the system
+    make code/algorithms public
+    keep keys secret
+    minimize the part of the system that needs to be kept secret
+    if the system is leaked, in (1) you have to replace everything
+    where here you have to only replace the secret part
+
+managing configuration
+-----------------------
+myth: code is tricky, dangerous
+      put into version control, test it, ...
+      configuration is easy
+
+truth is that configuration files are simpler than code but just as dangerous
+maybe even more so, so should think about how to test configurations
+configuration processors are less bulletproof
+
+code is well supported by development environments
+configuration is ad-hoc so not well supported 
+
+how to configure configuration files?
+--------------------------------------
+put them in version control (good for simple systems)
+  can complicate things
+  developer repository (code)
+  production repository (configuration)
+autoconfiguration
+  determined from environment at startup
+  determined by a script at build time
+  determined while running (self-tuning)
+database or registry
+
+use cases
+----------
+move a database server
+  ideally change one thing in one configuration file and everything works
+promote a new application version
+  new configuration files/settings
+revert the above
+add a new environment
+  new developer can easily configure their workstation
+
+configuration defaults
+-----------------------
+suitable for developers?
+suitable for production?
+how stable between versions?
+
+testing configurations
+-----------------------
+build-time
+deploy-time
+run-time
+sanity checks
+  easy tests to catch errors as soon as we can
+
+environment management
+-----------------------
+avoid "works of art" (if you believe in continuous delivery)
+"It should be easier to generate a new environment than to repair an old one"
+  p.50 of book
+
+advantages
+  + replication
+  + debugging
+    easily communication because you have managed your environment
+    easy to recreate the same bug over and over again
+  + backups
+    just backup recipe, cheaper
+  + scaling
+    easy scaling
+
+keep track of
+  operating system
+  patches
+  libraries
+  configuration files
+  application code
+  network topology
+  external sources
+    configuration + sources
+
+  easy to forget things (should be exhaustive)
+  keep iterating to get as much of environment as you can  
+
+continuous integration predecessors
+------------------------------------
+nightly build of application
+  primitive form of continuous integration
+  do a 'make'
+
+nightly build + test of application
+  "tinderbox"
+  do 'make check' instead of 'make'
+
+rolling builds
+  have a server and its job is to do builds
+    while (true) {
+      git pull
+      make check
+    }
+  this is not fast enough either, we want to build per commit
+  let developer be in charge, not environment
+
+push approach
+
+  developers            commits              notifications
+    repository (.git)  ========>  build master  ======> email, web, IRC
+                                  |   |   |   |
+                             ---  build slaves --- 
+
+READ CHAPTERS 5, 6, 7?
+
+
+
+
+
+
+
+
+
+
 
 
 
