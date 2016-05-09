@@ -1760,14 +1760,234 @@ error -> fault -> failure
 error <- fault <- failure (debugging process)
 
 
+=============
+May. 9, 2016
+=============
+
+Should be only when project should be controlled
+
+consistency
+honesty
+inclusion
+respect
+
+project management danger signs
+--------------------------------
+if you see such danger signs, it may be time for you to leave
+
+* managers and developers avoid best practices
+  you know you should do test-first development but people don't want to test
+  if there is a general tendency to avoid this, then there is a problem
+
+* sponsorship was lost or never present
+  should have backing for this project (inside or outside)
+  but sponsor ran out of money or person left the company
+
+* project lacks people who have right skills
+  database administrators are working on user interface redesign
+
+* users don't want the software
+  annoying software (ads, security software)
+
+* business needs change
+  needs changed completely
+  idea for funding is no longer supported
+  different division argue with each other
+  VA Linux (huge boost on first day)
+
+* unrealistic deadlines
+  promised that software has to work by deadline
+
+* chosen technology changes
+  Android -> iOS
+
+* changes are managed poorly
+  ship out new release but forgot to inform customers about changes
+
+* product scope isn't defined
+  trying to nail down requirements but haven't figured out whether a
+  particular feature belongs to this project or another
+  take fuzzy area and figure out sharp line for project
+
+* developers don't understand the customer needs
+  writing code, given spec, but don't get why it's there
+  think you understand customer need but actually don't
+
+solution elements for software project management
+--------------------------------------------------
+(1) people
+
+    good staff + good environment
+    big enough screens in work station
+    fit dev roles to personalities
+      - outgoing (love people!)
+        talk to customers, negotiate
+        manage a project
+        have the best correlation with software quality
+        people skills are important in building high quality software
+      - task oriented (love to program/building stuff!)
+      - self oriented (what's in it for me?)
+      - neuroticism (how well am I doing?)
+      - openness (open to new ideas)
+      - argreeableness (how like to agree with others)
+        -> job satisfaction
+      - conscientiousness (treat tasks seriously)
+        -> job satisfaction
+      - autonomy
+      - meterdependency
+      - conflict
+    provide motivation, coordination, organization into teams
+      toxic teams (weakest link dominates)
+      jelled teams (people working together, strong links fill in weak links)
+    
+    people have different productivities
+    order of magnitude difference in productivity
+      5:1   ratio, even in large teams
+      25:1  ratio for individuals
+
+    Pareto principle (80-20 rule)
+      have 80% contribution from 20% developers
+      hire the 20% of the developers
+      find the motivation the other 80% need
+
+    Maslow motivation hierarchy
+    ----------------------------
+       self-realization
+         esteem needs
+         social needs
+         safety needs
+
+      safety needs      "do better or you're fired"
+                        simple, crude, hopefully not needed
+                        not that effective
+                          get worried, apply funny tricks to seem to do better
+
+      social needs      social networking, likes meetings
+                        we have cities so people can meet with each other
+
+      esteem needs      recognition by peers that you're doing good work
+                        get the corner office, better pay, awards, nice parking
+
+      self-realization  self-help, responsibility
+                        realize that they can develop by themselves
+
+(2) product
+
+    * bound the scope
+      huge part of product management
+      draw line between product and non-product
+    
+    * decompose the problem into subproblems
+      draw line between subproducts
+
+(3) process
+
+    organize and control by which your software is being developed
+      easier than people management
+
+    * select appropriate process model
+      don't choose agile method for air-traffic control
+    
+    * adapt the generic model to specific environment + projects
+    
+    * WWWWWHH (Boehm), also W^5HH
+      who  what  when  where  why  how  how much
+      if these aren't answered then you don't know how process works
+
+(4) product
+
+    * understand the problem
+      get the right team
+      set realistic and clear objectives/goals
+
+    * minimize turnovers
+      let the team do the right thing
+        focus on bottom-up process management
+      emphasize quality
+        start this from first day and not at the end
+
+    * measure progress
+      need to know what you're doing and how well you're doing it
+      change management
+      metrics
+
+    * keep it simple (KISS)
+      too easy to complicate things in software
+      avoid risk
+        simplicity to avoid risk
+      focus on complicated/risky areas
+
+    * review what went wrong/right
+      don't just fire the project and forget!
+      make it better next time
+
+scaling issues
+---------------
+O(N^2) communication overhead
+  as project scales, things working in small project starts failing
+
+probability that a random chosen programmer in the US
+will be working in a project of this size
+
+  1-3: 5%
+ 4-10: 15%
+11-25: 15%
+26-50: 15%
+  50+: 50%
+
+productivity |  \
+  kLOC/year  |   `
+             |     `
+             |       `
+             |          `
+             |              -
+             |                  -
+             |
+             |
+             +-----------------------------
+            project size (kLOC) (on log scale)
 
 
+risk management
+----------------
+~= estimating variance in project cost
+
+  how to estimate variance?
+  --------------------------
+  risk table
+
+  risky event                probability P        impact I (qualitative)
+  ------------------------------------------------------------------------
+  lead developer leaves      0.05
+  stakeholder vanishes
+  over AWS auota
 
 
+  impact on qualitative scale
+  1. catastrophic
+  2. critical
+  3. marginal
+  4. negligible
 
+  if impact is a cost then we can compute  (P*I)
 
+system testing
+---------------
+requirement most planning
+  harder to change than simple software testing
 
+recovery testing
+  for a fault-tolerant system or highly-available system
+  make random components fail
 
+security testing
+  get penetration teams to try to break into it
+    social engineering is the best way to break into system
+
+stress/performance testing
+  put it under large load to make sure it behaves correctly
+  best done at entire system level
+  need proper instrumentation
 
 
 
