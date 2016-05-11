@@ -1990,6 +1990,257 @@ stress/performance testing
   need proper instrumentation
 
 
+==============
+May. 11, 2016
+==============
+
+A * SIZE^B * M
+---------------
+
+B: on a scale of [0,5]
+add these together, divide by 100, then add 1.1
+
+risk analysis?
+development flexibility
+preceentedness
+team cohesion
+process maturity
+
+
+M: on scale of [1,6]
+
+personnel capability
+personnel experience
+reuse required
+platform difficulty
+schedule
+support facilities
+
+
+project planning
+-----------------
+(1) resource allocation
+    have to give resources to a project to get it work
+    this is 'people' in a software project
+    large company: involve drafting people to get the job done
+    small company: use all you have 
+
+(2) scheduling
+    when to do what
+    as it scales, it gets complex
+    unrealistic schedules
+      are the project manager's faults
+      although tempting to come up with schedule to make customer happy
+      learn to resist the unrealistic schedules
+      avoid these schedules by negotiating with the customer
+      cost models are what we use in negotiations
+      learn to redo cost model as the project goes on
+
+(3) cost estimation
+    resource allocation + scheduling = cost estimation
+    in practice, project planning is rarely disciplined
+    it is a interwined consideration
+    order of the 3 will not be the same
+    may have cost then determine resource + schedule
+
+typical components of a development plan
+-----------------------------------------
+(1) team organization
+    who will work on project and how they will collaborate
+
+(2) risk analysis
+    come up with idea on which parts of project are risky
+
+(3) resource requirements
+    not just software but also hardware and networking, etc
+
+(4) work breakdown
+    unless you have simple project, you have to split up the work
+    among developers to do it together
+    come up with tasks, milestones, deliverables
+
+(5) schedule
+
+(6) reporting mechanism
+    usually forgotten
+    crucial to keep track of what work has been done
+                             what problems to worry about
+
+hierarchical
+  probably the most efficient way to organize software development
+  not always needed for small projects
+
+synchronous
+  have a lot of people working in parallel
+  glue it together in the end and it works
+  minimize effort coordinating
+  maximize effort getting work done
+  has problem with scaling
+
+agile
+  starts up synchronous
+  then teams self-organize into small hierarchical trees
+
+major issues in a organization
+-------------------------------
+lines of communication
+  among whom?
+  email? IRC?
+  don't overuse communication
+  be efficient in communicating
+
+selecting members
+  pick good members for team
+  have complementary personalities
+  technical competence
+  interviewing skills are essential
+
+risk assessment
+----------------
+need to keep doing as project moves on
+
+* preliminary
+  done during requirements gathering
+  haven't decided on implementation
+  have to do this to know whether to commit to project
+  most important to get right
+
+* life-cycle
+  done during system development
+  know the implementation but don't know the usage fully
+  can predict how the software will be used
+
+* operational
+  done during production
+  software is run with real users
+  goal is to resond to production issues
+  quick response to issues as they arise
+
+risk categories
+----------------
+instead of looking at how the risks are going to hit you
+look at where risks are coming from
+
+* business
+  may be driven out of business by large companies
+    Google competes!
+
+* product
+  something goes wrong inside software you've written
+    garbage collector doesn't scale
+
+* project
+  have nothing to do with actual product you're building
+    leading developer leaves
+
+risks can overlap although we may think they're independent
+
+sample resource issues
+-----------------------
+* buy or build?
+  should you reuse software or simply build it yourself
+  major issue
+
+* inhouse or outsource?
+  write it in your own team or outsource it to other teams
+
+* different combinations of the two above
+  20 projects -> 2^20 combinations
+  how to prune intelligently
+
+deining your tasks
+-------------------
+class-based
+package-based
+
+tasks nest
+tasks have dependencies
+
+dependency graph
+we can generate a schedule with this graph
+
+critical path analysis
+scheduling time -> Gantt chart
+
+when you're late
+-----------------
+* add resources to project
+* add time (delay due date)
+* decrease scope
+
+how to price a software project
+--------------------------------
+
+C    costs (usually unknown)
+P    profit
+-----------------------------
+C+P  done
+
+we typically guess the cost or adjust the software to match our budget
+adjust software to match budget (relies on trust)
+
+general rules for project estimation
+-------------------------------------
+average large project is 1 year late and 100% over budget
+
+(1) keep + use records of previous projects
+(2) use several methods, and cross-check
+(3) assume things will go wrong during development
+(4) if possible, develop + estimate incrementally
+
+factors affecting cost
+-----------------------
+(1) size
+      $ wc # number of lines
+    length of API
+    helpful to estimate size before writing the code
+    count statements instead of comments
+      ;;;;;;;; is totally valid in C
+
+(2) complexity
+
+(3) requirements analyst capability
+    requirements analysis is among the hardest parts of software analysis
+
+(4) prgrammer capability
+
+(5) CPU time / storage constraints
+    typically bites during embedded application
+
+(6) personnel turnover
+    the larger the project, the more likely this is going to happen
+
+(7) platform variability
+    affect cost model quite a bit
+
+(8) team experience
+    application area
+    language and tools
+    production platform
+
+(9) use of software tools
+    do we have good static tools that will help find bugs before runtime
+
+(10) location / communication
+
+(11) motivation
+
+
+* Putnam Norden Rayleigh (PNR) curve
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
