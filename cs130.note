@@ -2229,6 +2229,190 @@ factors affecting cost
 * Putnam Norden Rayleigh (PNR) curve
 
 
+==============
+May. 16, 2016
+==============
+
+2. what is the relationship between statistical testing
+   and operational profiling uncertainty?
+
+statistical testing: testing randomly with undeterministic tests
+                     figure out what real-world input would look like
+                     and test these inputs
+                     works best where we know what use cases are
+
+                     sort program, we count out-of-order numbers and then
+                     generate similar test cases to test that
+
+operational profile: description of what inputs should look like
+                     uncertain: haven't built up what input would look like
+                                low quality of statistical testing
+                                since we do not have the user input profile yet
+
+3. what is the relationship between experience-based testing
+   and penetration testing?
+
+experience-based testing: come up with test cases for unit, integration tests
+                          use experience to come up with testing
+
+penetration testing: have a team who is really good in breaking into systems
+                     form of experience-based testing
+                     special case of experience-based testing
+
+4. give 3 basic methods for risk reduction in safety engineering
+
+(a) avoid the risk, make it impossible for things to "catch fire"
+(b) detect and remove, catch problem and fix it
+(c) tolerate, ignore the risk and keep going
+
+
+ORCA: election day application
+      Romney campaign
+        secret, didn't want to expose to opponent (imitate or counter)
+      data mining system designed to run in cloud-like system
+      clients running in election worker cellphones
+      focus limited resources on aspects that will do elections most good
+
+apps on cellphones + web service + data mining
+out-of-house development
+reported to a different technique
+rolled out at 0600 EST 2012-11-06
+
+got Distributed Denial of Service Attack (DDoS) on release day
+
+
+dependibility
+--------------
+can rely on the system working on arbitrary real-world conditions
+  even under adverse real-world conditions
+  even if you have adversaries
+assume universe is subtle
+
+* security (for later)
+* safety
+  likelyhood that software will not damage users either directly or indirectly
+* reliability
+  likelyhood that software will match expectations
+* availability
+  likelyhood that service will be up
+* resilience
+  likelyhood that software will resist and recover from damage
+
+* maintainability
+  likelyhood that software will stay working after change
+* repairability
+  how fixable when buggy
+* user error tolerance
+
+dependibility engineering
+--------------------------
+requirements
+software architecture
+dependible programming
+software processes
+  software development process/method
+  can show why .999 depenidble
+  can prove that software has reached dependibility goal
+
+security
+---------
+assume universe is malicious
+paranoia is almost required here
+security is a more difficult problem
+
+often the most important
+  can trump funcitonality
+bad P.R. if it fails
+
+cost ($) vs. dependibility (0-1): curve has asymtotic growth
+choosing position on curve is a hard design decision
+
+
+specifying dependibility and security
+--------------------------------------
+often requirements are the hardest part
+easy to think you're done because you filled out all forms, but you're not
+over-specify depndability
+techniques
+  -> identify risks
+  -> analyze & prioritize risks
+  -> decompose the risks into their root causes
+  -> reduce them
+
+high failure rates are sometimes ok
+failure rate may depend on other factors
+  may need to specify different failure rates for different causes
+
+safety terminlology
+--------------------
+       accident   unplanned event causing injury
+         hazard   condition that might lead to an accident
+         damage   measure of cost of accident
+hazard severity   what's the worst that can happen?
+           risk   probability of an accident
+
+security terminlogy
+--------------------
+      exploit   unwanted event causing loss of privacy, etc.
+vulnerability   condition that might lead to an exploit
+     exposure   system is available to be attacked
+       attack   attempt to exploit
+       threat   vulnerability that might be attacked ('misuse case')
+      control   mechanism to defend a vulnerability
+
+reliability terminology
+------------------------
+MTBF   mean time between failure
+MTTF   mean time to failure
+MTTR   mean time to repair
+
+       up       down   up   down         up
+---------------+    +------+    +-----------------
+               +----+      +----+
+                    MTBF
+               |<--------->|
+               |<-->|<---->|
+                MTTR  MTTF
+
+AVAIL = MTTF/MTBF >= 0.999 (3 9s)
+POFOD = probability of failure on demand
+ROCOF = rate of occurence of failure = 1/MTTF
+
+safety requirements
+--------------------
+   primary (e.g. brakes?)
+vs.
+   secondary (e.g. both brake lights?)
+
+analysis of risks from requirements
+------------------------------------
+fault-tree analysis
+  try to categorize all bad things that can happen
+  tree where leaves represent accident or hazard
+              nodes represent events that leads to accident
+  tree node will be AND/OR
+  organize the tree to capture dependencies of the accidents
+  if the analysis works well, you can assign probablities to branches of tree
+  not always clear (correlation between events)
+  can calculate prbability for hazard analysis table
+  this makes hazards/accidents easy to explain
+
+dependability & architecture
+-----------------------------
+security kernel + protection systems
+  minimalize amount of software that have to be secure and put in kernel
+  architecture that makes it easier to build dependable systems
+
+self-monitoring architectures
+  log the stuff that try to cross the walls
+  e.g. Firefox Health
+
+N-version programming
+  create N versions for the same program
+  vote for the best and the majority rules
+    paying N times (or more) as much for the same program
+    have discrepancies between engineers in different versions
+
 
 
 
