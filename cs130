@@ -2414,6 +2414,292 @@ N-version programming
     have discrepancies between engineers in different versions
 
 
+==============
+May. 18, 2016
+==============
+
+legacy systems have both code and people
+code is mysterious to programmers
+replacing legacy system doesn't mean duplicating what code does
+but also have to figure out what people do
+
+bad smells for refactoring
+  data clumping
+  duplicate code
+  speculartive generality
+
+
+security & dependability
+-------------------------
+hard to retrofit security
+security risk assessment (how worried about security)
+  identify assests (things to protect)
+    financial, phyiscal
+    prioritize assets (give value to asset)
+    identify exposures
+  identify threats
+    attacks
+    estimate cost of each attack
+  specify controls + feasibility
+
+security design guidelines
+---------------------------
+have an explicit security policy, and use it
+  providing scope for security, which is a problem in software development
+  there's always more you can do with security
+  you should know where to stop
+
+defense in depth
+  used in football, military
+  don't rely on one technique to defend system
+  have multiple levels of defense so that attackers have a hard time
+
+fail securely
+  robust, dependable system
+  deal with component failure
+  a good chunk of code deals with failures, exception handling
+  fail in such a way that you still have security policy
+  exception handlers are big problems in security
+
+balance security and usability
+  a brick is very secure
+  need software that actually works
+  security is not end goal that dominates everything else
+  people are willing to give up some security for features
+
+log actions
+  log actions coming from the outside world (users)
+  this is brute force debugging applied to security
+    `printf' statements sent to logs
+  doing this under assumption that program will fail, mess up
+
+reduce risk via redundancy and diveristy
+  have multiple identical copies of the password server
+  does not necessary reduce risk
+
+specify imput format
+  people don't do this all the time
+  fairly mundane but is often forgotten
+
+compartmentalize assets
+  related to defense in depth but different
+    put several layers around valuable assets
+  break up assets into pieces
+    attacker will not get all information with breaking in at once
+    have more database systems, although harder to manage
+
+design for deployment
+  when a new version of program comes out, want this program secure
+  no configuration, no simple default root password (`admin')
+
+design for recovery
+  when system gets breached, need a way to recover into secure system
+  without posting root password `on the wall'
+
+how to check this stuff?
+-------------------------
+how to make sure that system is secure?
+  tiger teams, test cases
+
+procedures for developers
+  don't think security as something built into product
+  security is also a property of development process
+  what to do if a developer goes bad?
+    log developer actions
+    reuse security guidelines above and apply to development process
+
+dependable software processes
+  you not only build dependable software but also using dependable processes
+  convince customer / developer / regulator that software is dependable
+  
+  can involve the following
+    test plan + management
+      need to document these
+    static analysis
+      describe tools and run the analysis, then list the results
+    formal inspections
+      formal code reviews, etc.
+    formal specifications
+      write down specifications for code in formal language, based in logic
+    system modeling
+      provide model / simulation of system in report
+    review requirements + management
+      management => version control
+      go back and look how requirements evolved with time
+
+    goal of the process
+      auditable
+      redundant
+        provide multiple ways on making sure system is dependable & secure
+      robust
+        assume development steps will not be done correctly
+        want system to recover well from failure
+
+dependable programming
+  information hiding
+    private class members not to make it hard on users
+    provide interior security walls
+    keep part of implementation private so not visible to other parts of code
+    can isolate walls into the code, fewer avenues of attack into system
+  
+  input validity checking
+    specify format
+    constantly checking validity of input data
+
+  exception handling
+    commonly used for dependability
+    resume execution after some part of computation fails
+    promotes redundancy
+
+  omit tricky stuff
+    floating point
+      rounding errors
+      computing with values that are close to what you want but not exactly
+      descrepancy can lead to unreliability
+    goto's
+      generally a bad idea to use them
+    pointers
+      null pointers
+      dangling pointers (freed memory)
+      imposter pointers (point to memory not supposed to point at)
+    subscripts
+      arrays and indexing into an array
+      can have dangling index in array
+      all problems with pointers can exist with subscripts
+    new
+      creating object is trouble, similar to pointers
+    recursion
+      dangerous
+      understood by only 25% of programmers
+      structure hard to understand
+    parallelism (threads)
+      source of enormous class of bugs
+      race conditions / deadlock
+    signals / traps / interrupts
+      asynchronous function calls
+      can break a lot of things with signals
+    aliasing
+      can get aliasing without pointers
+      it is helplessly confusing
+      recipe for bugs
+    inheritance
+      breaks incapsulation
+      don't have walls between parent and children
+      another recipe for bugs
+    polymorphism
+      also very comfusing
+
+debugging (M.W. Wilkes)
+------------------------
+can take half the development time
+20:1 ratio of performance between experienced & inexperienced developers
+connotation of dread, get little reward in publishing papers on debugging
+this is the least understood part of software development/construction
+
+how not to debug (classic mistakes)
+
+  (1) assume the error is somewhere else in the system
+      `printf is broken!'
+      printf("%d\n", i) // prints out garbage where i = 2
+      actually defined: long i;
+
+  (2) fix the problem without completely understanding it
+      you're in a hurry
+      you despair in ever understanding the problem
+
+how to debug
+
+  (1) make the bug reproducable
+      make the bug happen whenever you want it to happen
+      it may be difficult, especially as we gain parallelism
+      and undeterministic programs
+      bug doesn't always happen in the program
+      get rid of the nondeterministic
+        $ gcc -fdeterministic foo.c  # doesn't exist
+        [!] except that there is no `deterministic' flag
+      
+      how to make deterministic
+        turn off multi-threading/multi-processing
+          $ make -j  # builds in parallel, remove it
+        specify the seed for the random generator
+          can be really helpful to run in controlled environment
+        clear all variables before startup
+        reset the clock
+          use a clock permanently set to 1970
+          or just set the time
+
+  (2) locate the fault
+      doesn't have an algorithm
+      use the scientific method
+        form a hypothesis about the fault
+        test the hypothesis
+      painstaking process
+
+  (3) fix the defect
+      typically a relatively easy step compared to the above
+
+  (4) test the fix
+      common for debugging to involve adding new test cases
+      this prevents the bug from going undetected in the future
+
+  (5) look for similar errors
+      bugs travel in clumps
+      there's probably more than one floating around
+
+useful heuristics
+------------------
+(1) look at code that is changed recently
+    $ git bisect
+
+      |-----------------------|-----------------------|
+      ok                      ok                      ng
+
+    do binary search for the defect
+
+(2) prefer O(logN) techniques to search for defects
+
+(3) budget your time
+    try another technique
+    rewrite the program! (only if have decent budget)
+
+(4) one fix at a time
+    general advice in software development
+    can test small pieces
+    apply multiple patches where each patch fixes one bug at a time
+
+(5) keep out of ruts
+    be flexible, jump around a lot
+    try looking at things a different way
+    `part-time debugger', come back to bug with a fresh mind
+      typically more efficient
+
+software evolution
+-------------------
+deliver the software (people are using)
+apply a change (delta) to the software
+  maybe your business changed
+  maybe your technology changed
+  bugs
+
+planned vs. agile
+  all plans for development applies to evolution as well
+  new phase: understanding existing software
+    evolving pre-engineered old code
+    can be significant part of your work
+    gain maximum amount of understanding for minimum amount of work
+
+how to efficienty grok existing software
+  look at its documentation
+    not always available
+  source code translator
+    translate to other language and run the translated code (C -> Python)
+    this may not work well
+
+
+
+
+
+
 
 
 
