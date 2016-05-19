@@ -2572,6 +2572,161 @@ push approach
 READ CHAPTERS 5, 6, 7?
 
 
+==============
+May. 19, 2016
+==============
+
+Emacs assignment
+-----------------
+get PCRE to work in Emacs
+
+ordinary search
+
+  $ (emacs) M-C-s ab*c RET
+
+PCRE search
+
+  $ (emacs) M-C-p ab(...) RET
+                      ^
+                     PCRE regex
+
+don't try to convert PCRE to POSIX regex
+try to link to PCRE code
+
+preliminary study, design how to build it
+integrate PCRE with module system
+3-page paper
+
+DEADLINE   Jun. 1, 2016 (Wed.) 
+
+build tools
+------------
+make, other ecosystems have other flavors
+learn to use the tools for each ecosystem
+
+Java: Ant (make in XML) + Ivy dependency manager
+      Maven (build + project management)
+      Gradle (initially Ivy based, has own dependency manager)
+        own DSL for building
+
+some general advice
+--------------------
+(1) script every step
+(2) keep these scripts under version control
+(3) minimize use of tests for versions
+      
+      if $(gcc --version) -lt 6; then ...
+      else ...
+
+      #if __GCC_VERSION < 6 ...
+
+    new features for new versions of GCC
+    want to exploit new compiler features
+    it should not check for GCC version but should check for the feature
+    want direct tests for what you actually need
+
+      __has_decl_annotation
+
+(4) cascading configurations
+
+  +--------------+
+  | +----------+ |
+  | |          | |
+  | |   code   | |
+  | |          | |
+  | +----------+ |
+  | | (conf A) | = delta from default to your favorite configuration
+  | +----------+ |
+  |   (conf B)   | = delta from your favorite configuration to this test case
+  +--------------+
+
+    tree of configurations
+
+    prefer relative paths in configuration
+
+      /home/eggert/cache --> $HOME/cache
+
+(5) automate the second time you build
+    try to figure out what to do for the first time (do by hand)
+    probably want to log your actions
+    
+    for the second time, try not to replicate the log
+    instead, write a script (cut & paste from the log)
+    hopefully enough for first two times
+
+    third time, may not be general enough, edit / evolve again
+
+(6) what to do on failure
+    make vs. make -k [--keep-going]
+      when a build step fails, abort
+        save CPU time and resources (default, 1970)
+      when a build step fails, keep going if doesn't depend on failed step
+
+(7) integrate smoke tests (fast failure)
+      deployment
+      startup
+      periodic cooperation
+    can be two-edge sword
+    be careful with these tests, need to be reliable
+    sometimes sanity tests give failure when the system can actually keep going
+
+(8) for task-oriented tasks
+    test for idempotency (some compilers generate .o with timestamps)
+      .tgz .zip  contain meta data (userid, timestamp)
+      .gz        contain timestamps
+
+(9) evolve your build system incrementally
+    don't try to write it all at once
+    evolve with your system
+    should be part of your system rather than add-on module
+
+(10) file system layout
+     should pick one file system layout
+       /src
+       /test
+       /lib
+       /bin
+     should pick for both development & deployment
+     usually agree but not always necessary
+
+(11) track from deployed objects to sources
+     if there is an executable, you should know how exactly it was created
+     keep verision control strings in object files
+     
+     (1) traditionally done via: char ID[] = "$Id:eggert-2009"
+         when compiled, the string is compiled into .o file (chicken dropping)
+
+         some compilers optimize it away
+           __attribute__((externally_visible))
+
+         if code includes other files (#include "a.h")
+         each file has to include information about each file it includes
+         information scales O(N^2) with size N
+
+     (2) check binaries into version control
+         record checksums
+         look up via checksum
+           bloats version control (binaries are large)
+           confuses developers (philosophy problem)
+             add a lot more checkins to version control
+             each build will result in multiple checkins
+             a lot more traffic
+             false alarms into version control system
+
+     (3) only put sources in version control
+         include build scripts
+         generate binaries you want
+         + separate database of built objects
+             different from version control repository
+             cache: can regenerate from sources + build scripts
+             all automatically generated
+             instead of thinking as cache, think as way object can be tracked
+             record how it was built
+
+READ CHAPTERS 11, 12
+
+
+
 
 
 
