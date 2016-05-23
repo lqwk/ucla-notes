@@ -2696,6 +2696,246 @@ how to efficienty grok existing software
     this may not work well
 
 
+==============
+May. 23, 2016
+==============
+
+How is Z Schema defined?
+
+what are state variables?
+what are their constraints?
+what were the state transitions?
+
+Two types of code beautifiers?
+
+(1) changes the code, into a certain type of style
+(2) doesn't change the code, gives highlighting
+
+
+why haven't formal methods taken over?
+---------------------------------------
+first proposed in 1960s and lots of work was done in this
+
+(1) scalability
+    tends to work best when spec is small
+    has problems scaling up to large systems
+    large systems can't use them & small systems don't need them
+
+(2) limited scope (e.g. no UIs)
+
+(3) expectations for reliability have relaxed
+    don't care if software is reliable anymore
+    in old times, software had to be reliable to process important things
+
+(4) there are other cheaper ways of improving reliability
+    these other ways are cheaper than formal methods
+      formal inspections
+      hardware support (more checking, bad pointers, subscript)
+      object oriented information hiding
+
+formal methods downsides
+-------------------------
+(1) they're hard (need an expert)
+    complicated
+
+(2) notation is crucial
+    coming up with good notation is more important than programming
+
+(3) easy to overformalize
+    once you've captured the idea to formalize
+    it becomes tempting to formalize out spec completely
+    cost goes up and may cost more than it's worth
+    try to formalize the important part
+    retain the ability to leave other parts informal to keep costs down
+
+(4) not a substitute for competence
+    will not make you competent in the first place
+
+(5) they still need comments
+    will still require informal comments
+
+(6) don't guarantee code to be bug-free
+    formally verify code satisfies the spec, you know your code matches spec
+    but this doesn't guarantee that you code is bugfree, you spec may have bugs
+
+(7) they need same software engineering effort as everything else
+    put formal specs under version control
+    have to review specs so to make sure they are the right specs
+
+And yet -
+  Coverity (practical)
+    uses formal methods
+  proof-carrying code
+    gives answers + proof that answer is correct
+    checker can detect malicious behavior, check proof, proof is wrong
+
+informal specifications - problems
+-----------------------------------
+(1) get contradictions
+    result from several meetings
+    write down multiple specs
+    discover that specs are contradictory
+
+(2) ambiguities, vagueness, incompleteness
+    forget to include some aspects
+    all the same thing in formal specs
+      nailing down set of possible worlds for implementation
+        contradiction: empty
+        ambiguity: too large
+    spend most of effort in finding incompleteness
+
+standard formal methods ideas
+------------------------------
+(1) invariant
+    bool expression involving all state variables
+    should always give true
+
+(2) precondition
+    bool expression involving all state variables
+    should be true just before a particular state transition
+
+(3) postcondition
+    bool expression involving all state variables
+    should be true just after a particular state transition
+
+specification languages
+------------------------
+standard programming languages
+tends not to work very well
+  don't have to be executed
+  they can be much higher level
+    sets, for all, exists
+  they are often tailored for specific domains
+  they encourage  you to nail down all spec details
+
+
+formal methods details
+-----------------------
+  algebraic
+    typically for functional code
+    no state
+    just recursive data structures
+
+vs
+
+  model based
+    typically for imperative code
+    state machine via state variables
+    invariants that have to be always true
+    state transitions
+    initial state predicate
+
+    invariant, trans
+      ==> invariant
+
+    initial state, trans1, trans2, ... , transN
+      ==> invariant
+
+examples
+---------
+signatures
+  List(Elem)
+  sort List
+constructors
+  Create -> List
+  Cons(Elem, List) -> List
+inspectors
+  Head(List) -> Elem
+  Tail(List) -> List
+axioms
+  Head(Cons(V,L)) = V
+  Tail(Cons(V,L)) = L
+
+behavior driven development
+----------------------------
+poor person approximation to 'Z'
+
+write down a scenario in a text file
+  given: <precondition>
+         bank balance is positive
+   when: <state name + arguments>
+         withdraw N dollars
+   then: <postcondition>
+         new bank balance is N less than old one
+
+domain specific language
+read text file and generate some python code
+
+/balance is
+/{check(balance > N);}
+
+construction tools
+-------------------
+(1) editing source code
+    Eggert uses Emacs
+    others like Vim, nano, Eclipse, VS, Xcode
+
+(2) refactoring source code
+    add new argument to function
+    should be easy to change function calls to it
+
+(3) version control
+     
+    diff: compare two files
+          diff X Y => XdeltaY
+    
+    patch: apply diff and get new file
+           patch XdeltaY X => Y
+    
+    merge: merge two different files
+           
+           diff X Y => XdeltaY        diff X Z => XdeltaZ
+           patch XdeltaY Z => M       patch XdeltaZ Y => M'
+
+           is M = M' ?
+           not always, there might be incompatible merge conflicts
+
+
+    $ (emacs) M-x vc-pull  ->  returned gibberish
+    
+                            +----+----+
+    source code in UTF-16   |    |    |
+                            +----+----+
+                              16 bits
+    
+    git diff  ->  "Binary files A and B diff"  (in ASCII)
+    emacs converted this into UTF-16, and returned gibberish
+
+(4) code beautifiers
+    indent (Linux)
+      can lead to many problems
+      fight against other changes to source code, since it changes globally
+    javadoc (Java)
+      turns comments into beautiful documentation
+    xref
+      cross-referencing tool
+      where a name is used and defined
+      does auto-completion when you start typing identifier
+    diagram generators
+      traditionally, simple tools to generate flow chart for code flow
+      state machine diagram
+    lint
+      cc but no code compiling
+      instead style/correctness checking
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
