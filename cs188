@@ -2682,10 +2682,11 @@ some general advice
 
 (10) file system layout
      should pick one file system layout
-       /src
-       /test
-       /lib
-       /bin
+       /root
+         /src
+         /test
+         /lib
+         /bin
      should pick for both development & deployment
      usually agree but not always necessary
 
@@ -2726,7 +2727,317 @@ some general advice
 READ CHAPTERS 11, 12
 
 
+==============
+May. 24, 2016
+==============
 
+commit stage checking
+----------------------
+performance matters
+failure means no commit
+
+checking should be fast + reliable
+
+(1) avoid overspecialization among developers
+    dangerous to make someone the commit checker
+    don't just have one person be the expert
+    should have large number of developers who are comfortable
+    should be easy to update
+    people view this as lower priority than the software
+
+    $ .gitconfig + ./autogen.sh git
+
+      installs git precommit tests
+      .git/hooks/...
+      checks for simple stuff, such as no commit message
+
+(2) rotate the job of coming up with commit tests
+    not because it is a bad job but because it shouldn't be done by only one
+    so that if the person leaves, the project can go on
+
+(3) if too slow, migrate to acceptance test
+    acceptance tests can be slower
+    so that it won't be done at each commit
+
+(4) if too slow, can parallelize
+
+(5) if too slow, minimize the scope
+    similar to (3)
+
+(6) distinguish source from artifacts (binaries, etc)
+    source has version control
+    artifacts are usually not in version control
+    instead keep separate repository "artifact repository"
+
+(7) don't test user interface
+    trying to do on each commit won't work
+    probably have good user interface testing system (Mercury), but still bad
+
+(8) use mocks & stubs
+    dependency injection in software development
+      public Car(Engine eng) { ... }
+        eng can be a mock if we want to test only the 'Car'
+
+(9) avoid the database
+    1. it's slow
+    2. it's a pain to configure
+       have to bring it up, load it with data, then test
+    should not do it in commit tests
+
+(10) avoid heavy-weight state
+     should be light weight
+     don't need system already running
+     avoid cascading tests
+       take resulting state of test A and run test B
+       cannot parallelize anymore
+       have linkage between A & B, so modify A -> modify B
+
+(11) avoid races
+     not have tests that are affected on synchrony
+     can partly be done by faking the clock
+       can pretend the results came back in any order you want
+
+user acceptance testing
+------------------------
+later state, end-to-end test, require more resources
+also controversial
+
+(1) some developers don't bother
+    more trouble than they're worth (cost/benefit)
+    cost exeeds benefits
+    Emacs doesn't have acceptance tests
+      don't have the resources
+      automating UI tests won't be that helpful
+
+(2) need good requirements
+    should be valuable to end users
+    requirements should be testable
+
+(3) test the GUI?
+    or just below the GUI?
+
+             user
+      +-----------------+ <- end-to-end test (manually)
+      |       GUI       |
+      +-----------------+ <- test interface (automated)
+      |                 |
+      | everything else |
+      |                 |
+      +-----------------+
+
+    if using microservice architecture, testing this should be easy
+    run each test against each microservice
+    test GUI later with a separate test
+
+(4) need buyin from developers, users
+
+(5) they'll mutate too
+    evolved through history, should check old methods?
+
+(6) get feedback from users
+    know how good tests are, then iterate
+    reflect expectations on how system will be used
+
+(7) map failures back to causes
+    need to record deltas from previous presumably successful tests
+    deltas can be changes to tests itself or to the application
+
+(8) testing approach
+    a few, intensely-maintained tests
+      each one is carefully written in a scripting language
+    many somewhat generic tests
+      each acceptance test is not one that you may have thought through
+      but in total they will be useful
+      CPU overhead but ok because we have CPU time
+      probably going to need tools
+        sometimes invent programming languages
+        common to use DSL (Domain Specific Languages)
+        can build off existing languages
+        can evolve to next language
+
+        Emacs (no acceptance tests but have commit tests)
+         $ make -j8 check
+           test/Makefile.in -> Makefile
+           test/lisp/subr-test.el
+             tests the file lisp/subr.el
+             
+             (ert-deftest foo ()
+               (should (...)))
+
+             code in (should (...)) should succeed and return true value 
+
+behavior-driven development
+----------------------------
+write acceptance test criterion in English and compile into acceptance test
+stylized English spec for an acceptance test
+
+Senario: user order should debit account
+  Given: there is an instrument called bud
+    And: there is a user called Dave
+   When: I login as Dave
+   Then: Dave's account is debited
+
+compile into acceptance test using DSL, English -> Python
+
+When  /I log in as (\w+) |user|
+  Do  trading_ui.login(user)
+
+can be very brittle and hard to fix
+
+state in acceptance tests
+--------------------------
+there are going to be heavier weight tests
+state will be important in real world
+(1) tempting to populate this data from real-world database
+    there could be business reasons why you can't do that
+      privacy rules (patient data, stock)
+      proprietary (have to pay for data)
+    have to maintain the data
+      if data is part of test, then you have to bring data with you, under vc
+      maintenance problem can turn into an issue
+      ok if don't change it often 
+
+(2) synthetic data is probably better to go
+    write program to generate data
+    put under version control
+
+(3) if you cascade, record the dependencies
+    T1 -> T2, need to say T2 depends on T1
+    sometimes T2, T3, T4 all depend on T1 but are independent of each other
+      clone the database, but expensive
+      can BEGIN; T2; ABORT; (if nested transactions are allowed)
+        don't commit the transaction, then run T3, T4
+        if T2 is long, then others cannot access the database because T2 locks
+
+special test interfaces
+------------------------
+(1) change to API to support testing
+    sometimes need this to work
+    may end up testing the test API rather than production API
+    want to minimize this
+
+(2) same API + magic cookies
+    backdoor approach
+    may need to do it for technical reasons
+    best to avoid this 
+
+timeouts & sleeps
+------------------
+run one test, sleep for half a second, then run second test
+  T1(); sleep(500); T2();
+T2 needs to wait for T1 to complete and store state
+the magic number 500 is always wrong, too slow or too fast
+
+often better to poll for T1 to be done
+or the wait for T1 to be done
+  more efficient than polling
+need API support for polling or waiting
+polling & waiting is considered as special API for supporting testing
+
+acceptance test performance
+----------------------------
+(1) don't overdo worrying about it
+
+(2) parallelize
+
+(3) share acceptance test environment with other phases
+    can use virtual machine to run acceptance tests and do some other things
+    this can create dependencies
+    environment can be hard to setup
+
+capacity measurement
+---------------------
+(1)                  +-> capacity measurement
+    commit -> accept +-> deploy
+
+    some think it's a prerequisite for deployment but that is not necessary
+    turning into a tree or DAG
+
+(2) can do other nonfunctional requirements
+    check out things users mostly don't think about
+      security
+      reliabilty
+      performance
+
+(3) need to get requirements right
+    measure things like security, reliability, performance
+    not necessarily exact numbers
+      need to know general nonfunctional areas
+      do sanity check of requirements
+        "all user interactions take 2s or less"
+          even during failure?
+          even during monthly maintenance?
+            can make exceptions
+            should be put into requirements, not add on later
+        or in exceptional cases such as "progress every 2s"
+
+capacity measures
+------------------
+absolute vs. relative
+
+  what is the latency?
+    how long does it take to get an answer back?
+    latency grows exponentially with load (reqs/sec)
+  what is the throughput?
+    operations/second
+    throughput grows logarithmically with load (reqs/sec) until capacity
+  scalability
+  longevity
+    how long has the system been up?
+
+bad performance initially because of cache filling
+decay as time goes due to memory leaks, etc.
+
+
+capacity measurements are not binary
+-------------------------------------
+continuous measurement
+leaving realm of logic & entering realm of calculus
+
+(1) look for regressions
+    they can be fuzzy
+    can we ignore?
+      this is a judgement call
+      depends on developer
+
+(2) base the criteria
+    - on user needs (strategies)
+    - "not much worse than last time" (tactics)
+      track change to code that caused the performance to go down
+
+graphs are often idealized
+real world tests are often spikier
+
+basic idea
+-----------
+(1) 3% of your code will be relevant to performance
+    capacitiy test: identify the 3%
+
+(2) don't ruthlessly tune everything
+    tuning takes time
+    tuned code is typically larger and harder to maintain
+
+(3) don't put off performance worries until capacity tests
+    need to choose architecture that lets you do capacity tests
+    keep big O in mind
+
+(4) H&F
+    don't overthread
+    why not?
+      one big server vs. microservices
+      microservice should be small
+        scaling should have multiple instances of it
+        threading introduces races and collisions
+
+(5) end-to-end vs. micro-benchmarks
+    "make sure 'cos' goes fast"
+    acceptance tests should focus on end-to-end tests
+    write micro-benchmarks and pretend that they are end-to-end
+    avoid the temptation to write micro-benchmarks
+    "decompose by scenario, not by function"
+      don't test 'cos', test the scenario where 'cos' is used
+
+READ CHAPTER 11
 
 
 
