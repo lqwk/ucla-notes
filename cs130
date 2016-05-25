@@ -2919,28 +2919,253 @@ construction tools
       instead style/correctness checking
 
 
+==============
+May. 25, 2016
+==============
+
+tools for debugging
+--------------------
+(1) google search
+    very good choice
+
+(2) print statements
+    logging out actions
+    add stuff to code to output useful information through execution
+    highly recommended, even in production code, usually turned off
+    want log analysis tools for this (grep)
+      Apache log format
+      well documented
+      with ecosystem of tools to analyze
+
+(3) memory analysis tools
+    valgrind, etc.
+    suspicious accesses, memory leaks
+    run different version (valgrind version) of the program
+    sometimes static analysis
+
+(4) debuggers
+    GDB, step through program
+    avoid these if possible
+
+    breakpoints
+      jump ahead and stop at certain points
+    watchpoints
+      wait for program to hit a piece of data (read/write)
+
+(5) ask a debugging expert    
+    some are really good at this
+
+(6) profilers
+    gprof program
+    performance instrumenting mode
+    generates extra code to increment counter each time code is executed
+    gprof looks at execution output and analyzes
+    $ gcc -pg
+
+(7) project-specific tools
+    know that it's going to work for your particular application
+      Ken Thompson: chess machine
+      relied on scanned games, got many scanned errors
+      wrote special debugging tool
+      looked at raw data, returned possibilities with probabilties
+      then fed possibilities into validator to check if move was possible
+    build vs. buy
+      buy from someone else of build it yourself
+      sometimes it will be easier to just build your debugging tool
+
+user interface design
+----------------------
+special case of design
+all points on how to do design all apply to user interface design
+
+how is it different from general software design
+
+  crucial to learn the user characteristics before doing the design
+    learn to think like the users
+
+  some general principles for UI focus neeed
+
+    (1) reduce user memory load
+        assume users will forget, because they do not focus on application
+
+        * have consistent user interface
+          don't have differnent ways for deleting things!
+          usually different designers & developers make different things
+
+        * be compatible with existing practice
+          comply to the 'two-finger pinch'
+          can collide with above
+            either be consistent with system or consistent with world
+
+        * use real-world metaphors
+          use from real world so they have less to learn
+
+        * disclose information progressively
+          don't have to give user at first glance
+          if they may not want the information provided
+            file browser
+              list names
+              hover mouse over it and show more
+              open it to show even more
+          avoid information overload
+
+        * make context explicit
+          if the user has interacted with system
+          they should be able to see, just by looking at the page
+          the context of the page, such as 'how I got here'
+          show 'breadcrumbs', path to how they got here
+
+        * defaults
+          supply good defaults for things that users may not change
+          choosing defaults becomes delicate and important exercise
+          sometimes increase memory load
+
+        * shortcuts
+          can be user-programmable
+          different users have different habits
+          so they can have their own shortcuts for doing things
+          sometimes increase memory load
+
+    (2) have to put the user in control
+        example where user is not in control
+          +----------------------+
+          | fatal error: exit?   |
+          |               +----+ |
+          |               | ok | |
+          |               +----+ |
+          +----------------------+
+
+        * no dead ends
+          user interface should not hang
+
+        * flexible
+          lots of options
+
+        * undo/redo
+          should have undo/redo key
+          can try things out and go back to previous state
+          use redo to avoid chain of undo
+            A1  A2  A3 <-> A4
+            A1 <- A2 <- A3 <- A4
+
+common user interface design issues
+------------------------------------
+(1) response time
+    should not have LONG response time
+
+(2) help
+    how can user discover how to use application as they use it
+    usually added at last minute, and does not work well
+
+(3) error handling
+    when user makes a mistake/system has a problem, how to let user know
+    what will the user see?
+    decide which problem are worth notifying the user about
+
+(4) shortcuts/commands vs. menu/mouse
+    commonly known as CLI vs. GUI
+    prompt the user or wait for commands?
+
+(5) internationalization (i18n)
+    error message text
+    horizontally & vertically for different languages
+    make user interface easily portable to such languages
+
+(6) accessibility
+    make application useful who have disabilities
+    might have a blind user
+
+    http://w3.org/WAI
+
+    * provide text alternatives for any useful non-text content
+      picture on page is how user will select where to go to
+      <img href="foo.jpg" alt="agree to arbitration?">
+      if there is no alt text, screen reader will read 'foo.jpg'
+    * synchronize multimedia alternatives
+      make sure all finish at the same time
+    * main image/video should be clear to people with partial disabilities
+      make sure text is big enough
+      what about people who are red/green color blind?
+    * make all functionality doable from the keyboard
+      can also talk to keyboard
+    * give users enough time
+      for the speech-to-text interfaces
+    * don't create context known to cause seizures
+      > 3 flashes/second
+
+common usability problems
+--------------------------
+in intranets
+
+(1) search
+    need to find out small part of larger user interface
+    can use search engine (Google/Bing)
+    sometimes cannot use search engine on intranet
+    can use internal search engine
+    some things will not be easily searchable
+    should have good organization for your system
+(2) login
+    authentication/authorization
+    getting access to stuff you need access to
+
+how to define usability?
+-------------------------
+(1) more effective
+    does what you want
+(2) more efficient to use
+    can tell it what you want to do quicker than other UIs
+(3) easier to learn and remember
+    minimizing the memory load for the user interface itself, not data
+(4) more satisfying to use
+    hardest to nail down
+    more 'user-friendly', comfortable, natural
+    typically need market research to establish
+(5) fewer and less important errors
+
+how to measure usability?
+--------------------------
+sometimes it will be straightforward
+e.g. errors in UI
+
+questions to answer before measuring
+
+(1) know what user does and what the implementation does
+    people want to do something at high level
+    decompose into smaller commands and there are different commands
+(2) what is the user's context?
+    why would the user want to use your application
+(3) what is the user's background
+    who's the audience for your application
+(4) what is the user's need
+    what they want to do
+
+questions while measuring usability
+
+(1) how much traning to use system?
+    training is part of usability testing
+(2) does help suffice?
+    can users figure stuff out on their own
+    do you have to step in to help them (this can be considered as a bug)
+(3) what kind of and how many error?
+    can count errors
+    each time user makes mistake is a success in usability testing
+(4) how do users recover from errors?
 
 
+what users say is less important than what they say
+measure what the DO, not what they SAY!
 
+don't partition usability testing by function
 
+how do you know when to stop?
+you don't know, you stop when the money runs out!
+no this is actually not correct
+need to specify the scope
 
+suppose catch users in Los Angeles, New Orleans, New York
+not useful unless application differs in regional diversity
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+probably useful to test different ages
 
 
 
