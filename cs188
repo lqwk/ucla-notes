@@ -3040,8 +3040,349 @@ basic idea
 READ CHAPTER 11
 
 
+==============
+May. 26, 2016
+==============
 
+capacity tests/measurements issues
+-----------------------------------
+(1) tester must be faster than the system itself
+    worry too much about provisioning the system
+    should provision the tester as well
 
+(2) robust in the presence of changes
+    testing system should evolve with system
+
+(3) repeatable
+    for reproducibility
+    trying to measure capactiy for system
+    should make system match demands of customer
+    for longevity tests
+
+(4) typically: take one or more acceptance test and scale them up
+      run all acceptance tests in parallel
+    but: you may focus on different paths
+      may focus on 'happy' paths and not so much on 'sad' paths
+
+    record-playback
+      record behavior, requests
+      and play them over & over again to get them to work
+      have to decide at what level to do recording and playback
+        UI level
+          typically hard to capture
+        service API level
+          about right
+          may mutate a bit to support capacity tests
+        internal API (e.g. DB API)
+          tends to be too low level
+          too micro-benchy
+          should focus more on what users can see
+
+costs of capacity tests
+------------------------
+getting a capacity test environment
+  don't need to dedicate the environment to capacity tests
+  can be used for things other than capacity tests
+    e.g. for production
+tend to be a bit fuzzier than acceptance tests
+  measurements, not booleans
+  it won't be perfect! but it's ok
+  will get numbers that can be used for scaling estimates
+blurs into canary releasing
+  
+      +------+----------+
+      | main | capactiy |
+      |      |   test   |
+      +------+----------+
+       |   |   |   |   |
+       users users users
+
+sometimes turns into correctness tests
+generally it should assume software is correct
+but this is not always the case
+
+deploying & releasing
+----------------------
+talk to stakeholders (at the start of the project)
+what to identify
+  assets
+  technology choice
+  external systems
+    deploy into other systems that you do not have control over
+  software process - developers
+  operational process - operation staff
+    disaster recovery
+    archiving
+  service level agreements (SLAs)
+    can be detailed or simple
+    but you have to come up with these agreements early on
+    because developers will assume these agreements
+    and users will expect these agreements from you
+
+deployment plan
+----------------
+deploy
+  how to get software out, or next version out
+backout
+  from version N+1 to version N
+backup/restore
+  be useful for disaster recovery
+  useful for backout
+restart
+  how to restart from backup
+upgrade
+  how to deploy the next version given previous version
+data migration
+  not simply moving data from A to B
+  alter the data as you migrate it
+  change to data format as you migrate from A to B
+
+typically starts off tentatively
+may not know capacity well yet
+may not know load wll yet
+
+'chicken-counting'
+  {0, 1, many} when counting
+  pick one of these, e.g. if you pick may, just use 2 [?]
+
+want to automate as much as possible
+  do this gradually instead of trying to come up with everything
+
+deployment pipeline itself can mutate
+  
+  +--------+    +------------+    +----------+    +--------+
+  | commit | -> | acceptance | -> | capacity | +> | deploy |
+  +--------+    +------------+    +----------+    +--------+
+
+===>
+                                                      v25
+  +--------+    +------------+    +----------+    +----------+
+  | commit | -> | acceptance | -> | capacity | +> | deploy 1 | for production
+  +--------+    +------------+    +----------+ |  +----------+
+                                               |      v27
+       dev + ops should know the drill         |  +----------+
+                                               +> | deploy 2 | for canaries
+                                                  +----------+
+
+promotion: decided that v25 passed acceptace test
+           someone signs off
+           later stages can decide independently which promoted version to use
+
+promotion checklist (for next phase)
+-------------------------------------
+automatic
+(1) prepare environment
+    run system in prepared operating system
+(2) deploy binaries from artifact repository
+    here's the stuff we need to pull in from stuff we built
+(3) configure
+(4) migrate any data
+    most trick, sometimes most expensive
+(5) smoke-test
+    simple sanity test to make sure that it works
+
+once automatic part works -> approve promotion
+
+manual (only if it fails)
+record why it failed
+
+Eggert found bug in next version of Emacs
+
+  $ git clone
+  $ ./autogen.sh
+  $ ./configure
+  $ cp . .
+  $ make pdf
+
+in practice this can run into problems
+scripts can be heavy weight
+in practice migrating data will be the most trouble
+
+common problems in promotion
+-----------------------------
+(1) too much data
+(2) incomplete automation
+    you wrote down script
+    but you forgot steps
+      missing/wrong settings
+      wrong version of some tool
+(3) dueling environment settings
+    have two different applications running in same environment
+    one wants Python 2.7.7 and one wants Python 2.7.8
+    environment settings might clash
+(4) dependencies among applications
+    if you are doing microservice approach
+    one service might depend on other service
+(5) how many environments to provision
+    production environments
+    capacity measurements )
+    staging               )
+(6) rollback
+    deployed new version and it has a problem
+    have to go back to old version
+    making transion from v10 -> v9
+    a)  treat as "install v9 and run it"
+        if you can get away with this, then this is the best way to go
+        this should work anyway, you should just use it
+        feels like a 'dev' thing (install software)
+    b)  fundamental problem: saving work done in v10 back to v9 system
+        if application is stateless, then a) will work
+        but most applications do have state
+    c)  obviously you're taking backups
+        "restore from backups just before you upgraded from v9 -> v10"
+        this should work anyway too!
+        worse performance than a)
+        backup procedure not designed for performance on restores
+        restores on emergencies
+        feels like an 'ops' thing (backups)
+    d)  v10 -> v9
+        bad version can be valuable because it broke and you want to debug it
+        don't just override v10, it may have valuable debugging info
+        keep it around for debugging
+(7) emergency fixes
+    don't rollback to previous version
+    have a bad version
+    figure out the problem
+    fix the problem and reboot
+    H&F: never do this, may be overkill
+      easy to claim that each fix is an emergency
+
+"zero-downtime" deployment
+---------------------------
+blue-green
+  how to switch from blue to green DB?
+    put the blue system in readonly mode
+    copy from blue to green
+    switch
+    green is RW
+
+canary
+  one option: partition users & their data
+  you can do capacity measurements etc. in canary
+  what about shared data
+    since it works only if data is partitioned
+    can be modified by green or blue users
+      don't do it
+        shared nothing approach
+        not always possible
+      keep schema constant
+        changing your app but keep database the same in both halves of system
+        can have one DB with two app servers
+        app servers can talk to each other via DB
+      upward-compatible schema
+        old code doesn't know about the new DB
+        old code doesn't modify the new DB
+        this kind of deployment can be tricky
+
++--------------+----+
+|              | c1 |
+| base version | c2 |  <== canaries (combinatorial explosion of canaries)
+|              | c3 |
++---------||---+----+      canaries <= 1, says the book
+          ||
+       +--||--+
+       |      |
+       |  DB  |
+       |      |
+       +------+
+
+continuous deployment
+----------------------
+promotion decision is automatic
+  make sure tests are good tests
+
+somewhat controversial
+  increase development costs
+    more presure on developers
+    have to always make commits that are 100% good until deployment
+    leave imperfect code uncommited
+    code stacks up (less integrated)
+    changes pile up waiting to be integrated
+  trading flexibility for reliability
+
+user-installed deployment
+--------------------------
+more versions in the wild
+  many people simply don't update their cellphones
+  don't have money for data to upgrade
+  application should still work on all versions
+  may have to upgrade from v(N) to v(N+k)
+    can do recursively   v(N) -> v(N+1)
+                       v(N+1) -> v(N+2)
+                             ...
+    too slow, chew up too much space
+      can install v(N+k) from scratch
+  migrate data too
+    more space constraints than server side applications
+  crash reports are essential
+
+automatic upgrade of application?
+  H&F: should be completely automatic
+    users may not necessary agree with H&F
+  on-request
+  download auto, upgrade on request
+
+continuous deployment advice
+-----------------------------
+(1) devs + ops should be friends
+    avoid the situation where devs and ops are separated or isolated
+
+(2) production is locked down
+    no emergency fixes
+    "do not stop the train" -> "only build a new train"
+
+(3) give time to warm up to fill caches
+    only fill up when they get activity
+    when you switch from version to next version
+    give time to warm up the cache
+    let new version to get up and going
+
+(4) fail fast
+    if it doesn't work, fail as quickly as possible
+    minimize the hassle of migrating new data to old version
+
+(5) no GUIs on the server
+    do not reply on the GUIs on the server
+    server should be automated and GUIs fight against that
+
+(6) log everything
+    automatically logging
+    default should be 'log everything you did'
+
+(7) move, don't overwrite
+    don't destroy old version of software
+    makes sense to keep around old version of software to revert
+
+infrastructure management
+--------------------------
+
+------------------------------------
+               apps                    developers
+------------------------------------ fuzzy boundary
+     DNS, firewall, networking         operators
+ routers, storage, compute servers
+------------------------------------
+
+devs write app for ops
+devs write app for user, but app needs to consult DNS to ge answer
+
+ops priorities
+---------------
+(1) focus more on QoS metrics
+    MTTF MTTR ==> get SLA
+(2) procedure for installing changes
+    more emphasis on reliability
+    change requests become first class items (document, audit the following)
+      how risky is it?
+      how important is it?
+      what does it depend on?
+(3) procedures for monitoring the system
+    infrastructure at runtime to keep track of problems & measurements
+    e.g. well understood procedure for application to report errors
+      errors should have priorities
+    may get information overload
+
+READ CHAPTER 12
 
 
 
