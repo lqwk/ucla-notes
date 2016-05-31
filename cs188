@@ -3385,16 +3385,263 @@ ops priorities
 READ CHAPTER 12
 
 
+==============
+May. 31, 2016
+==============
 
+needs for operations staff
+---------------------------
+(1) quality of service (QoS) metrics
+    MTBF, MTTF, AVAIL
+    service level agreement (SLA)
+      this can be tricky to enforce
+      if providers don't conform to this, what to do?
+      this can turn into a gigantic hassle
 
+      ------ SLA 1 ------
+      system you maintain
+      ------ SLA 0 ------
 
+(2) procedures for installing changes
+    operation staff have natural aversion to making changes
+    better have good reason to change things
+    this collides with continuous deployment model
+    come in as change requests
+      have priorities
+      evaluated according to how risky they are
 
+      risk levels
 
+        standard    so risk-free that operations staff can do it without
+                    talking to users or developent
+                    load is getting high, upgrade from 3 -> 4 servers
 
+        normal      with some level of risk
+                      new application
+                      siginificant change to existing application
+                    usually don't let one person perform the change
+                    these changes go through change control board (CCB)
+                    slow down the progress
+                    document & audit changes
 
+(3) monitoring procedure
+    have to record everything
+      be able to figure out if the change was done correctly
+      diagnostic messages in general
+      may suffer from information overload
+        these messages should have priorities
+        these priorities should be standardized
+        should plug in diagnostics into exisiting montioring system
+        learn/integrate what operation staff uses for monitoring
 
+(4) continuity planning (disaster planning)
+    impact of a failure
+    recovery plan for the failure
 
+            backup/snapshot      restore backup/snapshot
+            ^                    ^
+            | data loss |        |
+    up   ---|===========|        |----------
+                        |        |
+    down                +--------+
+                           MTTR = time it takes to restore
 
+    try to make data loss as less as possible
 
+    highly available systems
+      no single point of failure
+      have a duplicate somewhere
+      try to make data loss period zero
 
+(5) they know lower-level technology well, not so much higher level dev
+    they know Bash, but not Scala!
+    know how to configure, but not how to develop
+      both know Python why don't let both use Python?
+      not possible for everything to be written in Python
 
+(6) suppose your middleware requires GUI to configure
+    middleware is any tool used to build application
+    going to have problems if require GUI
+      fights against the idea that you want to automate configurations
+      GUI is not automated!
+    workarounds
+      configure by hand
+        not going to work, can't scale
+      reverse engineer the configuration files
+        first configure by hand, then capture the configuration files
+        run under 'strace' to find all files modified
+      apply them automatically
+
+server provisioning
+--------------------
+LOW IPMI 
+  built into PROM
+  consults configuration management server
+  PXE server (Preboot eXecution Environment) = DHCP + TFTP + UEFI code
+
+DHCP = Dynamic Host Configuration for recovery Protocol
+TFTP = Trivial File Transfer Protocol
+
+virtualization
+---------------
+disk image specifies entire VM
+  complicates privisioning
+  images are artifacts
+    serve as baselines
+    serve as templates, or prototypes
+
+    +---------+     Y - X      +---------+
+    | image X |   --------->   | image Y | 
+    +---------+    a script    +---------+
+
+    continuous delivery
+      automate all changes
+      this is OPTIONAL if you have VM-based deployment
+
+don't worry about all this, JUST GET THE JOB DONE!
+
+benefits of virtualization
+---------------------------
+(1) multi-platform testing (GNU/Linux/FreeBSD/OpenBSD)
+(2) can do in parallel
+(3) bring down cost of multi-platform testing
+
+[ BUT ]
+
+(1) how high in app stack do you want your provider to handle?
+    kernel + middleware + app
+
+    Docker, LXC, Google App Engine
+
+    the higher you go, the more you're locked in
+
+monitoring your applications
+-----------------------------
+(1) diagnostics (errors) + measurements
+(2) store this stuff
+    operations staff typically have standard way
+(3) dashboards for viewing
+(4) notifications when important things happen
+
+data is multi-level
+  hardware
+  operating system
+  middleware
+  application
+
+e.g. CPU cache allocations
+---------------------------
+single CPU with multiple applications running
+one app can "take over" the cache
+
+          80%          20%
+  +-----------------+-------+   L2 cache
+  |      app 1      | app 2 |
+  +-----------------+-------+
+  video decoding     realtime monitor (at least 20% so latency is good)
+
+you want to monitor this and make sure cache allocation works
+look at hardware cahce
+  this may be hard because caches are designed to be invisible
+you want to control this!!
+  tell virtual machine or physical hardware
+
+Intel Cache Allocation Technology (CAT)
+
+                                 cache mask
+  +---------------------------------------+
+  | 1 1 1 0 0 0 0 . . . 1 1 1 0 0 0 0 0 0 |
+  +---------------------------------------+
+
+  only cache lines with 1's can be used
+  configurable at runtime!
+    Xeon e5 v4
+
+traditionally applications assume an unchanging environment
+  CPU cache size is fixed
+    this assumption doesn't necessary hold now
+  nameservers are fixed
+    fixed IP address
+    but now set of nameservers change with time
+    switch to different nameserver
+  tzdata is fixed
+    long running services
+    suddenly get rid of daylight saving [!]
+
+data management
+----------------
+it's LARGE, too large to version-control
+you can start off with VC
+  create database with script
+    instructions to configure database
+    schema for your data
+  VC your script
+
+once database becomes large though
+  data migration procedure
+    takes old database with schema 0, generates new database with schema 1
+    can be a script
+      doesn't contain data
+      records the schema
+      record a procedure, when applied to old database, gives your new database
+  script to revert
+    first class appliation on its own
+    need testing
+
+problems in database deployment
+--------------------------------
+(1) changes to database schema have dependencies
+    on each other
+    vs code
+(2) rollbacks can lose data
+    because we are not recording data in version control
+    save date before deleting it
+      complicates roll forward
+(3) blue-green database deployment
+    keep both in sync on database server
+
+decoupled database deployment
+------------------------------
+app 0 --> app 0.5 --> app 1
+schema 0 --> schema 1
+
+app 0.5 works with both schema 0 and schema 1
+then eventually migrate to schema 1, disable app 0
+then create app 1 which works with only schema 1 (simpler)
+
+data and tests
+---------------
+(1) test sequencing
+    T1; T2; T3
+
+(2) adaptive tests
+    runs test by adapting to current state of database
+      T1 (adapts to current database state)
+      T2 (adapts to current database state)
+      T3 (adapts to current database state)
+    can run in any order, and can run in parallel
+    however, they may be less reproduceable
+
+(3) test isolation
+    via transactions
+    via partitioning the database
+      each test will run independently
+      can run in parallel
+
+cascading test specifications
+------------------------------
+app + empty db
++ app reference data (irrelevant to test but app needs it)
++ test reference data (needed for test but not directly relevant)
++ test specific data
+
+can be at many levels
+keep reproduceable
+
+backdoors in data testing
+--------------------------
+steps not   "take DB snapshot using low-level tools"
+   in API   "restore it"
+
+watch out!! you'll need this for operations
+put this in the API, which may be used
