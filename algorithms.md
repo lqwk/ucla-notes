@@ -1,16 +1,15 @@
 # Algorithms
 
-* [Numbers](#numbers)
+* [NUMBERS](#numbers)
     - [Leetcode 204. Count Primes](#leetcode-204-count-primes)
-
-* [Dynamic Programming](#dynamic-programming)
+* [DYNAMIC PROGRAMMING](#dynamic-programming)
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
 
-## Numbers
+## NUMBERS
 
 ### Leetcode 204. Count Primes
 
@@ -50,7 +49,7 @@ class Solution(object):
 ```
 
 
-## Dynamic Programming
+## DYNAMIC PROGRAMMING
 
 ### Leetcode 62. Unique Paths
 
