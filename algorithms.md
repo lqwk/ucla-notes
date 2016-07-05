@@ -8,7 +8,7 @@
 
 ## Dynamic Programming
 
-### Leetcode 62. Unique Paths
+### [Leetcode 62. Unique Paths](https://leetcode.com/problems/unique-paths/)
 
 **Question:** A robot is located at the top-left corner of a m x n grid. The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid. How many possible unique paths are there? (**Note:** You can only move either down or right at any point in time.)
 
@@ -37,7 +37,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 63. Unique Paths II
+### [Leetcode 63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/)
 
 **Question:** Now consider if some obstacles are added to the grids. How many unique paths would there be? An obstacle and empty space is marked as 1 and 0 respectively in the grid. (**Note:** You can only move either down or right at any point in time.)
 
@@ -92,7 +92,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 64. Minimum Path Sum
+### [Leetcode 64. Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)
 
 **Question:** Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path. (**Note:** You can only move either down or right at any point in time.)
 
@@ -127,7 +127,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 174. Dungeon Game
+### [Leetcode 174. Dungeon Game](https://leetcode.com/problems/dungeon-game/)
 
 **Question:** The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
 
