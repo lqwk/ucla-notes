@@ -74,11 +74,11 @@ class Solution(object):
             paths[i][0] = 1
         for j in range(n):
             paths[0][j] = 1
-        
+
         for i in range(1, m):
             for j in range(1, n):
                 paths[i][j] = paths[i-1][j] + paths[i][j-1]
-        
+
         return paths[m-1][n-1]
 ```
 
@@ -107,7 +107,7 @@ class Solution(object):
         :type obstacleGrid: List[List[int]]
         :rtype: int
         """
-        
+
         m = len(obstacleGrid)
         n = len(obstacleGrid[0])
 
@@ -154,25 +154,25 @@ class Solution(object):
         :type grid: List[List[int]]
         :rtype: int
         """
-        
+
         m = len(grid)
         n = len(grid[0])
-        
+
         paths = [[0 for x in range(n)] for y in range(m)]
         paths[0][0] = grid[0][0]
-        
+
         for i in range(1, m):
             paths[i][0] = paths[i-1][0] + grid[i][0]
         for j in range(1, n):
             paths[0][j] = paths[0][j-1] + grid[0][j]
-        
+
         for i in range(1, m):
             for j in range(1, n):
                 if paths[i-1][j] < paths[i][j-1]:
                     paths[i][j] = paths[i-1][j] + grid[i][j]
                 else:
                     paths[i][j] = paths[i][j-1] + grid[i][j]
-        
+
         return paths[m-1][n-1]
 ```
 
