@@ -1,8 +1,8 @@
 # Algorithms
 
-* [NUMBERS](#numbers)
+* [Numbers](#numbers)
     - [Leetcode 204. Count Primes](#leetcode-204-count-primes)
-* [DYNAMIC PROGRAMMING](#dynamic-programming)
+* [Dynamic Programming](#dynamic-programming)
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
