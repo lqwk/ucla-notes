@@ -5,10 +5,13 @@
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
+    - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
 
 ## Dynamic Programming
 
-### [Leetcode 62. Unique Paths](https://leetcode.com/problems/unique-paths/)
+### Leetcode 62. Unique Paths
+
+[Leetcode Source](https://leetcode.com/problems/unique-paths/)
 
 **Question:** A robot is located at the top-left corner of a m x n grid. The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid. How many possible unique paths are there? (**Note:** You can only move either down or right at any point in time.)
 
@@ -37,7 +40,9 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### [Leetcode 63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/)
+### Leetcode 63. Unique Paths II
+
+[Leetcode Souce](https://leetcode.com/problems/unique-paths-ii/)
 
 **Question:** Now consider if some obstacles are added to the grids. How many unique paths would there be? An obstacle and empty space is marked as 1 and 0 respectively in the grid. (**Note:** You can only move either down or right at any point in time.)
 
@@ -92,7 +97,9 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### [Leetcode 64. Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)
+### Leetcode 64. Minimum Path Sum
+
+[Leetcode Source](https://leetcode.com/problems/minimum-path-sum/)
 
 **Question:** Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path. (**Note:** You can only move either down or right at any point in time.)
 
@@ -127,7 +134,9 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### [Leetcode 174. Dungeon Game](https://leetcode.com/problems/dungeon-game/)
+### Leetcode 174. Dungeon Game
+
+[Leetcode Source](https://leetcode.com/problems/dungeon-game/)
 
 **Question:** The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
 
@@ -208,5 +217,39 @@ class Solution(object):
         return paths[0][0]
 ```
 
+### Leetcode 279. Perfect Squares
+
+[Leetcode Source](https://leetcode.com/problems/perfect-squares/)
+
+**Question:** Given a positive integer `n`, find the least number of perfect square numbers (for example, `1, 4, 9, 16, ...`) which sum to `n`.
+
+For example, given `n = 12`, return `3` because `12 = 4 + 4 + 4`; given `n = 13`, return `2` because `13 = 4 + 9`.
+
+**Answer:**
+```python
+class Solution(object):
+
+    def numSquares(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        if n == 0:
+            return 1
+
+        num = [sys.maxint for x in range(n+1)]
+        num[0] = 0
+
+        for i in range(1, n+1):
+            tmp = num[i]
+            for j in range(1, n+1):
+                if j**2 > i:
+                    break
+                tmp = min(tmp, 1+num[i-j**2])
+            num[i] = tmp
+
+        return num[-1]
+```
 
 
