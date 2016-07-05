@@ -1,12 +1,54 @@
 # Algorithms
 
+* [Numbers](#numbers)
+    - [Leetcode 204. Count Primes](#leetcode-204-count-primes)
+
 * [Dynamic Programming](#dynamic-programming)
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
-    - [Leetcode 204. Count Primes](#leetcode-204-count-primes)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
+
+## Numbers
+
+### Leetcode 204. Count Primes
+
+[Leetcode Source](https://leetcode.com/problems/count-primes/)
+
+**Question:** Count the number of prime numbers less than a non-negative number, **`n`**.
+
+**Answer:**
+
+Use the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) method to find the answer.
+
+```python
+class Solution(object):
+
+    def countPrimes(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        prime = [True for x in range(n)]
+
+        for i in range(2, n):
+            if i*i >= n:
+                break
+            if not prime[i]:
+                continue
+            for j in range(i*i, n, i):
+                prime[j] = False
+
+        count = 0
+        for i in range(2, n):
+            if prime[i]:
+                count = count+1
+
+        return count
+```
+
 
 ## Dynamic Programming
 
@@ -216,43 +258,6 @@ class Solution(object):
                 paths[i][j] = min(right, down)
 
         return paths[0][0]
-```
-
-### Leetcode 204. Count Primes
-
-[Leetcode Source](https://leetcode.com/problems/count-primes/)
-
-**Question:** Count the number of prime numbers less than a non-negative number, **`n`**.
-
-**Answer:**
-
-Use the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) method to find the answer.
-
-```python
-class Solution(object):
-
-    def countPrimes(self, n):
-        """
-        :type n: int
-        :rtype: int
-        """
-
-        prime = [True for x in range(n)]
-
-        for i in range(2, n):
-            if i*i >= n:
-                break
-            if not prime[i]:
-                continue
-            for j in range(i*i, n, i):
-                prime[j] = False
-
-        count = 0
-        for i in range(2, n):
-            if prime[i]:
-                count = count+1
-
-        return count
 ```
 
 ### Leetcode 279. Perfect Squares
