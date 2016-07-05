@@ -1,5 +1,11 @@
 # Algorithms
 
+* [Dynamic Programming](#dynamic-programming)
+    - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
+    - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
+    - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
+    - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
+
 ## Dynamic Programming
 
 ### Leetcode 62. Unique Paths
