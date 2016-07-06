@@ -368,7 +368,9 @@ Hints:
 
 **Answer:**
 
-**This algorithm uses dynamic programming, and is an `O(n)` algorithm** For a number `num >= 4`, we can separate it into the sum of `num-2` and `2` or the sum of `num-3` and `3`. We compare the products `product[num-2] * 2` and `product[num-3] * 3` to determine which is larger and htat is what we put in for `product[num]`. Thus this gives the dymamic programming approach.
+**This algorithm uses dynamic programming, and is an `O(n)` algorithm.**
+
+For a number `num >= 4`, we can separate it into the sum of `num-2` and `2` or the sum of `num-3` and `3`. We compare the products `product[num-2] * 2` and `product[num-3] * 3` to determine which is larger and htat is what we put in for `product[num]`. Thus this gives the dymamic programming approach.
 
 ```python
 class Solution(object):
@@ -392,7 +394,9 @@ class Solution(object):
         return products[n]
 ```
 
-**This algorithm uses math, and is an `O(1)` algorithm** This algorithm is given by a pattern found.
+**This algorithm uses math, and is an `O(1)` algorithm.**
+
+This algorithm is given by a pattern found.
 
 ```python
 class Solution(object):
