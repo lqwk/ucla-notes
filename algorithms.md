@@ -9,6 +9,7 @@
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
     - [Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
+    - [Leetcode 343. Integer Break](#leetcode-343-integer-break)
 
 ## NUMBERS
 
@@ -351,6 +352,45 @@ class Solution(object):
         return ones
 ```
 
+### Leetcode 343. Integer Break
 
+[Leetcode Source](https://leetcode.com/problems/integer-break/)
 
+**Question:** Given a positive integer `n`, break it into the sum of at least two positive integers and maximize the product of those integers. Return the maximum product you can get.
+
+For example, given `n = 2`, return 1 `(2 = 1 + 1)`; given `n = 10`, return 36 `(10 = 3 + 3 + 4)`.
+
+Note: You may assume that `n` is not less than 2 and not larger than 58.
+
+Hints:
+* There is a simple `O(n)` solution to this problem.
+* You may check the breaking results of `n` ranging from 7 to 10 to discover the regularities.
+
+**Answer:**
+```python
+class Solution(object):
+
+    def integerBreak(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        if n == 1:
+            return 0
+        if n == 2:
+            return 1
+        if n == 3:
+            return 2
+        if n == 4:
+            return 4
+
+        mod = n % 3
+        if mod == 0:
+            return 3**(n//3)
+        elif mod == 1:
+            return 4 * (3**(n//3 - 1))
+        elif mod == 2:
+            return 2 * (3**(n//3))
+```
 
