@@ -8,7 +8,7 @@
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
-    - [Leetcode 338. Perfect Squares](#leetcode-338-counting-bits)
+    - [Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
 
 ## NUMBERS
 
