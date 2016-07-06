@@ -370,7 +370,7 @@ Hints:
 
 **This algorithm uses dynamic programming, and is an `O(n)` algorithm.**
 
-For a number `num >= 4`, we can separate it into the sum of `num-2` and `2` or the sum of `num-3` and `3`. We compare the products `product[num-2] * 2` and `product[num-3] * 3` to determine which is larger and htat is what we put in for `product[num]`. Thus this gives the dymamic programming approach.
+For a number `num >= 4`, we can separate it into the sum of `num-2` and `2` or the sum of `num-3` and `3`. We compare the products `products[num-2] * 2` and `products[num-3] * 3` to determine which is larger and htat is what we put in for `products[num]`. Thus this gives the dymamic programming approach.
 
 ```python
 class Solution(object):
