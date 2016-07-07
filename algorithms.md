@@ -198,7 +198,7 @@ Given `n = 3`, there are a total of 5 unique BST's.
 
 **Answer:**
 
-We enumerate through each possible root `root = 1 ~ n`. Through each iteration, the left subtree can have `left = root - 1` possible roots and the right subtree can have `right = n-1 - left` possible roots. Thus the overall combination or each `root` would be `trees[left] * trees[right]`.
+We enumerate through each possible `root = 1 ~ n`. Through each iteration, the left subtree can have `left = root - 1` possible roots and the right subtree can have `right = n-1 - left` possible roots. Thus the overall combination of each `root` would be `trees[left] * trees[right]`.
 
 ```python
 class Solution(object):
