@@ -1,18 +1,18 @@
 # Algorithms
 
 * [Numbers](#numbers)
-    - [Leetcode 204. Count Primes](#leetcode-204-count-primes)
+    - [[E] Leetcode 204. Count Primes](#leetcode-204-count-primes)
 * [Dynamic Programming](#dynamic-programming)
-    - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
-    - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
-    - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
-    - [Leetcode 70. Climbing Stairs](#leetcode-70-climbing-stairs)
-    - [Leetcode 95. Unique Binary Search Trees II](#leetcode-95-unique-binary-search-trees-ii)
-    - [Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
-    - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
-    - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
-    - [Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
-    - [Leetcode 343. Integer Break](#leetcode-343-integer-break)
+    - [[M] Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
+    - [[M] Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
+    - [[M] Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
+    - [[E] Leetcode 70. Climbing Stairs](#leetcode-70-climbing-stairs)
+    - [[M] Leetcode 95. Unique Binary Search Trees II](#leetcode-95-unique-binary-search-trees-ii)
+    - [[M] Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
+    - [[H] Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
+    - [[M] Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
+    - [[M] Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
+    - [[M] Leetcode 343. Integer Break](#leetcode-343-integer-break)
 
 ## NUMBERS
 
