@@ -6,6 +6,7 @@
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
+    - [Leetcode 95. Unique Binary Search Trees II](#leetcode-95-unique-binary-search-trees-ii)
     - [Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
@@ -177,6 +178,61 @@ class Solution(object):
                     paths[i][j] = paths[i][j-1] + grid[i][j]
 
         return paths[m-1][n-1]
+```
+
+### Leetcode 95. Unique Binary Search Trees II
+
+[Leetcode Source](https://leetcode.com/problems/unique-binary-search-trees-ii/)
+
+**Question:** Given an integer `n`, generate all structurally unique BST's (binary search trees) that store values `1...n`.
+
+For example,
+Given `n = 3`, your program should return all 5 unique BST's shown below.
+
+```
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+```
+
+**Answer:**
+
+Generate each subtree recursively using the **depth-first-serach** algorithm.
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+
+    def generateTrees(self, n):
+        """
+        :type n: int
+        :rtype: List[TreeNode]
+        """
+
+        return self.dfs(1, n) if n >= 1 else []
+
+    def dfs(self, s, e):
+        if s > e:  return [None]
+
+        trees = []
+        for i in range(s, e+1):
+            ltrees = self.dfs(s, i-1)
+            rtrees = self.dfs(i+1, e)
+            for left in ltrees:
+                for right in rtrees:
+                    root = TreeNode(i)
+                    root.left, root.right = left, right
+                    trees.append(root)
+
+        return trees
 ```
 
 ### Leetcode 96. Unique Binary Search Trees
