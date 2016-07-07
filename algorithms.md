@@ -222,7 +222,7 @@ class Solution(object):
         for n in range(3, n+1):
             for left in range(0, n):
                 right = n-1 - left
-                trees[n] = trees[n] + trees[left] * trees[right]
+                trees[n] += trees[left] * trees[right]
 
         return trees[n]
 ```
