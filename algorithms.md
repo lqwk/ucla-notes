@@ -6,6 +6,7 @@
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
+    - [Leetcode 70. Climbing Stairs](#leetcode-70-climbing-stairs)
     - [Leetcode 95. Unique Binary Search Trees II](#leetcode-95-unique-binary-search-trees-ii)
     - [Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
@@ -178,6 +179,36 @@ class Solution(object):
                     paths[i][j] = paths[i][j-1] + grid[i][j]
 
         return paths[m-1][n-1]
+```
+
+### Leetcode 70. Climbing Stairs
+
+[Leetcode Source](https://leetcode.com/problems/climbing-stairs/)
+
+**Question:** You are climbing a stair case. It takes `n` steps to reach to the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+**Answer:**
+```python
+class Solution(object):
+    
+    def climbStairs(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        if n == 1:
+            return 1
+        if n == 2:
+            return 2
+
+        s = [1] * (n+1)
+        s[2] = 2
+
+        for i in range(3, n+1):
+            s[i] = s[i-2] + s[i-1]
+
+        return s[n]
 ```
 
 ### Leetcode 95. Unique Binary Search Trees II
