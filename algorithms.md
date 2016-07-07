@@ -6,6 +6,7 @@
     - [Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
     - [Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
     - [Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
+    - [Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
     - [Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
     - [Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
     - [Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
@@ -176,6 +177,54 @@ class Solution(object):
                     paths[i][j] = paths[i][j-1] + grid[i][j]
 
         return paths[m-1][n-1]
+```
+
+### Leetcode 96. Unique Binary Search Trees
+
+[Leetcode Source](https://leetcode.com/problems/unique-binary-search-trees/)
+
+**Question:** Given `n`, how many structurally unique BST's (binary search trees) that store values `1...n`?
+
+For example,
+Given `n = 3`, there are a total of 5 unique BST's.
+
+```
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+```
+
+**Answer:**
+
+We enumerate through each possible root `root = 1 ~ n`. Through each iteration, the left subtree can have `left = root - 1` possible roots and the right subtree can have `right = n-1 - left` possible roots. Thus the overall combination or each `root` would be `trees[left] * trees[right]`.
+
+```python
+class Solution(object):
+
+    def numTrees(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        trees = [0] * (n+1)
+        if n < 2:
+            return 1
+        elif n == 2:
+            return 2
+
+        trees[0] = 1
+        trees[1] = 1
+        trees[2] = 2
+
+        for n in range(3, n+1):
+            for left in range(0, n):
+                right = n-1 - left
+                trees[n] = trees[n] + trees[left] * trees[right]
+
+        return trees[n]
 ```
 
 ### Leetcode 174. Dungeon Game
