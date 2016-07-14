@@ -4,6 +4,7 @@
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
 * [DYNAMIC PROGRAMMING](#dynamic-programming)
   * [[M] Leetcode 53. Maximum Subarray](#m-leetcode-53-maximum-subarray)
+  * [[M] Leetcode 152. Maximum Product Subarray](#m-leetcode-152-maximum-product-subarray)
   * [[M] Leetcode 62. Unique Paths](#m-leetcode-62-unique-paths)
   * [[M] Leetcode 63. Unique Paths II](#m-leetcode-63-unique-paths-ii)
   * [[M] Leetcode 64. Minimum Path Sum](#m-leetcode-64-minimum-path-sum)
@@ -11,7 +12,6 @@
   * [[M] Leetcode 95. Unique Binary Search Trees II](#m-leetcode-95-unique-binary-search-trees-ii)
   * [[M] Leetcode 96. Unique Binary Search Trees](#m-leetcode-96-unique-binary-search-trees)
   * [[M] Leetcode 121. Best Time to Buy and Sell Stock](#m-leetcode-121-best-time-to-buy-and-sell-stock)
-  * [[M] Leetcode 152. Maximum Product Subarray](#m-leetcode-152-maximum-product-subarray)
   * [[H] Leetcode 174. Dungeon Game](#h-leetcode-174-dungeon-game)
   * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
   * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
@@ -92,6 +92,53 @@ class Solution(object):
             maxsum = max(temp, maxsum)
 
         return maxsum
+```
+
+
+### [M] Leetcode 152. Maximum Product Subarray
+
+[Leetcode Source](https://leetcode.com/problems/maximum-product-subarray/)
+
+**Question:** Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+For example, given the array `[2,3,-2,4]`,
+the contiguous subarray `[2,3]` has the largest `product = 6`.
+
+**Answer:**
+
+We need to keep track of both `maxprod` and `minprod` since multiplying two negative numbers will give a positive one.
+
+Let `f(k)` be `maxprod` and `g(k)` be `minprod`, then we have
+
+```
+f(k) = max( A[k], f(k-1) * A[k], A[k], g(k-1) * A[k] )
+g(k) = min( A[k], g(k-1) * A[k], A[k], f(k-1) * A[k] )
+```
+
+Other than that, we have tto check that the `num` we multiply with is not `0`.
+
+```python
+class Solution(object):
+
+    def maxProduct(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+
+        maxprod = minprod = res = nums[0]
+
+        for i in range(1, n):
+            temp = maxprod
+            maxprod = max(max(temp * nums[i], minprod * nums[i]), nums[i])
+            minprod = min(min(temp * nums[i], minprod * nums[i]), nums[i])
+            res = max(maxprod, res)
+
+        return res
 ```
 
 ### [M] Leetcode 62. Unique Paths
@@ -419,52 +466,6 @@ class Solution(object):
             current = min(prices[i], current)
 
         return profit
-```
-
-### [M] Leetcode 152. Maximum Product Subarray
-
-[Leetcode Source](https://leetcode.com/problems/maximum-product-subarray/)
-
-**Question:** Find the contiguous subarray within an array (containing at least one number) which has the largest product.
-
-For example, given the array `[2,3,-2,4]`,
-the contiguous subarray `[2,3]` has the largest `product = 6`.
-
-**Answer:**
-
-We need to keep track of both `maxprod` and `minprod` since multiplying two negative numbers will give a positive one.
-
-Let `f(k)` be `maxprod` and `g(k)` be `minprod`, then we have
-
-```
-f(k) = max( A[k], f(k-1) * A[k], A[k], g(k-1) * A[k] )
-g(k) = min( A[k], g(k-1) * A[k], A[k], f(k-1) * A[k] )
-```
-
-Other than that, we have tto check that the `num` we multiply with is not `0`.
-
-```python
-class Solution(object):
-
-    def maxProduct(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: int
-        """
-
-        n = len(nums)
-        if n == 0:
-            return 0
-
-        maxprod = minprod = res = nums[0]
-
-        for i in range(1, n):
-            temp = maxprod
-            maxprod = max(max(temp * nums[i], minprod * nums[i]), nums[i])
-            minprod = min(min(temp * nums[i], minprod * nums[i]), nums[i])
-            res = max(maxprod, res)
-
-        return res
 ```
 
 ### [H] Leetcode 174. Dungeon Game
