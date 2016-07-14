@@ -25,7 +25,8 @@
 
 [Leetcode Source](https://leetcode.com/problems/count-primes/)
 
-**Question:** Count the number of prime numbers less than a non-negative number, **`n`**.
+**Question:**
+>Count the number of prime numbers less than a non-negative number, **`n`**.
 
 **Answer:**
 
