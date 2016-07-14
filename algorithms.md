@@ -15,6 +15,7 @@
   * [[M] Leetcode 96. Unique Binary Search Trees](#m-leetcode-96-unique-binary-search-trees)
   * [[M] Leetcode 121. Best Time to Buy and Sell Stock](#m-leetcode-121-best-time-to-buy-and-sell-stock)
   * [[H] Leetcode 123. Best Time to Buy and Sell Stock III](#h-leetcode-123-best-time-to-buy-and-sell-stock-iii)
+  * [[H] Leetcode 188. Best Time to Buy and Sell Stock IV](#h-leetcode-188-best-time-to-buy-and-sell-stock-iv)
   * [[H] Leetcode 174. Dungeon Game](#h-leetcode-174-dungeon-game)
   * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
   * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
@@ -574,6 +575,72 @@ class Solution(object):
             current = max(current, prices[i])
             result = max(result, profits[i] + profit)
             i -= 1
+
+        return result
+```
+
+### [H] Leetcode 188. Best Time to Buy and Sell Stock IV
+
+[Leetcode Source](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/)
+
+**Question:**
+
+> Say you have an array for which the `i`th element is the price of a given stock on day `i`.
+> 
+> Design an algorithm to find the maximum profit. You may complete at most `k` transactions.
+> 
+> **Note:** You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**Answer:**
+
+If we have `k >= n/2`, then it is the same as having as many transactions we want, so we use the greedy algorithm we developed above.
+
+Otherwise, we let `profits[i][j]` be the maximum profit if we made the `i`th transaction on the `j`th day. We have
+
+* `maxTemp = max(maxTemp, profits[i-1][j-1] – prices[j])`
+    - This is the temporary maximum profit such that if we buy stock in on the `j`th day, we subtract the cost of the current purchase, which is `prices[j]` from the previous profits, which is `profits[i-1][j-1]`, accounting for one less transaction (`i-1`).
+* `profits[i][j] = max(profits[i][j-1], prices[j] + maxTemp)` 
+    - Since we already accounted for the purchase price in `maxTemp`, we simply add `prices[j]` to `maxTemp` to get the profit.
+
+```python
+class Solution(object):
+
+    def maxProfit(self, k, prices):
+        """
+        :type k: int
+        :type prices: List[int]
+        :rtype: int
+        """
+
+        n = len(prices)
+
+        if k >= (n >> 1): # fancy/fast for n/2
+            return self.maxProfitGreedy(prices)
+
+        profits =[[0 for j in range(n)] for i in range(k+1)]
+ 
+        for i in range(1, k+1):
+
+            maxTemp = (-prices[0])
+
+            for j in range(1, n):
+                profits[i][j] = max(profits[i][j-1], prices[j] + maxTemp)
+                maxTemp = max(maxTemp, profits[i-1][j-1] - prices[j])
+
+        return profits[k][n-1]
+
+
+    def maxProfitGreedy(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+
+        result = 0
+
+        for i in range(1, len(prices)):
+            if prices[i] > prices[i-1]:
+                result += prices[i] - prices[i-1]
 
         return result
 ```
