@@ -70,7 +70,7 @@ class Solution(object):
 **Question:**
 
 >Say you have an array for which the `i`th element is the price of a given stock on day `i`.
-
+>
 >Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
 **Answer:**
@@ -109,7 +109,7 @@ class Solution(object):
 **Question:**
 
 >Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
-
+>
 >For example, given the array `[−2,1,−3,4,−1,2,1,−5,4]`,
 the contiguous subarray `[4,−1,2,1]` has the largest `sum = 6`.
 
@@ -147,7 +147,7 @@ class Solution(object):
 **Question:**
 
 >Find the contiguous subarray within an array (containing at least one number) which has the largest product.
-
+>
 >For example, given the array `[2,3,-2,4]`,
 the contiguous subarray `[2,3]` has the largest `product = 6`.
 
@@ -228,16 +228,16 @@ class Solution(object):
 **Question:**
 
 >Now consider if some obstacles are added to the grids. How many unique paths would there be? An obstacle and empty space is marked as 1 and 0 respectively in the grid. (**Note:** You can only move either down or right at any point in time.)
-
->For example: There is one obstacle in the middle of a 3x3 grid as illustrated below.
-```python
-[
-  [0,0,0],
-  [0,1,0],
-  [0,0,0]
-]
-```
->The total number of unique paths is 2.
+>
+> For example: There is one obstacle in the middle of a 3x3 grid as illustrated below.
+> ```python
+> [
+>   [0,0,0],
+>   [0,1,0],
+>   [0,0,0]
+> ]
+> ```
+> The total number of unique paths is 2.
 
 **Answer:**
 ```python
@@ -357,18 +357,18 @@ class Solution(object):
 
 **Question:**
 
->Given an integer `n`, generate all structurally unique BST's (binary search trees) that store values `1...n`.
-
->For example,
->Given `n = 3`, your program should return all 5 unique BST's shown below.
-
-```
-   1         3     3      2      1
-    \       /     /      / \      \
-     3     2     1      1   3      2
-    /     /       \                 \
-   2     1         2                 3
-```
+> Given an integer `n`, generate all structurally unique BST's (binary search trees) that store values `1...n`.
+> 
+> For example,
+> Given `n = 3`, your program should return all 5 unique BST's shown below.
+> 
+> ```
+>    1         3     3      2      1
+>     \       /     /      / \      \
+>      3     2     1      1   3      2
+>     /     /       \                 \
+>    2     1         2                 3
+> ```
 
 **Answer:**
 
@@ -414,18 +414,18 @@ class Solution:
 
 **Question:**
 
->Given `n`, how many structurally unique BST's (binary search trees) that store values `1...n`?
-
->For example,
->Given `n = 3`, there are a total of 5 unique BST's.
-
-```
-   1         3     3      2      1
-    \       /     /      / \      \
-     3     2     1      1   3      2
-    /     /       \                 \
-   2     1         2                 3
-```
+> Given `n`, how many structurally unique BST's (binary search trees) that store values `1...n`?
+> 
+> For example,
+> Given `n = 3`, there are a total of 5 unique BST's.
+> 
+> ```
+>    1         3     3      2      1
+>     \       /     /      / \      \
+>      3     2     1      1   3      2
+>     /     /       \                 \
+>    2     1         2                 3
+> ```
 
 **Answer:**
 
@@ -464,25 +464,25 @@ class Solution(object):
 
 **Question:**
 
->Say you have an array for which the ith element is the price of a given stock on day `i`.
-
->If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
-
->Example 1:
-```
-Input: [7, 1, 5, 3, 6, 4]
-Output: 5
-
-max. difference = 6-1 = 5 (not 7-1 = 6, as selling price needs to be larger than buying price)
-```
-
->Example 2:
-```
-Input: [7, 6, 4, 3, 1]
-Output: 0
-
->In this case, no transaction is done, i.e. max profit = 0.
-```
+> Say you have an array for which the ith element is the price of a given stock on day `i`.
+> 
+> If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+> 
+> Example 1:
+> ```
+> Input: [7, 1, 5, 3, 6, 4]
+> Output: 5
+> 
+> max. difference = 6-1 = 5 (not 7-1 = 6, as selling price needs to be larger than buying price)
+> ```
+> 
+> Example 2:
+> ```
+> Input: [7, 6, 4, 3, 1]
+> Output: 0
+> 
+> In this case, no transaction is done, i.e. max profit = 0.
+> ```
 
 **Answer:**
 
@@ -536,13 +536,13 @@ class Solution(object):
 **Question:**
 
 >The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
-
+>
 >The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
-
+>
 >Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
-
+>
 >In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
-
+>
 >**Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.**
 
 **Answer:**
@@ -621,7 +621,7 @@ class Solution(object):
 **Question:**
 
 >Given a positive integer `n`, find the least number of perfect square numbers (for example, `1, 4, 9, 16, ...`) which sum to `n`.
-
+>
 >For example, given `n = 12`, return `3` because `12 = 4 + 4 + 4`; given `n = 13`, return `2` because `13 = 4 + 9`.
 
 **Answer:**
@@ -658,12 +658,12 @@ class Solution(object):
 **Question:**
 
 >Given a non negative integer number num. For every numbers `i` in the range `0 <= i <= num` calculate the number of 1's in their binary representation and return them as an array.
-
+>
 >Example: For `num = 5` you should return `[0,1,1,2,1,2]`.
-
+>
 >Follow up: It is very easy to come up with a solution with run time `O(n*sizeof(integer))`. But can you do it in linear time `O(n)` possibly in a single pass? Space complexity should be `O(n)`.
 Can you do it like a boss? Do it without using any builtin function like `__builtin_popcount` in C++ or in any other language.
-
+>
 >Hints:
 >* You should make use of what you have produced already.
 >* Divide the numbers in ranges like `[2-3]`, `[4-7]`, `[8-15]` and so on. And try to generate new range from previous.
@@ -716,11 +716,11 @@ class Solution(object):
 **Question:**
 
 >Given a positive integer `n`, break it into the sum of at least two positive integers and maximize the product of those integers. Return the maximum product you can get.
-
+>
 >For example, given `n = 2`, return 1 `(2 = 1 + 1)`; given `n = 10`, return 36 `(10 = 3 + 3 + 4)`.
-
+>
 >Note: You may assume that `n` is not less than 2 and not larger than 58.
-
+>
 > Hints:
 > * There is a simple `O(n)` solution to this problem.
 > * You may check the breaking results of `n` ranging from 7 to 10 to discover the regularities.
