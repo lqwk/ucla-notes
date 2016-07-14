@@ -1,22 +1,25 @@
 # Algorithms
 
-* [Numbers](#numbers)
-    - [[E] Leetcode 204. Count Primes](#leetcode-204-count-primes)
-* [Dynamic Programming](#dynamic-programming)
-    - [[M] Leetcode 62. Unique Paths](#leetcode-62-unique-paths)
-    - [[M] Leetcode 63. Unique Paths II](#leetcode-63-unique-paths-ii)
-    - [[M] Leetcode 64. Minimum Path Sum](#leetcode-64-minimum-path-sum)
-    - [[E] Leetcode 70. Climbing Stairs](#leetcode-70-climbing-stairs)
-    - [[M] Leetcode 95. Unique Binary Search Trees II](#leetcode-95-unique-binary-search-trees-ii)
-    - [[M] Leetcode 96. Unique Binary Search Trees](#leetcode-96-unique-binary-search-trees)
-    - [[H] Leetcode 174. Dungeon Game](#leetcode-174-dungeon-game)
-    - [[M] Leetcode 279. Perfect Squares](#leetcode-279-perfect-squares)
-    - [[M] Leetcode 338. Counting Bits](#leetcode-338-counting-bits)
-    - [[M] Leetcode 343. Integer Break](#leetcode-343-integer-break)
+* [NUMBERS](#numbers)
+  * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
+* [DYNAMIC PROGRAMMING](#dynamic-programming)
+  * [[M] Leetcode 53. Maximum Subarray](#m-leetcode-53-maximum-subarray)
+  * [[M] Leetcode 62. Unique Paths](#m-leetcode-62-unique-paths)
+  * [[M] Leetcode 63. Unique Paths II](#m-leetcode-63-unique-paths-ii)
+  * [[M] Leetcode 64. Minimum Path Sum](#m-leetcode-64-minimum-path-sum)
+  * [[E] Leetcode 70. Climbing Stairs](#e-leetcode-70-climbing-stairs)
+  * [[M] Leetcode 95. Unique Binary Search Trees II](#m-leetcode-95-unique-binary-search-trees-ii)
+  * [[M] Leetcode 96. Unique Binary Search Trees](#m-leetcode-96-unique-binary-search-trees)
+  * [[M] Leetcode 121. Best Time to Buy and Sell Stock](#m-leetcode-121-best-time-to-buy-and-sell-stock)
+  * [[M] Leetcode 152. Maximum Product Subarray](#m-leetcode-152-maximum-product-subarray)
+  * [[H] Leetcode 174. Dungeon Game](#h-leetcode-174-dungeon-game)
+  * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
+  * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
+  * [[M] Leetcode 343. Integer Break](#m-leetcode-343-integer-break)
 
 ## NUMBERS
 
-### Leetcode 204. Count Primes
+### [E] Leetcode 204. Count Primes
 
 [Leetcode Source](https://leetcode.com/problems/count-primes/)
 
@@ -56,7 +59,42 @@ class Solution(object):
 
 ## DYNAMIC PROGRAMMING
 
-### Leetcode 62. Unique Paths
+### [M] Leetcode 53. Maximum Subarray
+
+[Leetcode Source](https://leetcode.com/problems/maximum-subarray/)
+
+**Question:** Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+
+For example, given the array `[−2,1,−3,4,−1,2,1,−5,4]`,
+the contiguous subarray `[4,−1,2,1]` has the largest `sum = 6`.
+
+**Answer:**
+```python
+class Solution(object):
+
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+
+        maxsum, temp = nums[0], 0
+
+        for num in nums:
+            if temp > 0:
+                temp = temp + num
+            else:
+                temp = num
+            maxsum = max(temp, maxsum)
+
+        return maxsum
+```
+
+### [M] Leetcode 62. Unique Paths
 
 [Leetcode Source](https://leetcode.com/problems/unique-paths/)
 
@@ -87,7 +125,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 63. Unique Paths II
+### [M] Leetcode 63. Unique Paths II
 
 [Leetcode Souce](https://leetcode.com/problems/unique-paths-ii/)
 
@@ -144,7 +182,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 64. Minimum Path Sum
+### [M] Leetcode 64. Minimum Path Sum
 
 [Leetcode Source](https://leetcode.com/problems/minimum-path-sum/)
 
@@ -181,7 +219,7 @@ class Solution(object):
         return paths[m-1][n-1]
 ```
 
-### Leetcode 70. Climbing Stairs
+### [E] Leetcode 70. Climbing Stairs
 
 [Leetcode Source](https://leetcode.com/problems/climbing-stairs/)
 
@@ -211,7 +249,7 @@ class Solution(object):
         return s[n]
 ```
 
-### Leetcode 95. Unique Binary Search Trees II
+### [M] Leetcode 95. Unique Binary Search Trees II
 
 [Leetcode Source](https://leetcode.com/problems/unique-binary-search-trees-ii/)
 
@@ -266,7 +304,7 @@ class Solution:
         return trees
 ```
 
-### Leetcode 96. Unique Binary Search Trees
+### [M] Leetcode 96. Unique Binary Search Trees
 
 [Leetcode Source](https://leetcode.com/problems/unique-binary-search-trees/)
 
@@ -314,7 +352,122 @@ class Solution(object):
         return trees[n]
 ```
 
-### Leetcode 174. Dungeon Game
+### [M] Leetcode 121. Best Time to Buy and Sell Stock
+
+[Leetcode Source](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+
+**Question:** Say you have an array for which the ith element is the price of a given stock on day `i`.
+
+If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+Example 1:
+```
+Input: [7, 1, 5, 3, 6, 4]
+Output: 5
+
+max. difference = 6-1 = 5 (not 7-1 = 6, as selling price needs to be larger than buying price)
+```
+
+Example 2:
+```
+Input: [7, 6, 4, 3, 1]
+Output: 0
+
+In this case, no transaction is done, i.e. max profit = 0.
+```
+
+**Answer:**
+
+There is a simple `O(n^2)` solution for this problem as shown below.
+```python
+class Solution(object):
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+
+        n = len(prices)
+        profit = 0
+        for i in range(1, n):
+            for j in range(i):
+                if prices[i] - prices[j] > profit:
+                    profit = prices[i] - prices[j]
+
+        return profit
+```
+
+However, we need an `O(n)` algorithm, so we use dynamic programming as shown below.
+```python
+class Solution(object):
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+
+        n = len(prices)
+        if n == 0 or n == 1:
+            return 0
+
+        profit, current = 0, prices[0]
+
+        for i in range(n):
+            profit = max(profit, prices[i] - current)
+            current = min(prices[i], current)
+
+        return profit
+```
+
+### [M] Leetcode 152. Maximum Product Subarray
+
+[Leetcode Source](https://leetcode.com/problems/maximum-product-subarray/)
+
+**Question:** Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+For example, given the array `[2,3,-2,4]`,
+the contiguous subarray `[2,3]` has the largest `product = 6`.
+
+**Answer:**
+
+We need to keep track of both `maxprod` and `minprod` since multiplying two negative numbers will give a positive one.
+
+Let `f(k)` be `maxprod` and `g(k)` be `minprod`, then we have
+
+```
+f(k) = max( A[k], f(k-1) * A[k], A[k], g(k-1) * A[k] )
+g(k) = min( A[k], g(k-1) * A[k], A[k], f(k-1) * A[k] )
+```
+
+Other than that, we have tto check that the `num` we multiply with is not `0`.
+
+```python
+class Solution(object):
+
+    def maxProduct(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+
+        maxprod = minprod = res = nums[0]
+
+        for i in range(1, n):
+            temp = maxprod
+            maxprod = max(max(temp * nums[i], minprod * nums[i]), nums[i])
+            minprod = min(min(temp * nums[i], minprod * nums[i]), nums[i])
+            res = max(maxprod, res)
+
+        return res
+```
+
+### [H] Leetcode 174. Dungeon Game
 
 [Leetcode Source](https://leetcode.com/problems/dungeon-game/)
 
@@ -397,7 +550,7 @@ class Solution(object):
         return paths[0][0]
 ```
 
-### Leetcode 279. Perfect Squares
+### [M] Leetcode 279. Perfect Squares
 
 [Leetcode Source](https://leetcode.com/problems/perfect-squares/)
 
@@ -432,7 +585,7 @@ class Solution(object):
         return num[-1]
 ```
 
-### Leetcode 338. Counting Bits
+### [M] Leetcode 338. Counting Bits
 
 [Leetcode Source](https://leetcode.com/problems/counting-bits/)
 
@@ -488,7 +641,7 @@ class Solution(object):
         return ones
 ```
 
-### Leetcode 343. Integer Break
+### [M] Leetcode 343. Integer Break
 
 [Leetcode Source](https://leetcode.com/problems/integer-break/)
 
