@@ -14,6 +14,7 @@
   * [[M] Leetcode 95. Unique Binary Search Trees II](#m-leetcode-95-unique-binary-search-trees-ii)
   * [[M] Leetcode 96. Unique Binary Search Trees](#m-leetcode-96-unique-binary-search-trees)
   * [[M] Leetcode 121. Best Time to Buy and Sell Stock](#m-leetcode-121-best-time-to-buy-and-sell-stock)
+  * [[H] Leetcode 123. Best Time to Buy and Sell Stock III](#h-leetcode-123-best-time-to-buy-and-sell-stock-iii)
   * [[H] Leetcode 174. Dungeon Game](#h-leetcode-174-dungeon-game)
   * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
   * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
@@ -527,6 +528,54 @@ class Solution(object):
             current = min(prices[i], current)
 
         return profit
+```
+
+### [H] Leetcode 123. Best Time to Buy and Sell Stock III
+
+[Leetcode Source](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/)
+
+**Question:**
+
+> Say you have an array for which the `i`th element is the price of a given stock on day `i`.
+> 
+> Design an algorithm to find the maximum profit. You may complete at most two transactions.
+> 
+> **Note:** You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**Answer:**
+
+We first do a scan forward similar to the one we did for the single transaction one and record the max profit for each step `i` in an array. Then we reverse scan the profits array and prices array to determine if there should be a second transaction and what it is.
+
+For example, we have the prices `1 5 2 6 6 8`, the constructed profits array is `[0, 4, 4, 5, 5, 7]`. In the reverse scan we find that we can have `profits[2] + prices[5] - prices[2]` to be the maximum profit, which is `10`.
+
+```python
+class Solution(object):
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        
+        n = len(prices)
+        if n == 0 or n == 1:
+            return 0
+
+        profits, current, profit = [], prices[0], 0
+        
+        for i in range(n):
+            profit = max(profit, prices[i] - current)
+            current = min(current, prices[i])
+            profits.append(profit)
+
+        i, result, current, profit = n-1, profits[n-1], prices[n-1], 0
+        while i >= 0:
+            profit = max(profit, current - prices[i])
+            current = max(current, prices[i])
+            result = max(result, profits[i] + profit)
+            i -= 1
+
+        return result
 ```
 
 ### [H] Leetcode 174. Dungeon Game
