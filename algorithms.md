@@ -21,6 +21,8 @@
   * [[H] Leetcode 123. Best Time to Buy and Sell Stock III](#h-leetcode-123-best-time-to-buy-and-sell-stock-iii)
   * [[H] Leetcode 188. Best Time to Buy and Sell Stock IV](#h-leetcode-188-best-time-to-buy-and-sell-stock-iv)
   * [[H] Leetcode 174. Dungeon Game](#h-leetcode-174-dungeon-game)
+  * [[E] Leetcode 198. House Robber](#e-leetcode-198-house-robber)
+  * [[M] Leetcode 213. House Robber II](#m-leetcode-213-house-robber-ii)
   * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
   * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
   * [[M] Leetcode 343. Integer Break](#m-leetcode-343-integer-break)
@@ -961,6 +963,99 @@ class Solution(object):
                 paths[i][j] = min(right, down)
 
         return paths[0][0]
+```
+
+### [E] Leetcode 198. House Robber
+
+[Leetcode Source](https://leetcode.com/problems/house-robber/)
+
+**Question:**
+
+> You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+> 
+> Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+
+**Answer:**
+
+Using dynamic programming, the two conditions at each iteration is `robbed[i-1]` or `robbed[i-2] + nums[i]`. We would like to choose the larger of the two.
+
+```python
+class Solution(object):
+
+    def rob(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            return nums[0]
+        if n == 2:
+            return max(nums[0], nums[1])
+
+        robbed = [0] * n
+        robbed[0] = nums[0]
+        robbed[1] = max(nums[0], nums[1])
+
+        for i in range(2, n):
+            robbed[i] = max(robbed[i-1], nums[i] + robbed[i-2])
+
+        return robbed[i-1]
+```
+
+### [M] Leetcode 213. House Robber II
+
+[Leetcode Source](https://leetcode.com/problems/house-robber-ii/)
+
+**Question:**
+
+> After robbing those houses on that street, the thief has found himself a new place for his thievery so that he will not get too much attention. This time, all houses at this place are arranged in a circle. That means the first house is the neighbor of the last one. Meanwhile, the security system for these houses remain the same as for those in the previous street.
+> 
+> Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+
+**Answer:**
+
+We can construct two slices of the given array, one taking the first element (without the last) and one taking the last element (without the first) and perform the same dynamic programming approach as above to the two slices. Then we take the larger of the two results.
+
+```python
+class Solution(object):
+
+    def rob(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            return nums[0]
+        if n == 2:
+            return max(nums[0], nums[1])
+        if n == 3:
+            return max(nums[0], max(nums[1], nums[2]))
+
+        robbed = [0] * (n-1)
+        robbed[0] = nums[0]
+        robbed[1] = max(nums[0], nums[1])
+
+        for i in range(2, n-1):
+            robbed[i] = max(robbed[i-1], nums[i] + robbed[i-2])
+
+        temp = robbed[n-2]
+
+        robbed = [0] * (n-1)
+        robbed[0] = nums[1]
+        robbed[1] = max(nums[1], nums[2])
+
+        for i in range(2, n-1):
+            robbed[i] = max(robbed[i-1], nums[i+1] + robbed[i-2])
+
+        return max(temp, robbed[n-2])
 ```
 
 ### [M] Leetcode 279. Perfect Squares
