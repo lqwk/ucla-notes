@@ -6,6 +6,7 @@
   * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
   * [[M] Leetcode 122. Best Time to Buy and Sell Stock II](#m-leetcode-122-best-time-to-buy-and-sell-stock-ii)
+  * [[M] Leetcode 134. Gas Station](#m-leetcode-134-gas-station)
   * [[H] Leetcode 330. Patching Array](#h-leetcode-330-patching-array)
   * [[M] Leetcode 376. Wiggle Subsequence](#m-leetcode-376-wiggle-subsequence)
 * [DYNAMIC PROGRAMMING](#dynamic-programming)
@@ -202,6 +203,58 @@ class Solution(object):
                 profit += prices[i] - prices[i-1]
 
         return profit
+```
+
+
+### [M] Leetcode 134. Gas Station
+
+[Leetcode Source](https://leetcode.com/problems/gas-station/)
+
+**Question:**
+
+There are `N` gas stations along a circular route, where the amount of gas at station `i` is `gas[i]`.
+
+You have a car with an unlimited gas tank and it costs `cost[i]` of gas to travel from station `i` to its next station (`i+1`). You begin the journey with an empty tank at one of the gas stations.
+
+Return the starting gas station's index if you can travel around the circuit once, otherwise return `-1`.
+
+**Answer:**
+
+We compute the differences and sum them up and if the total sum is less than `0`, then we cannot complete a round so we return `-1`. During each iteration, we also monitor the local sum and whenever it falls below `0`, it cannot be the `start` point. Since there is guaranteed to be a unique solution if `total >= 0`, we can find it through the greedy algorithm.
+
+```python
+class Solution(object):
+
+    def canCompleteCircuit(self, gas, cost):
+        """
+        :type gas: List[int]
+        :type cost: List[int]
+        :rtype: int
+        """
+
+        n = len(gas)
+        if n == 0:
+            return 0
+        if n == 1:
+            if gas[0] >= cost[0]:
+                return 0
+            else:
+                return -1
+
+        total, currentSum, start = 0, 0, 0
+
+        for i in range(0, n):
+            diff = gas[i] - cost[i]
+            total += diff
+            currentSum += diff
+            if currentSum < 0:
+                start = i+1
+                currentSum = 0
+
+        if total < 0:
+            return -1
+        
+        return start
 ```
 
 ### [H] Leetcode 330. Patching Array
