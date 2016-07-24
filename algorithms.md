@@ -3,6 +3,7 @@
 * [NUMBERS](#numbers)
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
+  * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
   * [[M] Leetcode 122. Best Time to Buy and Sell Stock II](#m-leetcode-122-best-time-to-buy-and-sell-stock-ii)
   * [[H] Leetcode 330. Patching Array](#h-leetcode-330-patching-array)
   * [[M] Leetcode 376. Wiggle Subsequence](#m-leetcode-376-wiggle-subsequence)
@@ -66,6 +67,54 @@ class Solution(object):
 
 
 ## GREEDY ALGORITHMS
+
+### [M] Leetcode 55. Jump Game
+
+[Leetcode Source](https://leetcode.com/problems/jump-game/)
+
+**Question:**
+
+> Given an array of non-negative integers, you are initially positioned at the first index of the array.
+> 
+> Each element in the array represents your maximum jump length at that position.
+> 
+> Determine if you are able to reach the last index.
+> 
+> For example:
+> ```
+> A = [2,3,1,1,4], return true.
+> A = [3,2,1,0,4], return false.
+> ```
+
+**Answer:**
+
+Let `cover` be the indices that can be covered starting from index `0`. Each step we calculate the new `cover` index. Once we have the condition `cover >= n-1` wher `n` is the length of the array (`n-1` is the last index), we are successful and return `true`. However if we do not reach the condition at the end, we return `false`. Through the iteration, if we find ourselves without being able to reach the next step (that is we cannot cover the current index, which is `cover < i`), we also break and return `false`.
+
+```python
+class Solution(object):
+
+    def canJump(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+
+        n = len(nums)
+        if n == 0 or n == 1:
+            return True
+
+        i, cover = 0, 0
+
+        while i < n:
+            if cover < i:
+                break
+            cover = max(cover, i+nums[i])
+            if cover >= n-1:
+                return True
+            i += 1
+
+        return False
+```
 
 ### [M] Leetcode 122. Best Time to Buy and Sell Stock II
 
