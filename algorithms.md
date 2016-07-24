@@ -3,6 +3,7 @@
 * [NUMBERS](#numbers)
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
+  * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
   * [[M] Leetcode 122. Best Time to Buy and Sell Stock II](#m-leetcode-122-best-time-to-buy-and-sell-stock-ii)
   * [[H] Leetcode 330. Patching Array](#h-leetcode-330-patching-array)
@@ -67,6 +68,55 @@ class Solution(object):
 
 
 ## GREEDY ALGORITHMS
+
+### [H] Leetcode 45. Jump Game II
+
+[Leetcode Source](https://leetcode.com/problems/jump-game-ii/)
+
+**Question:**
+
+> Given an array of non-negative integers, you are initially positioned at the first index of the array.
+> 
+> Each element in the array represents your maximum jump length at that position.
+> 
+> Your goal is to reach the last index in the minimum number of jumps.
+> 
+> For example:
+> 
+> ```
+> Given array A = [2,3,1,1,4]
+> The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+> ```
+> 
+> **Note:** You can assume that you can always reach the last index.
+
+**Answer:**
+
+We use a greedy approach. We calculate the the `curReach` (maximum reach for `jumps` number of jumps). Then we calculate `nextReach`, which is maximum reach for `jumps+1` number of jumps. When the iterator `i` reaches a range greater than `curReach`, increment `jumps` and proceed. We will finally reach the `n-1` index in `jumps` steps.
+
+```python
+class Solution(object):
+
+    def jump(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0 or n == 1:
+            return 0
+
+        curReach, nextReach, jumps, = 0, 0, 0
+        for i in range(0, n):
+            if curReach < i :
+                curReach = nextReach
+                jumps += 1            
+            nextReach = max(nextReach, nums[i]+i)
+
+        return jumps
+
+```
 
 ### [M] Leetcode 55. Jump Game
 
