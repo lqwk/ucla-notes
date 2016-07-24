@@ -1003,7 +1003,7 @@ class Solution(object):
         for i in range(2, n):
             robbed[i] = max(robbed[i-1], nums[i] + robbed[i-2])
 
-        return robbed[i-1]
+        return robbed[n-1]
 ```
 
 ### [M] Leetcode 213. House Robber II
@@ -1039,23 +1039,31 @@ class Solution(object):
         if n == 3:
             return max(nums[0], max(nums[1], nums[2]))
 
-        robbed = [0] * (n-1)
+        return max(self.rob2(nums[:-1]), self.rob2(nums[1:]))
+
+    def rob2(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            return nums[0]
+        if n == 2:
+            return max(nums[0], nums[1])
+
+        robbed = [0] * n
+
         robbed[0] = nums[0]
         robbed[1] = max(nums[0], nums[1])
 
-        for i in range(2, n-1):
+        for i in range(2, n):
             robbed[i] = max(robbed[i-1], nums[i] + robbed[i-2])
 
-        temp = robbed[n-2]
-
-        robbed = [0] * (n-1)
-        robbed[0] = nums[1]
-        robbed[1] = max(nums[1], nums[2])
-
-        for i in range(2, n-1):
-            robbed[i] = max(robbed[i-1], nums[i+1] + robbed[i-2])
-
-        return max(temp, robbed[n-2])
+        return robbed[n-1]
 ```
 
 ### [M] Leetcode 279. Perfect Squares
