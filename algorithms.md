@@ -10,6 +10,7 @@
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
   * [[M] Leetcode 122. Best Time to Buy and Sell Stock II](#m-leetcode-122-best-time-to-buy-and-sell-stock-ii)
   * [[M] Leetcode 134. Gas Station](#m-leetcode-134-gas-station)
+  * [[H] Leetcode 135. Candy](#h-leetcode-135-candy)
   * [[H] Leetcode 330. Patching Array](#h-leetcode-330-patching-array)
   * [[M] Leetcode 376. Wiggle Subsequence](#m-leetcode-376-wiggle-subsequence)
 * [DYNAMIC PROGRAMMING](#dynamic-programming)
@@ -362,6 +363,53 @@ class Solution(object):
             return -1
         
         return start
+```
+
+### [H] Leetcode 135. Candy
+
+[Leetcode Source](https://leetcode.com/problems/candy/)
+
+**Question:**
+
+> There are `N` children standing in a line. Each child is assigned a rating value.
+> 
+> You are giving candies to these children subjected to the following requirements:
+> 
+> * Each child must have at least one candy.
+> * Children with a higher rating get more candies than their neighbors.
+> 
+> What is the minimum candies you must give?
+
+**Answer:**
+
+We use a greedy approach. First initialize `candies` to have `1` for each child. We first scan from left to right, and if `ratings[i] > ratings[i-1]`, we set `candies[i] = candies[i-1]`. This will guarantee that for each child on the right, if that child has a higher rating than that on the left, he/she will have one more candy. Similarly we can from right to left to guarantee that each child on the left, if the child has a higher rating than that on the right, he/she will have one more candy. However, when we scan from right to left, we only change `candies[i]` if we have `candies[i] <= candies[i+1]`.
+
+```python
+class Solution(object):
+
+    def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
+
+        n = len(ratings)
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+
+        candies = [1] * n
+
+        for i in range(1, n):
+            if ratings[i] > ratings[i-1]:
+                candies[i] = candies[i-1] + 1
+
+        for i in range(n-2, -1, -1):
+            if ratings[i] > ratings[i+1] and candies[i] <= candies[i+1]:
+                candies[i] = candies[i+1] + 1
+
+        return sum(candies)
 ```
 
 ### [H] Leetcode 330. Patching Array
