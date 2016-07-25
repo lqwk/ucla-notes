@@ -2,6 +2,9 @@
 
 * [NUMBERS](#numbers)
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
+* [STACK](#stack)
+  * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
+  * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
   * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
@@ -67,6 +70,111 @@ class Solution(object):
                 count = count+1
 
         return count
+```
+
+
+## STACK
+
+### [M] Leetcode 71. Simplify Path
+
+[Leetcode Source](https://leetcode.com/problems/simplify-path/)
+
+**Question:**
+
+> Given an absolute path for a file (Unix-style), simplify it.
+> 
+> For example:
+> 
+> ```
+> path = "/home/", => "/home"
+> path = "/a/./b/../../c/", => "/c"
+> ```
+> 
+> Corner Cases:
+> 
+> * Did you consider the case where `path = "/../"`?
+>     - In this case, you should return `"/"`.
+> * Another corner case is the path might contain multiple slashes `'/'` together, such as `"/home//foo/"`.
+>     - In this case, you should ignore redundant slashes and return `"/home/foo"`.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def simplifyPath(self, path):
+        """
+        :type path: str
+        :rtype: str
+        """
+
+        ans = []
+        splitPaths = path.split('/')
+
+        for p in splitPaths:
+
+            if p == '' or p == '.':
+                continue
+
+            if p == '..':
+                if len(ans) != 0:
+                    ans.pop()
+
+            else:
+                ans.append(p)
+
+        return '/' + '/'.join(ans)
+```
+
+### [H] Leetcode 316. Remove Duplicate Letters
+
+[Leetcode Source](https://leetcode.com/problems/remove-duplicate-letters/)
+
+**Question:**
+
+> Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+> 
+> Example:
+> 
+> Given `"bcabc"`
+> Return `"abc"`
+> 
+> Given `"cbacdcbc"`
+> Return `"acdb"`
+
+**Answer:**
+
+We use a stack approach to build up this answer. First we find the number of times a character appears in the string and store the results in `cnt`. Then we visit each character `c` in the string. Once we visit each character we decrease the number of times stored in `cnt`. Also if `c` is smaller than the character `s` in the stack and if `cnt[s]` is greater than `0`, meaning there is a remaining `s` in the string, this means that we can remove `s` from our final results, so we pop the stack and push on `c`. Each time we do this, we have to check and indicate whether `c` is currently included in the stack to prevent duplicates.
+
+```python
+class Solution(object):
+
+    def removeDuplicateLetters(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+
+        included, cnt = [False] * 26, [0] * 26
+        ans = []
+
+        for c in s:
+            cnt[ord(c) - 97] += 1  # ord('a') = 97
+
+        for c in s:
+            index = ord(c) - 97
+            cnt[index] -= 1
+
+            if included[index]:
+                continue
+
+            while len(ans) != 0 and ans[-1] > c and cnt[ord(ans[-1]) - 97] != 0:
+                included[ord(ans.pop()) - 97] = False
+
+            ans.append(c)
+            included[index] = True
+
+        return ''.join(ans)
 ```
 
 
@@ -204,7 +312,6 @@ class Solution(object):
 
         return profit
 ```
-
 
 ### [M] Leetcode 134. Gas Station
 
