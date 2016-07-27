@@ -4,6 +4,9 @@
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
 * [ARRAY](#array)
   * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
+  * [[E] Leetcode 217. Contains Duplicate](#e-leetcode-217-contains-duplicate)
+  * [[E] Leetcode 219. Contains Duplicate II](#e-leetcode-219-contains-duplicate-ii)
+  * [[M] Leetcode 220. Contains Duplicate III](#m-leetcode-220-contains-duplicate-iii)
   * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
 * [STACK](#stack)
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
@@ -179,6 +182,126 @@ class Solution(object):
                 left = mid + 1
             else:
                 right = mid - 1
+
+        return False
+```
+
+### [E] Leetcode 217. Contains Duplicate
+
+[Leetcode Source](https://leetcode.com/problems/contains-duplicate/)
+
+**Question:**
+
+> Given an array of integers, find if the array contains any duplicates. Your function should return `true` if any value appears at least twice in the array, and it should return `false` if every element is distinct.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def containsDuplicate(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+
+        n = len(nums)
+        if n == 0 or n == 1:
+            return False
+
+        matches = {}
+
+        for num in nums:
+            numStr = str(num)
+            if numStr in matches:
+                return True
+            else:
+                matches[numStr] = True
+
+        return False
+```
+
+### [E] Leetcode 219. Contains Duplicate II
+
+[Leetcode Source](https://leetcode.com/problems/contains-duplicate-ii/)
+
+**Question:**
+
+> Given an array of integers and an integer `k`, find out whether there are two distinct indices `i` and `j` in the array such that `nums[i] = nums[j]` and the difference between `i` and `j` is at most `k`.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def containsNearbyDuplicate(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: bool
+        """
+
+        n = len(nums)
+        if n == 0 or n == 1:
+            return False
+
+        matches = {}
+
+        for i in range(n):
+            numStr = str(nums[i])
+            if numStr in matches:
+                j = matches[numStr]
+                if (i - j) <= k:
+                    return True
+            matches[numStr] = i
+
+        return False
+```
+
+### [M] Leetcode 220. Contains Duplicate III
+
+[Leetcode Source](https://leetcode.com/problems/contains-duplicate-iii/)
+
+**Question:**
+
+> Given an array of integers, find out whether there are two distinct indices `i` and `j` in the array such that the difference between `nums[i]` and `nums[j]` is at most `t` and the difference between `i` and `j` is at most `k`.
+
+**Answer:**
+
+We keep an `OrderedDict` so that whenever the iterator `i` goes beyond `k`, we will pop the first added item in order to save us the work of determining if the indices are out of range. Also, we bucket the numbers with the following condition:
+
+```
+abs( nums[i] - nums[j] ) <= t    <=>    abs( nums[i]/t - nums[j]/t ) <= 1
+```
+
+```python
+class Solution(object):
+
+    def containsNearbyAlmostDuplicate(self, nums, k, t):
+        """
+        :type nums: List[int]
+        :type k: int
+        :type t: int
+        :rtype: bool
+        """
+
+        n = len(nums)
+        if k < 1 or t < 0 or n == 0 or n == 1:
+            return False
+
+        matches = collections.OrderedDict()
+
+        for i in range(n):
+            key = nums[i] // max(1, t)
+
+            for m in (key, key-1, key+1):
+                if m in matches and abs(nums[i] - matches[m]) <= t:
+                    return True
+
+            matches[key] = nums[i]
+
+            if i >= k:
+                matches.popitem(last=False)
 
         return False
 ```
