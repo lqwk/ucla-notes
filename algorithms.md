@@ -4,6 +4,7 @@
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
 * [ARRAY](#array)
   * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
+  * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
 * [STACK](#stack)
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
@@ -106,7 +107,7 @@ class Solution(object):
 
 **Answer:**
 
-We perform binary search first on all the rows then on a particular selected row.
+In the first method, we perform binary search first on all the rows then on a particular selected row.
 
 ```python
 class Solution(object):
@@ -150,6 +151,106 @@ class Solution(object):
         return False
 ```
 
+In the second method, we view the 2D array as a linear array and binary search through it.
+
+```python
+class Solution(object):
+
+    def searchMatrix(self, matrix, target):
+        """
+        :type matrix: List[List[int]]
+        :type target: int
+        :rtype: bool
+        """
+
+        n = len(matrix)
+        if n == 0:
+            return False
+        m = len(matrix[0])
+        if m == 0:
+            return False
+
+        left, right = 0, m*n-1
+        while left <= right:
+            mid = (left + right) >> 1
+            if matrix[mid//m][mid%m] == target:
+                return True
+            elif matrix[mid//m][mid%m] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return False
+```
+
+### [M] Leetcode 240. Search a 2D Matrix II
+
+[Leetcode Source](https://leetcode.com/problems/search-a-2d-matrix-ii/)
+
+**Question:**
+
+> Write an efficient algorithm that searches for a value in an `m x n` matrix. This matrix has the following properties:
+> 
+> * Integers in each row are sorted in ascending from left to right.
+> * Integers in each column are sorted in ascending from top to bottom.
+> 
+> For example:
+> 
+> ```
+> Consider the following matrix:
+> 
+> [
+>   [1,   4,  7, 11, 15],
+>   [2,   5,  8, 12, 19],
+>   [3,   6,  9, 16, 22],
+>   [10, 13, 14, 17, 24],
+>   [18, 21, 23, 26, 30]
+> ]
+> 
+> Given target = 5, return true.
+> Given target = 20, return false.
+> ```
+
+**Answer:**
+
+We could easily write an algorithm to binary search through each row, which will take `O(mlogn)` time, but we can do better than this. The goal is to limit the algorithm to a single step at each iteration, which means that for each comparison, we have a deterministic step.
+
+For this I chose the bottom left as the pivot so at each iteration, we have the following conditions:
+
+1. If `matrix[pRow][pCol] == target`, we return `True`
+2. If `matrix[pRow][pCol] > target`, we move up, which is `pRow--`
+3. If `matrix[pRow][pCol] < target`, we move right, which is `pCol++`
+
+```python
+class Solution(object):
+
+    def searchMatrix(self, matrix, target):
+        """
+        :type matrix: List[List[int]]
+        :type target: int
+        :rtype: bool
+        """
+
+        n = len(matrix)
+        if n == 0:
+            return False
+        m = len(matrix[0])
+        if m == 0:
+            return False
+
+        # take the lower left corner to be the pivot (pRow, pCol)
+        pRow, pCol = n-1, 0
+
+        while pRow >= 0 and pCol < m:
+            if target == matrix[pRow][pCol]:
+                return True
+            elif target < matrix[pRow][pCol]:
+                pRow -= 1
+            else:
+                pCol += 1
+
+        return False
+```
 
 ## STACK
 
