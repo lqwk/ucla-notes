@@ -2,6 +2,8 @@
 
 * [NUMBERS](#numbers)
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
+* [ARRAY](#array)
+  * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
 * [STACK](#stack)
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
@@ -72,6 +74,80 @@ class Solution(object):
                 count = count+1
 
         return count
+```
+
+
+## ARRAY
+
+### [M] Leetcode 74. Search a 2D Matrix
+
+[Leetcode Source](https://leetcode.com/problems/search-a-2d-matrix/)
+
+**Question:**
+
+> Write an efficient algorithm that searches for a value in an `m x n` matrix. This matrix has the following properties:
+> 
+> * Integers in each row are sorted from left to right.
+> * The first integer of each row is greater than the last integer of the previous row.
+> 
+> For example:
+> 
+> ```
+> Consider the following matrix:
+> 
+> [
+>   [1,   3,  5,  7],
+>   [10, 11, 16, 20],
+>   [23, 30, 34, 50]
+> ]
+> 
+> Given target = 3, return true.
+> ```
+
+**Answer:**
+
+We perform binary search first on all the rows then on a particular selected row.
+
+```python
+class Solution(object):
+
+    def searchMatrix(self, matrix, target):
+        """
+        :type matrix: List[List[int]]
+        :type target: int
+        :rtype: bool
+        """
+
+        n = len(matrix)
+        if n == 0:
+            return False
+        m = len(matrix[0])
+        if m == 0:
+            return False
+
+        # binary search on the all rows
+        left, right, pivot = 0, n-1, 0
+        while left <= right:
+            pivot = (left + right) >> 1
+            if target < matrix[pivot][0]:
+                right = pivot - 1
+            elif target > matrix[pivot][m-1]:
+                left = pivot + 1
+            else:
+                break
+
+        # binary search on the selected row
+        left, right = 0, m-1
+        while left <= right:
+            mid = (left + right) >> 1
+            if target == matrix[pivot][mid]:
+                return True
+            if target < matrix[pivot][mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+
+        return False
 ```
 
 
@@ -906,7 +982,7 @@ class Solution(object):
 
 ### [H] Leetcode 97. Interleaving String
 
-[Leetcode Source](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+[Leetcode Source](https://leetcode.com/problems/interleaving-string/)
 
 **Question:**
 
