@@ -22,6 +22,7 @@
   * [[E] Leetcode 70. Climbing Stairs](#e-leetcode-70-climbing-stairs)
   * [[M] Leetcode 95. Unique Binary Search Trees II](#m-leetcode-95-unique-binary-search-trees-ii)
   * [[M] Leetcode 96. Unique Binary Search Trees](#m-leetcode-96-unique-binary-search-trees)
+  * [[H] Leetcode 97. Interleaving String](#h-leetcode-97-interleaving-string)
   * [[M] Leetcode 121. Best Time to Buy and Sell Stock](#m-leetcode-121-best-time-to-buy-and-sell-stock)
   * [[H] Leetcode 123. Best Time to Buy and Sell Stock III](#h-leetcode-123-best-time-to-buy-and-sell-stock-iii)
   * [[H] Leetcode 188. Best Time to Buy and Sell Stock IV](#h-leetcode-188-best-time-to-buy-and-sell-stock-iv)
@@ -510,7 +511,7 @@ class Solution(object):
 > Output: 2
 > ```
 > 
-> Follow up: Can you do it in O(n) time?
+> Follow up: Can you do it in `O(n)` time?
 
 **Answer:**
 
@@ -902,6 +903,107 @@ class Solution(object):
 
         return trees[n]
 ```
+
+### [H] Leetcode 97. Interleaving String
+
+[Leetcode Source](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+
+**Question:**
+
+> Given `s1`, `s2`, `s3`, find whether `s3` is formed by the interleaving of `s1` and `s2`. For example,
+> 
+> ```
+> Given:
+> 
+> s1 = "aabcc",
+> s2 = "dbbca",
+> 
+> When s3 = "aadbbcbcac", return true.
+> When s3 = "aadbbbaccc", return false.
+> ```
+
+**Answer:**
+
+We can solve this with a simple recursive solution.
+
+```python
+class Solution(object):
+
+    def isInterleave(self, s1, s2, s3):
+        """
+        :type s1: str
+        :type s2: str
+        :type s3: str
+        :rtype: bool
+        """
+
+        if len(s1) == 0 and len(s2) == 0 and len(s3) == 0:
+            return True
+        if (len(s1) + len(s2)) != len(s3):
+            return False
+
+        return self.isInterleave2(s1, s2, s3)
+
+    def isInterleave2(self, s1, s2, s3):
+        """
+        :type s1: str
+        :type s2: str
+        :type s3: str
+        :rtype: bool
+        """
+
+        if len(s1) == 0 and len(s2) == 0:
+            return True
+
+        if len(s1) == 0 and len(s2) != 0:
+            if s2[-1] != s3[-1]:
+                return False
+            else:
+                return self.isInterleave2(s1, s2[:-1], s3[:-1])
+
+        if len(s1) != 0 and len(s2) == 0:
+            if s1[-1] != s3[-1]:
+                return False
+            else:
+                return self.isInterleave2(s1[:-1], s2, s3[:-1])
+
+        return ((s1[-1] == s3[-1]) and self.isInterleave2(s1[:-1], s2, s3[:-1])) or ((s2[-1] == s3[-1]) and self.isInterleave2(s1, s2[:-1], s3[:-1]))
+```
+
+But this exceeds the time limit because it does a lot of extra work. We can transform this into a dymanic programming algorithm that runs in `O(mn)` time, where `m` and `n` are the lengths of the strings `s1` and `s2`.
+
+We use `interleave[i][j]` (a `boolean` value) to represent whether substring `s3[:i+j-1]` can be generated from `s1[:i]` and `s2[:j]`. In the end all we have to do is look at `interleave[n][m]`. The algorithm runs in `O(mn)` to fill in the `m x n` array.
+
+```python
+class Solution(object):
+
+    def isInterleave(self, s1, s2, s3):
+        """
+        :type s1: str
+        :type s2: str
+        :type s3: str
+        :rtype: bool
+        """
+
+        m, n = len(s1), len(s2)
+        if len(s3) != m+n:
+            return False
+
+        interleave = [[False for i in range(m+1)] for j in range(n+1)]
+        interleave[0][0] = True
+
+        for i in range(1, m+1):
+            interleave[0][i] = interleave[0][i-1] and (s1[i-1] == s3[i-1])
+        for j in range(1, n+1):
+            interleave[j][0] = interleave[j-1][0] and (s2[j-1] == s3[j-1])
+
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                interleave[j][i] = (interleave[j][i-1] and (s1[i-1] == s3[i+j-1])) or (interleave[j-1][i] and (s2[j-1] == s3[i+j-1]))
+
+        return interleave[n][m]
+```
+
 
 ### [M] Leetcode 121. Best Time to Buy and Sell Stock
 
