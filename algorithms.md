@@ -107,7 +107,7 @@ class Solution(object):
         :rtype: str
         """
 
-        return s [::-1]
+        return s[::-1]
 ```
 
 ## ARRAY
