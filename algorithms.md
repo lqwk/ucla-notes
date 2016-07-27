@@ -2,12 +2,14 @@
 
 * [NUMBERS](#numbers)
   * [[E] Leetcode 204. Count Primes](#e-leetcode-204-count-primes)
+* [STRING](#string)
+  * [[E] Leetcode 344. Reverse String](#e-leetcode-344-reverse-string)
 * [ARRAY](#array)
   * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
+  * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
   * [[E] Leetcode 217. Contains Duplicate](#e-leetcode-217-contains-duplicate)
   * [[E] Leetcode 219. Contains Duplicate II](#e-leetcode-219-contains-duplicate-ii)
   * [[M] Leetcode 220. Contains Duplicate III](#m-leetcode-220-contains-duplicate-iii)
-  * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
 * [STACK](#stack)
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
@@ -80,6 +82,33 @@ class Solution(object):
         return count
 ```
 
+
+## STRING
+
+### [E] Leetcode 344. Reverse String
+
+[Leetcode Source](https://leetcode.com/problems/reverse-string/)
+
+**Question:**
+
+> Write a function that takes a string as input and returns the string reversed.
+> Example: Given `s = "hello"`, return `"olleh"`.
+
+**Answer:**
+
+Use the Python stepping syntax: `[<start>:<end>:<step>]`
+
+```python
+class Solution(object):
+
+    def reverseString(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+
+        return s [::-1]
+```
 
 ## ARRAY
 
@@ -182,6 +211,75 @@ class Solution(object):
                 left = mid + 1
             else:
                 right = mid - 1
+
+        return False
+```
+
+### [M] Leetcode 240. Search a 2D Matrix II
+
+[Leetcode Source](https://leetcode.com/problems/search-a-2d-matrix-ii/)
+
+**Question:**
+
+> Write an efficient algorithm that searches for a value in an `m x n` matrix. This matrix has the following properties:
+> 
+> * Integers in each row are sorted in ascending from left to right.
+> * Integers in each column are sorted in ascending from top to bottom.
+> 
+> For example:
+> 
+> ```
+> Consider the following matrix:
+> 
+> [
+>   [ 1,  4,  7, 11, 15],
+>   [ 2,  5,  8, 12, 19],
+>   [ 3,  6,  9, 16, 22],
+>   [10, 13, 14, 17, 24],
+>   [18, 21, 23, 26, 30]
+> ]
+> 
+> Given target = 5, return true.
+> Given target = 20, return false.
+> ```
+
+**Answer:**
+
+We could easily write an algorithm to binary search through each row, which will take `O(mlogn)` time, but we can do better than this. The goal is to limit the algorithm to a single step at each iteration, which means that for each comparison, we have a deterministic step.
+
+For this I chose the bottom left as the pivot so at each iteration, we have the following conditions:
+
+1. If `matrix[pRow][pCol] == target`, we return `True`
+2. If `matrix[pRow][pCol] > target`, we move up, which is `pRow--`
+3. If `matrix[pRow][pCol] < target`, we move right, which is `pCol++`
+
+```python
+class Solution(object):
+
+    def searchMatrix(self, matrix, target):
+        """
+        :type matrix: List[List[int]]
+        :type target: int
+        :rtype: bool
+        """
+
+        n = len(matrix)
+        if n == 0:
+            return False
+        m = len(matrix[0])
+        if m == 0:
+            return False
+
+        # take the lower left corner to be the pivot (pRow, pCol)
+        pRow, pCol = n-1, 0
+
+        while pRow >= 0 and pCol < m:
+            if target == matrix[pRow][pCol]:
+                return True
+            elif target < matrix[pRow][pCol]:
+                pRow -= 1
+            else:
+                pCol += 1
 
         return False
 ```
@@ -302,75 +400,6 @@ class Solution(object):
 
             if i >= k:
                 matches.popitem(last=False)
-
-        return False
-```
-
-### [M] Leetcode 240. Search a 2D Matrix II
-
-[Leetcode Source](https://leetcode.com/problems/search-a-2d-matrix-ii/)
-
-**Question:**
-
-> Write an efficient algorithm that searches for a value in an `m x n` matrix. This matrix has the following properties:
-> 
-> * Integers in each row are sorted in ascending from left to right.
-> * Integers in each column are sorted in ascending from top to bottom.
-> 
-> For example:
-> 
-> ```
-> Consider the following matrix:
-> 
-> [
->   [ 1,  4,  7, 11, 15],
->   [ 2,  5,  8, 12, 19],
->   [ 3,  6,  9, 16, 22],
->   [10, 13, 14, 17, 24],
->   [18, 21, 23, 26, 30]
-> ]
-> 
-> Given target = 5, return true.
-> Given target = 20, return false.
-> ```
-
-**Answer:**
-
-We could easily write an algorithm to binary search through each row, which will take `O(mlogn)` time, but we can do better than this. The goal is to limit the algorithm to a single step at each iteration, which means that for each comparison, we have a deterministic step.
-
-For this I chose the bottom left as the pivot so at each iteration, we have the following conditions:
-
-1. If `matrix[pRow][pCol] == target`, we return `True`
-2. If `matrix[pRow][pCol] > target`, we move up, which is `pRow--`
-3. If `matrix[pRow][pCol] < target`, we move right, which is `pCol++`
-
-```python
-class Solution(object):
-
-    def searchMatrix(self, matrix, target):
-        """
-        :type matrix: List[List[int]]
-        :type target: int
-        :rtype: bool
-        """
-
-        n = len(matrix)
-        if n == 0:
-            return False
-        m = len(matrix[0])
-        if m == 0:
-            return False
-
-        # take the lower left corner to be the pivot (pRow, pCol)
-        pRow, pCol = n-1, 0
-
-        while pRow >= 0 and pCol < m:
-            if target == matrix[pRow][pCol]:
-                return True
-            elif target < matrix[pRow][pCol]:
-                pRow -= 1
-            else:
-                pCol += 1
 
         return False
 ```
