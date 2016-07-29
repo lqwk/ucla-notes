@@ -5,6 +5,7 @@
 * [STRING](#string)
   * [[E] Leetcode 344. Reverse String](#e-leetcode-344-reverse-string)
 * [ARRAY](#array)
+  * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
   * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
   * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
   * [[E] Leetcode 217. Contains Duplicate](#e-leetcode-217-contains-duplicate)
@@ -112,6 +113,86 @@ class Solution(object):
 
 
 ## ARRAY
+
+### [H] Leetcode 33. Search in Rotated Sorted Array
+
+[Leetcode Source](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+
+**Question:**
+
+Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+(i.e., `0 1 2 4 5 6 7` might become `4 5 6 7 0 1 2`).
+
+You are given a target value to search. If found in the array return its index, otherwise return `-1`.
+
+You may assume no duplicate exists in the array.
+
+**Answer:**
+
+Perform binary search on the whole array and when the left number is less than or equal to the right number `nums[left] <= nums[right]`, this means we have a strictly increasing array. Then we perform binary search on this array.
+
+```python
+class Solution(object):
+
+    def search(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return -1
+        if n == 1:
+            if nums[0] == target:
+                return 0
+            else:
+                return -1
+
+        left, right = 0, n-1
+        return self.search2(nums, left, right, target)
+
+    def search2(self, nums, left, right, target):
+        """
+        :type nums: List[int]
+        :type left: int
+        :type right: int
+        :type target: int
+        :rtype: int
+        """
+
+        if nums[left] <= nums[right]:
+            return self.binarySearch(nums, left, right, target)
+
+        mid = (left + right) >> 1
+        ret = self.search2(nums, left, mid, target)
+        if ret != -1:
+            return ret
+
+        return self.search2(nums, mid+1, right, target)
+
+    def binarySearch(self, nums, left, right, target):
+        """
+        :type nums: List[int]
+        :type left: int
+        :type right: int
+        :type target: int
+        :rtype: int
+        """
+
+        while left <= right:
+            mid = (left + right) >> 1
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                left = mid+1
+            else:
+                right = mid-1
+
+        return -1
+```
 
 ### [M] Leetcode 74. Search a 2D Matrix
 
