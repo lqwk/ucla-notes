@@ -8,6 +8,7 @@
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[E] Leetcode 278. First Bad Version](#e-leetcode-278-first-bad-version)
+  * [[E] Leetcode 374. Guess Number Higher or Lower](#e-leetcode-374-guess-number-higher-or-lower)
   * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
   * [[M] Leetcode 81. Search in Rotated Sorted Array II](#m-leetcode-81-search-in-rotated-sorted-array-ii)
   * [[M] Leetcode 153. Find Minimum in Rotated Sorted Array](#m-leetcode-153-find-minimum-in-rotated-sorted-array)
@@ -276,6 +277,57 @@ class Solution(object):
                 left = mid+1
 
         return left
+```
+
+### [E] Leetcode 374. Guess Number Higher or Lower
+
+[Leetcode Source](https://leetcode.com/problems/guess-number-higher-or-lower/)
+
+**Question:**
+
+> We are playing the Guess Game. The game is as follows:
+> 
+> I pick a number from `1` to `n`. You have to guess which number I picked. Every time you guess wrong, I'll tell you whether the number is higher or lower. You call a pre-defined API `guess(int num)` which returns 3 possible results (`-1`, `1`, or `0`):
+> 
+> ```
+> -1 : My number is lower
+>  1 : My number is higher
+>  0 : Congrats! You got it!
+> ```
+> 
+> Example:
+> 
+> ```
+> n = 10, I pick 6.
+> Return 6.
+> ```
+
+**Answer:**
+
+```python
+# The guess API is already defined for you.
+# @param num, your guess
+# @return -1 if my number is lower, 1 if my number is higher, otherwise return 0
+# def guess(num):
+
+class Solution(object):
+
+    def guessNumber(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        left, right = 0, n
+        while left <= right:
+            mid = (left + right) >> 1
+            ret = guess(mid)
+            if ret == 0:
+                return mid
+            elif ret == 1:
+                left = mid+1
+            elif ret == -1:
+                right = mid-1
 ```
 
 ### [H] Leetcode 33. Search in Rotated Sorted Array
