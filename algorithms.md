@@ -7,6 +7,8 @@
 * [ARRAY](#array)
   * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
   * [[M] Leetcode 81. Search in Rotated Sorted Array II](#m-leetcode-81-search-in-rotated-sorted-array-ii)
+  * [[M] Leetcode 153. Find Minimum in Rotated Sorted Array](#m-leetcode-153-find-minimum-in-rotated-sorted-array)
+  * [[H] Leetcode 154. Find Minimum in Rotated Sorted Array II](#h-leetcode-154-find-minimum-in-rotated-sorted-array-ii)
   * [[M] Leetcode 74. Search a 2D Matrix](#m-leetcode-74-search-a-2d-matrix)
   * [[M] Leetcode 240. Search a 2D Matrix II](#m-leetcode-240-search-a-2d-matrix-ii)
   * [[E] Leetcode 217. Contains Duplicate](#e-leetcode-217-contains-duplicate)
@@ -272,6 +274,114 @@ class Solution(object):
                 right = mid-1
 
         return False
+```
+
+### [M] Leetcode 153. Find Minimum in Rotated Sorted Array
+
+[Leetcode Source](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
+
+**Question:**
+
+> Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+> 
+> (i.e., `0 1 2 4 5 6 7` might become `4 5 6 7 0 1 2`).
+> 
+> Find the minimum element.
+> 
+> You may assume no duplicate exists in the array.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def findMin(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            return nums[0]
+
+        left, right = 0, n-1
+        return self.findMin2(nums, left, right)
+
+    def findMin2(self, nums, left, right):
+        """
+        :type nums: List[int]
+        :type left: int
+        :type right: int
+        :rtype: int
+        """
+
+        if nums[left] <= nums[right]:
+            return nums[left]
+
+        mid = (left + right) >> 1
+        min1 = self.findMin2(nums, left, mid)
+        min2 = self.findMin2(nums, mid+1, right)
+        return min(min1, min2)
+```
+
+### [H] Leetcode 154. Find Minimum in Rotated Sorted Array II
+
+[Leetcode Source](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+
+**Question:**
+
+> Follow up for "Find Minimum in Rotated Sorted Array": What if duplicates are allowed?
+> 
+> Would this affect the run-time complexity? How and why?
+> Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+> 
+> (i.e., `0 1 2 4 5 6 7` might become `4 5 6 7 0 1 2`).
+> 
+> Find the minimum element.
+> 
+> The array may contain duplicates.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def findMin(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            return nums[0]
+
+        left, right = 0, n-1
+        return self.findMin2(nums, left, right)
+
+    def findMin2(self, nums, left, right):
+        """
+        :type nums: List[int]
+        :type left: int
+        :type right: int
+        :rtype: int
+        """
+
+        if left == right:
+            return nums[left]
+
+        if nums[left] < nums[right]:
+            return nums[left]
+
+        mid = (left + right) >> 1
+        min1 = self.findMin2(nums, left, mid)
+        min2 = self.findMin2(nums, mid+1, right)
+        return min(min1, min2)
 ```
 
 ### [M] Leetcode 74. Search a 2D Matrix
