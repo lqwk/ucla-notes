@@ -5,6 +5,8 @@
 * [STRING](#string)
   * [[E] Leetcode 344. Reverse String](#e-leetcode-344-reverse-string)
 * [ARRAY](#array)
+  * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
+  * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
   * [[M] Leetcode 81. Search in Rotated Sorted Array II](#m-leetcode-81-search-in-rotated-sorted-array-ii)
   * [[M] Leetcode 153. Find Minimum in Rotated Sorted Array](#m-leetcode-153-find-minimum-in-rotated-sorted-array)
@@ -116,6 +118,125 @@ class Solution(object):
 
 
 ## ARRAY
+
+### [M] Leetcode 34. Search for a Range
+
+[Leetcode Source](https://leetcode.com/problems/search-for-a-range/)
+
+**Question:**
+
+> Given a sorted array of integers, find the starting and ending position of a given target value.
+> 
+> Your algorithm's runtime complexity must be in the order of `O(logn)`.
+> 
+> If the target is not found in the array, return `[-1, -1]`. For example:
+> 
+> ```
+> Given [5, 7, 7, 8, 8, 10] and target value 8, return [3, 4].
+> ```
+
+**Answer:**
+
+The logic below is straightforward.
+
+```python
+class Solution(object):
+
+    def searchRange(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+
+        n = len(nums)
+        if n == 0:
+            return [-1, -1]
+
+        l = self.binarySearch(nums, target, False)
+        r = self.binarySearch(nums, target, True)
+
+        return [l, r]
+
+    def binarySearch(self, nums, target, maxIndex):
+        """
+        :type nums: List[int]
+        :type target: int
+        :type maxIndex: boolean
+        :rtype: int
+        """
+
+        left, right = 0, len(nums)-1
+        index = -1
+
+        while left <= right:
+            mid = (left + right) >> 1
+            if nums[mid] == target:
+                index = mid
+                if maxIndex:
+                    left = mid+1
+                else:
+                    right = mid-1
+            elif nums[mid] < target:
+                left = mid+1
+            else:
+                right = mid-1
+
+        return index
+```
+
+### [M] Leetcode 35. Search Insert Position
+
+[Leetcode Source](https://leetcode.com/problems/search-insert-position/)
+
+**Question:**
+
+> Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+> 
+> You may assume no duplicates in the array. Here are few examples:
+> 
+> ```
+> [1,3,5,6], 5 -> 2
+> [1,3,5,6], 2 -> 1
+> [1,3,5,6], 7 -> 4
+> [1,3,5,6], 0 -> 0
+> ```
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def searchInsert(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+
+        n = len(nums)
+        if n == 0:
+            return 0
+        if n == 1:
+            if target <= nums[0]:
+                return 0
+            else:
+                return 1
+
+        left, right, mid = 0, n-1, 0
+        while left <= right:
+            mid = (left + right) >> 1
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                left = mid+1
+            else:
+                right = mid-1
+
+        if target > nums[mid]:
+            return mid+1
+        return mid
+```
 
 ### [H] Leetcode 33. Search in Rotated Sorted Array
 
