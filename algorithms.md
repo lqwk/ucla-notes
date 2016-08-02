@@ -8,6 +8,7 @@
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
+  * [[E] Leetcode 350. Intersection of Two Arrays II](#e-leetcode-350-intersection-of-two-arrays-ii)
   * [[E] Leetcode 278. First Bad Version](#e-leetcode-278-first-bad-version)
   * [[E] Leetcode 374. Guess Number Higher or Lower](#e-leetcode-374-guess-number-higher-or-lower)
   * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
@@ -286,6 +287,69 @@ class Solution(object):
                 r[num] = True
 
         return r.keys()
+```
+
+### [E] Leetcode 350. Intersection of Two Arrays II
+
+[Leetcode Source](https://leetcode.com/problems/intersection-of-two-arrays/)
+
+**Question:**
+
+> Given two arrays, write a function to compute their intersection.
+> 
+> Example: Given `nums1 = [1, 2, 2, 1]`, `nums2 = [2, 2]`, `return [2, 2]`.
+> 
+> Note:
+> * Each element in the result should appear as many times as it shows in both arrays.
+> * The result can be in any order.
+> 
+> Follow up:
+> * What if the given array is already sorted? How would you optimize your algorithm?
+> * What if nums1's size is small compared to nums2's size? Which algorithm is better?
+> * What if elements of nums2 are stored on disk, and the memory is limited such that you cannot load all elements into the memory at once?
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def intersect(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: List[int]
+        """
+
+        n1 = len(nums1)
+        n2 = len(nums2)
+
+        if n1 == 0 or n2 == 0:
+            return []
+
+        d1, d2 = {}, {}
+        r = []
+
+        for i in range(n1):
+            num = nums1[i]
+            if num not in d1:
+                d1[num] = 1
+            else:
+                d1[num] += 1
+
+        for i in range(n2):
+            num = nums2[i]
+            if num not in d2:
+                d2[num] = 1
+            else:
+                d2[num] += 1
+
+        for key in d2.keys():
+            if key in d1:
+                count = min(d1[key], d2[key])
+                for i in range(count):
+                    r.append(key)
+
+        return r
 ```
 
 ### [E] Leetcode 278. First Bad Version
