@@ -7,6 +7,7 @@
 * [ARRAY](#array)
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
+  * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
   * [[E] Leetcode 278. First Bad Version](#e-leetcode-278-first-bad-version)
   * [[E] Leetcode 374. Guess Number Higher or Lower](#e-leetcode-374-guess-number-higher-or-lower)
   * [[H] Leetcode 33. Search in Rotated Sorted Array](#h-leetcode-33-search-in-rotated-sorted-array)
@@ -238,6 +239,53 @@ class Solution(object):
         if target > nums[mid]:
             return mid+1
         return mid
+```
+
+### [E] Leetcode 349. Intersection of Two Arrays
+
+[Leetcode Source](https://leetcode.com/problems/intersection-of-two-arrays/)
+
+**Question:**
+
+> Given two arrays, write a function to compute their intersection.
+> 
+> Example: Given `nums1 = [1, 2, 2, 1]`, `nums2 = [2, 2]`, `return [2]`.
+> 
+> Note:
+> * Each element in the result must be unique.
+> * The result can be in any order.
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def intersection(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: List[int]
+        """
+
+        n1 = len(nums1)
+        n2 = len(nums2)
+
+        if n1 == 0 or n2 == 0:
+            return []
+
+        d, r = {}, {}
+
+        for i in range(n1):
+            num = nums1[i]
+            if num not in d:
+                d[num] = True
+
+        for i in range(n2):
+            num = nums2[i]
+            if num in nums1 and num not in r:
+                r[num] = True
+
+        return r.keys()
 ```
 
 ### [E] Leetcode 278. First Bad Version
