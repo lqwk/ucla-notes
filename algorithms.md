@@ -10,6 +10,7 @@
   * [[M] Leetcode 16. 3Sum Closest](#m-leetcode-16-3sum-closest)
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
+  * [[M] Leetcode 274. H-Index](#m-leetcode-274-h-index)
   * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
   * [[E] Leetcode 350. Intersection of Two Arrays II](#e-leetcode-350-intersection-of-two-arrays-ii)
   * [[E] Leetcode 278. First Bad Version](#e-leetcode-278-first-bad-version)
@@ -394,6 +395,52 @@ class Solution(object):
         if target > nums[mid]:
             return mid+1
         return mid
+```
+
+### [M] Leetcode 274. H-Index
+
+[Leetcode Source](https://leetcode.com/problems/h-index/)
+
+**Question:**
+
+> Given an array of citations (each citation is a non-negative integer) of a researcher, write a function to compute the researcher's h-index.
+> 
+> According to the [definition of h-index on Wikipedia](https://en.wikipedia.org/wiki/H-index): "A scientist has index `h` if `h` of his/her `N` papers have at least `h` citations each, and the other `N − h` papers have no more than `h` citations each."
+> 
+> For example, given `citations = [3, 0, 6, 1, 5]`, which means the researcher has `5` papers in total and each of them had received `3`, `0`, `6`, `1`, `5` citations respectively. Since the researcher has `3` papers with at least `3` citations each and the remaining two with no more than `3` citations each, his h-index is `3`.
+> 
+> Note: If there are several possible values for `h`, the maximum one is taken as the h-index.
+> 
+> Hints:
+> * An easy approach is to sort the array first.
+> * What are the possible values of h-index?
+> * A faster approach is to use extra space.
+
+**Answer:**
+
+According to the hint, we would sort the array and the rest would be straightforward. This runs in `O(nlogn)` time because we need to sort the array.
+
+```python
+class Solution(object):
+
+    def hIndex(self, citations):
+        """
+        :type citations: List[int]
+        :rtype: int
+        """
+
+        n = len(citations)
+        if n == 0:
+            return 0
+        num, cit = 0, 0
+        citations.sort()
+        for i in range(n):
+            index = n-1-i
+            if num+1 > citations[index]:
+                return num
+            num, cit = num+1, citations[index]
+
+        return num
 ```
 
 ### [E] Leetcode 349. Intersection of Two Arrays
