@@ -5,6 +5,8 @@
 * [STRING](#string)
   * [[E] Leetcode 344. Reverse String](#e-leetcode-344-reverse-string)
 * [ARRAY](#array)
+  * [[E] Leetcode 1. Two Sum](#e-leetcode-1-two-sum)
+  * [[M] Leetcode 15. 3Sum](#m-leetcode-15-3sum)
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
@@ -122,6 +124,110 @@ class Solution(object):
 
 
 ## ARRAY
+
+### [E] Leetcode 1. Two Sum
+
+[Leetcode Source](https://leetcode.com/problems/two-sum/)
+
+**Question:**
+
+Given an array of integers, return indices of the two numbers such that they add up to a specific target. You may assume that each input would have exactly one solution. The return format should be zero-based indices.
+
+Example:
+```
+Given nums = [2, 7, 11, 15], target = 9,
+
+Because nums[0] + nums[1] = 2 + 7 = 9, return [0, 1].
+```
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+
+        n, d = len(nums), {}
+
+        for i in range(n):
+            num = nums[i]
+            if num not in d:
+                d[num] = [i]
+            else:
+                d[num].append(i)
+
+        for i in range(n):
+            num1 = nums[i]
+            num2 = target - num1
+            if num2 in d:
+                if num1 == num2 and len(d[num2]) > 1:
+                    return [d[num2][0], d[num2][1]]
+                elif num1 != num2:
+                    return [i, d[num2][0]]
+
+        return []
+```
+
+### [M] Leetcode 15. 3Sum
+
+[Leetcode Source](https://leetcode.com/problems/3sum/)
+
+**Question:**
+
+Given an array `S` of `n` integers, are there elements `a`, `b`, `c` in `S` such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
+
+Note: The solution set must not contain duplicate triplets.
+
+```
+For example, given array S = [-1, 0, 1, 2, -1, -4],
+
+A solution set is:
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+```
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+
+        n = len(nums)
+        nums.sort()
+        sol = []
+        for i in range(n):
+            if i > 0 and nums[i] == nums[i-1]:
+                continue
+            left, right = i+1, n-1
+            while left < right:
+                temp = nums[i] + nums[left] + nums[right]
+                if temp == 0:
+                    sol.append([nums[i], nums[left], nums[right]])
+                    left += 1
+                    right -= 1
+                    while left < right and nums[left] == nums[left-1]:
+                        left += 1
+                    while right > left and nums[right] == nums[right+1]:
+                        right -= 1
+                elif temp > 0:
+                    right -= 1
+                else:
+                    left += 1
+
+        return sol
+```
 
 ### [M] Leetcode 34. Search for a Range
 
