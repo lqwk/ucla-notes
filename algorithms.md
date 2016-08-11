@@ -7,6 +7,7 @@
 * [ARRAY](#array)
   * [[E] Leetcode 1. Two Sum](#e-leetcode-1-two-sum)
   * [[M] Leetcode 15. 3Sum](#m-leetcode-15-3sum)
+  * [[M] Leetcode 16. 3Sum Closest](#m-leetcode-16-3sum-closest)
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
@@ -131,14 +132,14 @@ class Solution(object):
 
 **Question:**
 
-Given an array of integers, return indices of the two numbers such that they add up to a specific target. You may assume that each input would have exactly one solution. The return format should be zero-based indices.
-
-Example:
-```
-Given nums = [2, 7, 11, 15], target = 9,
-
-Because nums[0] + nums[1] = 2 + 7 = 9, return [0, 1].
-```
+> Given an array of integers, return indices of the two numbers such that they add up to a specific target. You may assume that each input would have exactly one solution. The return format should be zero-based indices.
+> 
+> Example:
+> ```
+> Given nums = [2, 7, 11, 15], target = 9,
+> 
+> Because nums[0] + nums[1] = 2 + 7 = 9, return [0, 1].
+> ```
 
 **Answer:**
 
@@ -179,19 +180,19 @@ class Solution(object):
 
 **Question:**
 
-Given an array `S` of `n` integers, are there elements `a`, `b`, `c` in `S` such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
-
-Note: The solution set must not contain duplicate triplets.
-
-```
-For example, given array S = [-1, 0, 1, 2, -1, -4],
-
-A solution set is:
-[
-  [-1, 0, 1],
-  [-1, -1, 2]
-]
-```
+> Given an array `S` of `n` integers, are there elements `a`, `b`, `c` in `S` such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
+> 
+> Note: The solution set must not contain duplicate triplets.
+> 
+> ```
+> For example, given array S = [-1, 0, 1, 2, -1, -4],
+> 
+> A solution set is:
+> [
+>   [-1, 0, 1],
+>   [-1, -1, 2]
+> ]
+> ```
 
 **Answer:**
 
@@ -225,6 +226,53 @@ class Solution(object):
                     right -= 1
                 else:
                     left += 1
+
+        return sol
+```
+
+### [M] Leetcode 16. 3Sum Closest
+
+[Leetcode Source](https://leetcode.com/problems/3sum-closest/)
+
+**Question:**
+
+> Given an array `S` of `n` integers, find three integers in `S` such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+> 
+> ```
+> For example, given array S = {-1 2 1 -4}, and target = 1.
+> The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+> ```
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def threeSumClosest(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+
+        n = len(nums)
+        nums.sort()
+        sol = 0
+        diff = None
+        for i in range(n-2):
+            left, right = i+1, n-1
+            while left < right:
+                temp = nums[i] + nums[left] + nums[right]
+                if temp == target:
+                    return target
+                elif temp > target:
+                    right -= 1
+                else:
+                    left += 1
+
+                tempDiff = abs(temp - target)
+                if diff == None or tempDiff < diff:
+                    diff, sol = tempDiff, temp
 
         return sol
 ```
