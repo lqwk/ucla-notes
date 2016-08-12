@@ -443,6 +443,37 @@ class Solution(object):
         return num
 ```
 
+To get an `O(n)` algorithm, we use `O(n)` extra space by maintaining an array of length `n+1` to keep count of the number of references to citations.
+
+```python
+class Solution(object):
+
+    def hIndex(self, citations):
+        """
+        :type citations: List[int]
+        :rtype: int
+        """
+
+        n = len(citations)
+        if n == 0:
+            return 0
+
+        count = [0] * (n+1)
+        for c in citations:
+            if c < n:
+                count[c] += 1
+            else:
+                count[n] += 1
+
+        temp = 0
+        for i in range(n, -1, -1):
+            temp += count[i]
+            if temp >= i:
+                return i
+
+        return 0
+```
+
 ### [E] Leetcode 349. Intersection of Two Arrays
 
 [Leetcode Source](https://leetcode.com/problems/intersection-of-two-arrays/)
