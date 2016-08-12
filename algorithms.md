@@ -11,6 +11,7 @@
   * [[M] Leetcode 34. Search for a Range](#m-leetcode-34-search-for-a-range)
   * [[M] Leetcode 35. Search Insert Position](#m-leetcode-35-search-insert-position)
   * [[M] Leetcode 274. H-Index](#m-leetcode-274-h-index)
+  * [[M] Leetcode 275. H-Index II](#m-leetcode-275-h-index-ii)
   * [[E] Leetcode 349. Intersection of Two Arrays](#e-leetcode-349-intersection-of-two-arrays)
   * [[E] Leetcode 350. Intersection of Two Arrays II](#e-leetcode-350-intersection-of-two-arrays-ii)
   * [[E] Leetcode 278. First Bad Version](#e-leetcode-278-first-bad-version)
@@ -472,6 +473,47 @@ class Solution(object):
                 return i
 
         return 0
+```
+
+### [M] Leetcode 275. H-Index II
+
+[Leetcode Source](https://leetcode.com/problems/h-index-ii/)
+
+**Question:**
+
+> Follow up for **H-Index**: What if the `citations` array is sorted in ascending order? Could you optimize your algorithm?
+> 
+> Hint: Expected runtime complexity is in `O(logn)` and the input is sorted.
+
+**Answer:**
+
+Perform a simple binary search with the logic from **274. H-Index**.
+
+```python
+class Solution(object):
+
+    def hIndex(self, citations):
+        """
+        :type citations: List[int]
+        :rtype: int
+        """
+
+        n = len(citations)
+        if n == 0:
+            return 0
+
+        left, right, h = 0, n-1, 0
+        while left <= right:
+            mid = (left + right) >> 1
+            num = n - mid
+            cit = citations[mid]
+            if cit >= num:
+                h = num
+                right = mid-1
+            else:
+                left = mid+1
+
+        return h
 ```
 
 ### [E] Leetcode 349. Intersection of Two Arrays
