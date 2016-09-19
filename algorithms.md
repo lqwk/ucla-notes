@@ -29,12 +29,15 @@
 * [STACK](#stack)
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
+* [TREES](#trees)
+  * [[E] Leetcode 100. Same Tree](#e-leetcode-100-same-tree)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
   * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
   * [[M] Leetcode 122. Best Time to Buy and Sell Stock II](#m-leetcode-122-best-time-to-buy-and-sell-stock-ii)
   * [[M] Leetcode 134. Gas Station](#m-leetcode-134-gas-station)
   * [[H] Leetcode 135. Candy](#h-leetcode-135-candy)
+  * [[H] Leetcode 321. Create Maximum Number](#h-leetcode-321-create-maximum-number)
   * [[H] Leetcode 330. Patching Array](#h-leetcode-330-patching-array)
   * [[M] Leetcode 376. Wiggle Subsequence](#m-leetcode-376-wiggle-subsequence)
 * [DYNAMIC PROGRAMMING](#dynamic-programming)
@@ -56,6 +59,7 @@
   * [[M] Leetcode 279. Perfect Squares](#m-leetcode-279-perfect-squares)
   * [[M] Leetcode 338. Counting Bits](#m-leetcode-338-counting-bits)
   * [[M] Leetcode 343. Integer Break](#m-leetcode-343-integer-break)
+
 
 ## NUMBERS
 
@@ -1442,6 +1446,48 @@ class Solution(object):
 ```
 
 
+## TREES
+
+### [E] Leetcode 100. Same Tree
+
+[Leetcode Source](https://leetcode.com/problems/same-tree/)
+
+**Question:**
+
+> Given two binary trees, write a function to check if they are equal or not.
+> 
+> Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def isSameTree(self, p, q):
+        """
+        :type p: TreeNode
+        :type q: TreeNode
+        :rtype: bool
+        """
+
+        if p == None and q == None:
+            return True
+        if (p == None and q != None) or (p != None and q == None):
+            return False
+        if p.val != q.val:
+            return False
+
+        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+```
+
+
 ## GREEDY ALGORITHMS
 
 ### [H] Leetcode 45. Jump Game II
@@ -1673,6 +1719,68 @@ class Solution(object):
                 candies[i] = candies[i+1] + 1
 
         return sum(candies)
+```
+
+### [H] Leetcode 321. Create Maximum Number
+
+[Leetcode Source](https://leetcode.com/problems/create-maximum-number/)
+
+**Question:**
+
+> Given two arrays of length `m` and `n` with digits `0-9` representing two numbers. Create the maximum number of length `k <= m + n` from digits of the two. The relative order of the digits from the same array must be preserved. Return an array of the `k` digits. You should try to optimize your time and space complexity.
+> 
+> **Example 1:**
+> ```
+> nums1 = [3, 4, 6, 5]
+> nums2 = [9, 1, 2, 5, 8, 3]
+> k = 5
+> return [9, 8, 6, 5, 3]
+> ```
+> 
+> **Example 2:**
+> ```
+> nums1 = [6, 7]
+> nums2 = [6, 0, 4]
+> k = 5
+> return [6, 7, 6, 0, 4]
+> ```
+> 
+> **Example 3:**
+> ```
+> nums1 = [3, 9]
+> nums2 = [8, 9]
+> k = 3
+> return [9, 8, 9]
+> ```
+
+**Answer:**
+
+```python
+class Solution(object):
+
+    def maxNumber(self, nums1, nums2, k):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
+
+        def getMaxSubArray(nums, k):
+            res, n = [], len(nums)
+            for i in range(n):
+                while res and len(res) + n - i > k and nums[i] > res[-1]:
+                    res.pop()
+                if len(res) < k:
+                    res.append(nums[i])
+            return res
+
+        ans = [0] * k
+        for i in range(max(0, k - len(nums2)), min(k, len(nums1)) + 1):
+            res1 = getMaxSubArray(nums1, i)
+            res2 = getMaxSubArray(nums2, k - i)
+            ans = max(ans, [max(res1, res2).pop(0) for _ in range(k)])
+        return ans
 ```
 
 ### [H] Leetcode 330. Patching Array
