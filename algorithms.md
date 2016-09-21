@@ -31,6 +31,13 @@
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
 * [TREES](#trees)
   * [[E] Leetcode 100. Same Tree](#e-leetcode-100-same-tree)
+  * [[E] Leetcode 102. Binary Tree Level Order Traversal](#e-leetcode-102-binary-tree-level-order-traversal)
+  * [[M] Leetcode 103. Binary Tree Zigzag Level Order Traversal](#m-leetcode-103-binary-tree-zigzag-level-order-traversal)
+  * [[E] Leetcode 107. Binary Tree Level Order Traversal II](#e-leetcode-107-binary-tree-level-order-traversal-ii)
+  * [[E] Leetcode 104. Maximum Depth of Binary Tree](#e-leetcode-104-maximum-depth-of-binary-tree)
+  * [[E] Leetcode 111. Minimum Depth of Binary Tree](#e-leetcode-111-minimum-depth-of-binary-tree)
+  * [[M] Leetcode 108. Convert Sorted Array to Binary Search Tree](#m-leetcode-108-convert-sorted-array-to-binary-search-tree)
+  * [[E] Leetcode 110. Balanced Binary Tree](#e-leetcode-110-balanced-binary-tree)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
   * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
@@ -1487,6 +1494,414 @@ class Solution(object):
         return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
 ```
 
+### [E] Leetcode 102. Binary Tree Level Order Traversal
+
+[Leetcode Source](https://leetcode.com/problems/binary-tree-level-order-traversal/)
+
+**Question:**
+
+> Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+> 
+> For example:
+> ```
+> Given binary tree [3,9,20,null,null,15,7],
+>     3
+>    / \
+>   9  20
+>     /  \
+>    15   7
+> return its level order traversal as:
+> [
+>   [3],
+>   [9,20],
+>   [15,7]
+> ]
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def levelOrder(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[List[int]]
+        """
+
+        if root == None:
+            return []
+        q, nextl, ans = [root], [], []
+        while len(q) != 0:
+            cur = []
+            for node in q:
+                cur.append(node.val)
+                if node.left != None:
+                    nextl.append(node.left)
+                if node.right != None:
+                    nextl.append(node.right)
+            ans.append(cur)
+            q = nextl
+            nextl = []
+
+        return ans
+```
+
+### [M] Leetcode 103. Binary Tree Zigzag Level Order Traversal
+
+[Leetcode Source](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/)
+
+**Question:**
+
+> Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+> 
+> For example:
+> ```
+> Given binary tree [3,9,20,null,null,15,7],
+>     3
+>    / \
+>   9  20
+>     /  \
+>    15   7
+> return its zigzag level order traversal as:
+> [
+>   [3],
+>   [20,9],
+>   [15,7]
+> ]
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def zigzagLevelOrder(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[List[int]]
+        """
+
+        if root == None:
+            return []
+        q, nextl, ans = [root], [], []
+        while len(q) != 0:
+            cur = []
+            for node in q:
+                cur.append(node.val)
+                if node.left != None:
+                    nextl.append(node.left)
+                if node.right != None:
+                    nextl.append(node.right)
+            ans.append(cur)
+            q = nextl
+            nextl = []
+
+        flag = False
+        for l in ans:
+            if flag:
+                l.reverse()
+            flag = not flag
+
+        return ans
+```
+
+### [E] Leetcode 107. Binary Tree Level Order Traversal II
+
+[Leetcode Source](https://leetcode.com/problems/binary-tree-level-order-traversal-ii/)
+
+**Question:**
+
+> Given a binary tree, return the bottom-up level order traversal of its nodes' values. (ie, from left to right, level by level from leaf to root).
+> 
+> For example:
+> ```
+> Given binary tree [3,9,20,null,null,15,7],
+>     3
+>    / \
+>   9  20
+>     /  \
+>    15   7
+> return its bottom-up level order traversal as:
+> [
+>   [15,7],
+>   [9,20],
+>   [3]
+> ]
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def levelOrderBottom(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[List[int]]
+        """
+
+        if root == None:
+            return []
+        q, n, stack, ans = [root], [], [], []
+        while len(q) != 0:
+            cur = []
+            for node in q:
+                cur.append(node.val)
+                if node.left != None:
+                    n.append(node.left)
+                if node.right != None:
+                    n.append(node.right)
+            stack.append(cur)
+            q = n
+            n = []
+        while len(stack) != 0:
+            ans.append(stack.pop())
+
+        return ans
+```
+
+### [E] Leetcode 104. Maximum Depth of Binary Tree
+
+[Leetcode Source](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+
+**Question:**
+
+> Given a binary tree, find its maximum depth.
+> 
+> The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def maxDepth(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+
+        self.depth = 0
+        self.dfs(root, 0)
+        return self.depth
+
+    def dfs(self, root, cnt):
+        """
+        :type root: TreeNode
+        :type cnt: int
+        """
+
+        if root == None:
+            return
+        cnt += 1
+
+        if cnt > self.depth:
+            self.depth = cnt
+        self.dfs(root.left, cnt)
+        self.dfs(root.right, cnt)
+```
+
+### [E] Leetcode 111. Minimum Depth of Binary Tree
+
+[Leetcode Source](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+
+**Question:**
+
+> Given a binary tree, find its minimum depth.
+> 
+> The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def minDepth(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+
+        if root == None:
+            return 0
+        if root != None and root.left == None and root.right == None:
+            return 1
+
+        self.depth = None
+
+        if root.left == None and root.right != None:
+            self.dfs(root.right, 1)
+        if root.right == None and root.left != None:
+            self.dfs(root.left, 1)
+        else:
+            self.dfs(root.left, 1)
+            self.dfs(root.right, 1)
+
+        return self.depth+1
+
+    def dfs(self, root, cnt):
+        """
+        :type root: TreeNode
+        :type cnt: int
+        """
+
+        if root != None and root.left == None and root.right == None:
+            if self.depth == None:
+                self.depth = cnt
+            elif cnt < self.depth:
+                self.depth = cnt
+            return
+
+        if root == None:
+            return
+        if root.left != None:
+            self.dfs(root.left, cnt+1)
+        if root.right != None:
+            self.dfs(root.right, cnt+1)
+```
+
+### [M] Leetcode 108. Convert Sorted Array to Binary Search Tree
+
+[Leetcode Source](https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)
+
+**Question:**
+
+> Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def sortedArrayToBST(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: TreeNode
+        """
+
+        n = len(nums)
+        if n == 0:
+            return None
+        return self.convert(nums, 0, n-1)
+
+    def convert(self, nums, start, end):
+        """
+        :type nums: List[int]
+        :type start: int
+        :type end: int
+        :rtype: TreeNode
+        """
+
+        if start > end:
+            return None
+        mid = (start + end) // 2
+        if mid > (len(nums) - 1):
+            return None
+        left = self.convert(nums, start, mid - 1)
+        right = self.convert(nums, mid + 1, end)
+        node = TreeNode(nums[mid])
+        node.left = left
+        node.right = right
+
+        return node
+```
+
+### [E] Leetcode 110. Balanced Binary Tree
+
+[Leetcode Source](https://leetcode.com/problems/balanced-binary-tree/)
+
+**Question:**
+
+> Given a binary tree, determine if it is height-balanced.
+> 
+> For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def isBalanced(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+
+        if root == None:
+            return True
+        if self.dfs(root, 0) == -1:
+            return False
+        else:
+            return True
+
+    def dfs(self, root, depth):
+        """
+        :type root: TreeNode
+        :type depth: int
+        :rtype: int
+        """
+
+        if root == None:
+            return depth
+
+        l = self.dfs(root.left, depth+1)
+        r = self.dfs(root.right, depth+1)
+
+        if l == -1 or r == -1 or (abs(l-r) > 1):
+            return -1
+        else:
+            return max(l,r)
+```
 
 ## GREEDY ALGORITHMS
 
