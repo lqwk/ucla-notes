@@ -30,14 +30,21 @@
   * [[M] Leetcode 71. Simplify Path](#m-leetcode-71-simplify-path)
   * [[H] Leetcode 316. Remove Duplicate Letters](#h-leetcode-316-remove-duplicate-letters)
 * [TREES](#trees)
+  * [[H] Leetcode 99. Recover Binary Search Tree](#h-leetcode-99-recover-binary-search-tree)
   * [[E] Leetcode 100. Same Tree](#e-leetcode-100-same-tree)
   * [[E] Leetcode 102. Binary Tree Level Order Traversal](#e-leetcode-102-binary-tree-level-order-traversal)
   * [[M] Leetcode 103. Binary Tree Zigzag Level Order Traversal](#m-leetcode-103-binary-tree-zigzag-level-order-traversal)
   * [[E] Leetcode 107. Binary Tree Level Order Traversal II](#e-leetcode-107-binary-tree-level-order-traversal-ii)
   * [[E] Leetcode 104. Maximum Depth of Binary Tree](#e-leetcode-104-maximum-depth-of-binary-tree)
   * [[E] Leetcode 111. Minimum Depth of Binary Tree](#e-leetcode-111-minimum-depth-of-binary-tree)
+  * [[M] Leetcode 105. Construct Binary Tree from Preorder and Inorder Traversal](#m-leetcode-105-construct-binary-tree-from-preorder-and-inorder-traversal)
   * [[M] Leetcode 108. Convert Sorted Array to Binary Search Tree](#m-leetcode-108-convert-sorted-array-to-binary-search-tree)
+  * [[M] Leetcode 109. Convert Sorted List to Binary Search Tree](#m-leetcode-109-convert-sorted-list-to-binary-search-tree)
   * [[E] Leetcode 110. Balanced Binary Tree](#e-leetcode-110-balanced-binary-tree)
+  * [[E] Leetcode 112. Path Sum](#e-leetcode-112-path-sum)
+  * [[M] Leetcode 113. Path Sum II](#m-leetcode-113-path-sum-ii)
+  * [[M] Leetcode 129. Sum Root to Leaf Numbers](#m-leetcode-129-sum-root-to-leaf-numbers)
+  * [[E] Leetcode 226. Invert Binary Tree](#e-leetcode-226-invert-binary-tree)
 * [GREEDY ALGORITHMS](#greedy-algorithms)
   * [[H] Leetcode 45. Jump Game II](#h-leetcode-45-jump-game-ii)
   * [[M] Leetcode 55. Jump Game](#m-leetcode-55-jump-game)
@@ -1455,6 +1462,65 @@ class Solution(object):
 
 ## TREES
 
+### [H] Leetcode 99. Recover Binary Search Tree
+
+[Leetcode Source](https://leetcode.com/problems/recover-binary-search-tree/)
+
+**Question:**
+
+> Two elements of a binary search tree (BST) are swapped by mistake. Recover the tree without changing its structure.
+> 
+> **Note**: A solution using `O(n)` space is pretty straight forward. Could you devise a constant space solution?
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def recoverTree(self, root):
+        """
+        :type root: TreeNode
+        :rtype: void Do not return anything, modify root in-place instead.
+        """
+
+        self.pre, self.first, self.second = None, None, None
+        self.inorder(root)
+
+        self.first.val, self.second.val = self.second.val, self.first.val
+
+    def inorder(self, root):
+        """
+        :type root: TreeNode
+        :rtype: void
+        """
+
+        if not root:
+            return
+
+        if root.left:
+            self.inorder(root.left)
+
+        if self.pre:
+            if root.val < self.pre.val:
+                if not self.first:
+                    self.first = self.pre
+                    self.second = root
+                else:
+                    self.second = root
+
+        self.pre = root
+
+        if root.right:
+            self.inorder(root.right)
+```
+
 ### [E] Leetcode 100. Same Tree
 
 [Leetcode Source](https://leetcode.com/problems/same-tree/)
@@ -1796,6 +1862,66 @@ class Solution(object):
             self.dfs(root.right, cnt+1)
 ```
 
+### [M] Leetcode 105. Construct Binary Tree from Preorder and Inorder Traversal
+
+[Leetcode Source](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+**Question:**
+
+> Given preorder and inorder traversal of a tree, construct the binary tree.
+> **Note:** You may assume that duplicates do not exist in the tree.
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def buildTree(self, preorder, inorder):
+        """
+        :type preorder: List[int]
+        :type inorder: List[int]
+        :rtype: TreeNode
+        """
+
+        n = len(preorder)
+        if n == 0:
+            return None
+        if n == 1:
+            return TreeNode(preorder[0])
+        return self.buildTree2(preorder, inorder, 0, n-1, 0, n-1)
+
+    def buildTree2(self, preorder, inorder, pb, pe, ib, ie):
+        """
+        :type preorder: List[int]
+        :type inorder: List[int]
+        :type pb: int
+        :type pe: int
+        :type ib: int
+        :type ie: int
+        :rtype: TreeNode
+        """
+
+        if pb > pe:
+            return None
+        if pb == pe:
+            return TreeNode(preorder[pb])
+
+        val = preorder[pb]
+        index = inorder.index(val)
+
+        left = self.buildTree2(preorder, inorder, pb+1, pb+index-ib, ib, index-1)
+        right = self.buildTree2(preorder, inorder, pb+index-ib+1, pe, index+1, ie)
+
+        node = TreeNode(val)
+        node.left, node.right = left, right
+        return node
+```
+
 ### [M] Leetcode 108. Convert Sorted Array to Binary Search Tree
 
 [Leetcode Source](https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)
@@ -1847,6 +1973,69 @@ class Solution(object):
         node.right = right
 
         return node
+```
+
+### [M] Leetcode 109. Convert Sorted List to Binary Search Tree
+
+[Leetcode Source](https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/)
+
+**Question:**
+
+> Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+
+**Answer:**
+
+```python
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def sortedListToBST(self, head):
+        """
+        :type head: ListNode
+        :rtype: TreeNode
+        """
+
+        if head == None:
+            return None
+        h, n = head, 0
+        while h != None:
+            n += 1
+            h = h.next
+        root = self.convert(head, 0, n-1, n)
+        return root
+
+    def convert(self, head, s, e, length):
+        """
+        :type head: ListNode
+        :type s: int
+        :type e: int
+        :rtype: TreeNode
+        """
+
+        if s > e:
+            return None
+        mid = (s + e) >> 1
+        if mid > length-1:
+            return None
+        cnt, tmp = s, head
+        while cnt < mid:
+            cnt, tmp = cnt+1, tmp.next
+        root = TreeNode(tmp.val)
+        root.left = self.convert(head, s, mid-1, length)
+        root.right = self.convert(tmp.next, mid+1, e, length)
+        return root
 ```
 
 ### [E] Leetcode 110. Balanced Binary Tree
@@ -1901,6 +2090,270 @@ class Solution(object):
             return -1
         else:
             return max(l,r)
+```
+
+
+### [E] Leetcode 112. Path Sum
+
+[Leetcode Source](https://leetcode.com/problems/path-sum/)
+
+**Question:**
+
+> Given a binary tree and a `sum`, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given `sum`.
+> 
+> For example:
+> ```
+> Given the below binary tree and sum = 22,
+>               5
+>              / \
+>             4   8
+>            /   / \
+>           11  13  4
+>          /  \      \
+>         7    2      1
+> return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def hasPathSum(self, root, sum):
+        """
+        :type root: TreeNode
+        :type sum: int
+        :rtype: bool
+        """
+
+        self.hasSum = False
+        self.dfs(root, 0, sum)
+        return self.hasSum
+
+    def dfs(self, root, cur, sum):
+        """
+        :type root: TreeNode
+        :type s: int
+        :type sum: int
+        :rtype: void
+        """
+        if root == None:
+            return
+        if root.left == None and root.right == None: # leaf
+            if cur + root.val == sum:
+                self.hasSum = True
+            return
+
+        self.dfs(root.left, cur + root.val, sum)
+        self.dfs(root.right, cur + root.val, sum)
+```
+
+### [M] Leetcode 113. Path Sum II
+
+[Leetcode Source](https://leetcode.com/problems/path-sum-ii/)
+
+**Question:**
+
+> Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given `sum`.
+> 
+> For example:
+> ```
+> Given the below binary tree and sum = 22,
+>               5
+>              / \
+>             4   8
+>            /   / \
+>           11  13  4
+>          /  \    / \
+>         7    2  5   1
+> return
+> [
+>    [5,4,11,2],
+>    [5,8,4,5]
+> ]
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def pathSum(self, root, sum):
+        """
+        :type root: TreeNode
+        :type sum: int
+        :rtype: List[List[int]]
+        """
+
+        ans, path = [], []
+        self.dfs(0, root, sum, path, ans)
+        return ans
+
+    def dfs(self, cur, root, sum, path, ans):
+        """
+        :type cur: int
+        :type root: TreeNode
+        :type sum: int
+        :type path: List[int]
+        :type ans: List[List[int]]
+        :rtype: void
+        """
+
+        if not root:
+            return;
+        if root.left == None and root.right == None: # leaf
+            if cur + root.val == sum:
+                path.append(root.val)
+                ans.append(path[:])
+                path.pop()
+            return
+
+        path.append(root.val)
+        self.dfs(cur + root.val, root.left, sum, path, ans)
+        self.dfs(cur + root.val, root.right, sum, path, ans)
+        path.pop()
+```
+
+### [M] Leetcode 129. Sum Root to Leaf Numbers
+
+[Leetcode Source](https://leetcode.com/problems/sum-root-to-leaf-numbers/)
+
+**Question:**
+
+> Given a binary tree containing digits from `0-9` only, each root-to-leaf path could represent a number.
+> 
+> An example is the root-to-leaf path `1->2->3` which represents the number `123`.
+> 
+> Find the total sum of all root-to-leaf numbers.
+> 
+> For example,
+> ```
+>     1
+>    / \
+>   2   3
+> The root-to-leaf path 1->2 represents the number 12.
+> The root-to-leaf path 1->3 represents the number 13.
+> 
+> Return the sum = 12 + 13 = 25.
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def sumNumbers(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+
+        nums = []
+        self.dfs(root, [], nums)
+        return sum(nums)
+
+    def dfs(self, root, path, nums):
+        """
+        :type root: TreeNode
+        :type path: List[int]
+        :type nums: List[int]
+        :rtype: void
+        """
+
+        if root == None:
+            return
+        if root.left == None and root.right == None: # leaf
+            path.append(root.val)
+            num, tens = 0, 1
+            for i in reversed(range(len(path))):
+                num += tens * path[i]
+                tens *= 10
+            nums.append(num)
+            path.pop()
+            return
+
+        path.append(root.val)
+        self.dfs(root.left, path, nums)
+        self.dfs(root.right, path, nums)
+        path.pop()
+```
+
+### [E] Leetcode 226. Invert Binary Tree
+
+[Leetcode Source](https://leetcode.com/problems/balanced-binary-tree/)
+
+**Question:**
+
+> Invert a binary tree.
+> ```
+>      4
+>    /   \
+>   2     7
+>  / \   / \
+> 1   3 6   9
+> ```
+> to
+> ```
+>      4
+>    /   \
+>   7     2
+>  / \   / \
+> 9   6 3   1
+> ```
+
+**Answer:**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+
+    def invertTree(self, root):
+        """
+        :type root: TreeNode
+        :rtype: TreeNode
+        """
+
+        return self.invert(root)
+
+    def invert(self, root):
+        """
+        :type root: TreeNode
+        :rtype: TreeNode
+        """
+
+        if root == None:
+            return None
+        left = self.invert(root.right)
+        right = self.invert(root.left)
+        root.left, root.right = left, right
+        return root
 ```
 
 ## GREEDY ALGORITHMS
