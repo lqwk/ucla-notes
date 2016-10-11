@@ -36,10 +36,8 @@ Qingwei Lan
 
 ## Winter 2016
 - Computer Science M51A **Logic Design of Digital Systems** (*Potkonjak, M.*)
-- (Unofficial) Computer Science 111 **Operating Systems Principles** (*Eggert, P.R.*)
 - Computer Science 143 **Database Systems** (*Condie, T.*)
 - Computer Science 180 **Introduction to Algorithms and Complexity** (*Sarrafzadeh, M.*)
-- Math 132 **Complex Analysis for Applications** (*Greene, R.E.*)
 - Physics 4BL **Physics Laboratory for Scientists and Engineers: Electricity and Magnetism** (*Simon, M.D.*)
 - History 3C **Introduction to History of Science: History of Modern Science, Relativity to DNA** (*Porter, T.M.*)
 
@@ -49,3 +47,8 @@ Qingwei Lan
 - Statistics 100A **Introduction to Probability** (*Wu, Y.*)
 - Geography 2 **Biodiversity in Changing World** (*Willis, K.S.*)
 
+## Fall 2016
+- Computer Science 161 **Fundamentals of Artificial Intelligence** (*Darwiche, A.Y.*)
+- Computer Science 170A **Mathematical Modeling and Methods for Computer Science** (*Parker, D.S.*)
+- French 1 **Elementary French** (*Burns, M.P.*)
+- Mathematics 132 **Complex Analysis for Applications** (*Liu, G.*)
