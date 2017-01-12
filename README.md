@@ -52,3 +52,9 @@ Qingwei Lan
 - Computer Science 170A **Mathematical Modeling and Methods for Computer Science** (*Parker, D.S.*)
 - French 1 **Elementary French** (*Burns, M.P.*)
 - Mathematics 132 **Complex Analysis for Applications** (*Liu, G.*)
+
+## Winter 2017
+- Computer Science 144 **Web Applications** (*Cho, J.*)
+- Computer Science M151B **Computer Systems Architecture** (*Reinman, G.D.*)
+- Computer Science M152A **Introductory Digital Design Laboratory** (*Gu, H.*)
+- Computer Science 188 **Introduction to Machine Learning** (*Sankararaman, S.*)
