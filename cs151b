@@ -1,0 +1,167 @@
+
+Computer Science M151B - Computer Systems Architecture
+
+==============
+Jan. 11, 2017
+==============
+
+Defining Performance
+---------------------
+Response Time: how long it takes to do a task
+
+Throughput: total work done per unit time
+	e.g. tasks/transactions/... per hour
+
+How are response time and throughput affected by
+- replacing processors with faster versions
+- adding more processors
+
+
+Relative Performance
+---------------------
+Define Performance = 1/Execution Time
+
+"X is n times faster than Y"
+  Performance(X) / Performance(Y) = ExecutionTime(Y) / ExecutionTime(X) = n
+
+
+Measuring Execution Time
+-------------------------
+Elapsed Time
+  total response time, including all aspects
+    processing, I/O, OS overhead, idle time
+  determines system performance
+
+CPU Time
+  time spent processing a given job
+    discounts I/O time, other jobs' shares
+  comprises user CPU time and system CPU time
+  different programs are affected differently by CPU and system performance
+
+
+CPU Clocking
+-------------
+operation of digital hardware governed by a constant-rate clock
+
+                    clock period
+                   |<----------->|
+
+                |  +------+      +------+      +------+
+clock (cycles)  |--+      +------+      +------+      +------+
+                |
+data transfer   |
+computation     |  |<----------->|<----------->|<----------->|
+                |
+update state    |               [-]           [-]           [-]
+                +---------------------------------------------------->
+
+
+clock period: duration of a clock cycle
+clock frequency (rate): cycles per second
+
+
+CPU Time
+---------
+CPU Time = CPU Clock Cycles * Clock Cycle Time
+         = CPU Clock Cyclcs / Clock Rate
+
+Performance imrpoved by
+- reducing number of clock cycles
+- increasing clock rate
+- hardware designer must often trade off clock rate against cycle count
+
+
+Instruction Count and Cycles per Instruction (CPI)
+---------------------------------------------------
+Clock Cycles = Instruction Count * CPI
+CPU Time = Instruction Count * CPI * Clock Cycle Time
+         = (Instruction Count * CPI) / Clock Rate
+
+Instruction Count for a program
+	determined by program, ISA, and compiler
+	static: actual count in compiled code
+	dynamic: includes loops (implied instructions)  <-- using this one
+
+Average Cycles per Instruction
+  determined by CPU hardware
+  if different instructions have different CPI
+    average CPI affected by instruction mix
+
+If different instruction classes take different numbers of cycles
+
+  Clock Cycles = sum(i=1 -> n) (CPI(i) * InstructionCount(i))
+
+Weighted average CPI
+
+  CPI = Clock Cycles / Instruction Count
+      = sum(i=i -> n) (CPI(i) * (InstructionCount(i) / InstructionCount))
+
+Summary
+--------
+CPU Time = Instructions/Program * Clock Cycles/Instruction
+                                * Seconds/Clock Cycle
+
+Performance depends on:
+- algorithm
+  affects IC, possibly CPI
+- programming language
+  affects IC, CPI
+- compiler
+  affects IC, CPI
+- instruction set architecture
+  affects IC, CPI, Tc
+
+
+Power Trends
+-------------
+Power = Capacitive Load * Voltage^2 * Frequency
+
+
+Multiprocessors
+----------------
+Multicore processors
+  more than one processor per chip
+Requires explicitly parallel programming
+  compare with instruction level parallelism
+    hardware executes multiple instructions at once
+    hidden from programmer
+  hard to do
+    programming for performance
+    load balancing
+    optimizing communication and synchronization
+
+
+Pitfall: Amdahl's Law
+----------------------
+Improving an aspect of a computer and expecting a proportional improvement
+in overall performance
+
+  T_improved = T_affected / ImprovementFactor + T_unaffected
+
+Corollary: make the common case fast
+
+
+Pitfall: MIPS as a Performance Metric
+--------------------------------------
+MIPS: millions of instructions per second
+  doesn't account for
+    differences in ISAs between computers
+    differences in complexity between instructions
+
+  MIPS = InstructionCount / ExecutionTime * 10^6
+       = InstructionCount / (InstructionCount * CPI * 10^6 / ClockRate)
+       = ClockRate / CPI * 10^6
+
+CPI varies between programs on a given CPU
+
+Summary
+--------
+Cost/performance is improving
+  due to underlying technology development
+Hierarchical layers of abstraction
+  in both hardware and software
+Instruction set architecture
+  hardware/software interface
+Execution time: the best performance measure
+Power is a limiting factor
+  use parallelism to improve performance
