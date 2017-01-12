@@ -10,7 +10,8 @@ Jan. 10, 2017
 mini-quiz (30 mins) on Tue. Jan. 17.
 
 Course in machine learning by Hal Daume III (CIML)
-Machine Learning: The art and science of algorithms that make sense of data by Peter Flach (FL)
+Machine Learning: The art and science of algorithms that make sense of data by
+Peter Flach (FL)
 
 Exams
 ------
@@ -19,12 +20,44 @@ Final (Mar. 22)
 
 closed book, closed notes
 
-
-Python
--------
+Python 2.7
+-----------
 numpy
 scipy
 scikit-learn
+
+
+
+When do we use ML?
+-------------------
+- human expertise does not exist
+  + navigating on Mars
+- humans cannot explain their expertise
+  + speech recognition
+- algorithms must be customized
+  + personalized medicine
+- data exists to acquire expertise
+  + genomics
+- recognizing patterns
+  + facial identities or facial expressions
+  + handwritten or spoken words
+  + medical images
+- generating patterns
+  + generating images or motion sequences
+- recognizing anomalies
+  + unusual credit card transactions
+  + unusual patterns of sensor readings in a nuclear power plant
+- prediction
+  + future stock prices or currency exchange rates
+
+
+Machine Learning
+-----------------
+Study of algorithms that
+- improve their performance P
+- at some task T
+- with experience E
+A well-defined learning task is given by <P, T, E>
 
 
 Defining the Learning Task
@@ -40,30 +73,76 @@ P: Percentage of words correctly classified
 E: Database of human-labeled images of handwritten words
 
 T: Driving on four-lane highways using vision sensors
-P: Average distance travelled
-E: Learning from human drivers
+P: Average distance traveled before a human-judged error
+E: Sequence of images and steering commands recorded while observing a human
+   driver
+
+T: Categorize email messages as spam or legitimate
+P: Percentage of email messages correctly classified
+E: Database of emails, some with human-given labels
 
 
-Supervised Learning: Regression
+
+TYPES OF LEARNING
+
+
+Supervised (Inductive) Learning
 --------------------------------
-Given (x1, y1), (x2, y2), ... , (xn, yn)
-Learn a function f(x) to predict y given x
+Learning with a teacher
+Given: labeled traning instances (examples)
+Goal: learn mapping that predicts label for test instance
 
-* y is real-valued == regression
+  Regression
+  -----------
+  Given (x1, y1), (x2, y2), ... , (xn, yn)
+  Learn a function f(x) to predict y given x
+  * y is real-valued == regression
+
+  Classification
+  ---------------
+  Given (x1, y1), (x2, y2), ... , (xn, yn)
+  Learn a function f(x) to predict y given x
+  * y is categorical == classification
+
+x can be multi-dimensional
+each dimension corresponds to an attribute
 
 
 Unsupervised Learning
 ----------------------
+Learning without a teacher
+Given: unlabeled inputs
+Goal: learn some intrinsic structure in inputs
+
 Given x1, x2, ... , xn (without labels)
 Output hidden structure behind the x's
 
-- e.g. clustering
-- independent component analysis - separate a combined signal into its
-  original sources
+- clustering
+- gemonics application
+  group individuals by genetic similarity
+- independent component analysis
+  separate a combined signal into its original sources
+  two people are talking, separate the voices
 
 
-Framing a Learning Problem
----------------------------
+Reinforcement Learning
+-----------------------
+Learning by interacting
+Given: agent interacting in environment (having set of states)
+Goal: learn policy (state to action mapping) that maximizes agent's reward
+
+Given sequence of states and actions with (delayed) rewards
+Learn policy that maximizes agent's reward
+
+- game playing
+  given sequences of moves and whether or not the player won at the end,
+  learn to make good moves
+- robot in maze
+
+
+
+FRAMING A LEARNING PROBLEM
+
 
 Representing Instances/Examples
 --------------------------------
@@ -79,11 +158,13 @@ How is it represented?
   Yellow Banana: yellow, curved, no leaf, 4oz, ...
   Green Banana: green, curved, no leaf, 5oz, ...
 
-During learning/traning/induction, learn a model of what distinguishes apples and bananas based on the features.
+During learning/traning/induction, learn a model of what distinguishes apples
+and bananas based on the features.
 Generate a classifier.
 
 With a new instance, apply the classifier.
 Classifier classifies a new instance based on the features.
+
 
 Learning Algorithm
 -------------------
