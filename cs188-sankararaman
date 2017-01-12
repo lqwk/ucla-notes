@@ -1,0 +1,104 @@
+
+Computer Science 188 - Introduction to Machine Learning
+
+http://web.cs.ucla.edu/~sriram/courses/cs188.winter-2017/html/index.html
+
+==============
+Jan. 10, 2017
+==============
+
+mini-quiz (30 mins) on Tue. Jan. 17.
+
+Course in machine learning by Hal Daume III (CIML)
+Machine Learning: The art and science of algorithms that make sense of data by Peter Flach (FL)
+
+Exams
+------
+Midterm (Feb. 14)
+Final (Mar. 22)
+
+closed book, closed notes
+
+
+Python
+-------
+numpy
+scipy
+scikit-learn
+
+
+Defining the Learning Task
+---------------------------
+Improve on task T with respect to performance metric P, based on experience E
+
+T: Playing checkers
+P: Percentage of games won agianst arbitrary opponents
+E: Playing practice games agianst itself
+
+T: Recognizing hand-written words
+P: Percentage of words correctly classified
+E: Database of human-labeled images of handwritten words
+
+T: Driving on four-lane highways using vision sensors
+P: Average distance travelled
+E: Learning from human drivers
+
+
+Supervised Learning: Regression
+--------------------------------
+Given (x1, y1), (x2, y2), ... , (xn, yn)
+Learn a function f(x) to predict y given x
+
+* y is real-valued == regression
+
+
+Unsupervised Learning
+----------------------
+Given x1, x2, ... , xn (without labels)
+Output hidden structure behind the x's
+
+- e.g. clustering
+- independent component analysis - separate a combined signal into its
+  original sources
+
+
+Framing a Learning Problem
+---------------------------
+
+Representing Instances/Examples
+--------------------------------
+What is an instance?
+How is it represented?
+
+- Define a list of features.
+  This is how the algorithm views the data.
+  Features are the questions we can ask about the instances.
+  
+  Red Apple: red, round, leaf, 3oz, ...
+  Green Apple: green, round, no leaf, 4oz, ...
+  Yellow Banana: yellow, curved, no leaf, 4oz, ...
+  Green Banana: green, curved, no leaf, 5oz, ...
+
+During learning/traning/induction, learn a model of what distinguishes apples and bananas based on the features.
+Generate a classifier.
+
+With a new instance, apply the classifier.
+Classifier classifies a new instance based on the features.
+
+Learning Algorithm
+-------------------
+Learning is about generalizing from training data
+What does this assume about training and test set?
+
+We care about the performance of the learning algorithm
+
+We start with a loss function L(y, y^)
+Tells us how bad the system's prediction of y is compared to the true value
+of y
+
+- A loss function for regression (squared loss)
+  L(y, y^) = (y - y^)^2
+
+- A loss function for classification
+  L(y, y^) = 0   if y = y^
+             1   otherwise
