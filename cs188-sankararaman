@@ -168,18 +168,112 @@ Classifier classifies a new instance based on the features.
 
 Learning Algorithm
 -------------------
-Learning is about generalizing from training data
-What does this assume about training and test set?
+Learning is about *generalizing* from training data
+What does this *assume* about training and test set?
 
-We care about the performance of the learning algorithm
+- Don't see a test instance exactly the same as a training instance
 
-We start with a loss function L(y, y^)
-Tells us how bad the system's prediction of y is compared to the true value
-of y
 
-- A loss function for regression (squared loss)
-  L(y, y^) = (y - y^)^2
+Generalization Ability: performance of the learning algorithm
+How do we measure performance depends on the problem we are trying to solve
+The training and test data should be strongly related
 
-- A loss function for classification
-  L(y, y^) = 0   if y = y^
-             1   otherwise
+
+Loss function L(y, y^)
+  tells us how bad the system's prediction of y is compared to the true
+  value of y
+
+  - A loss function for regression (squared loss)
+    L(y, y^) = (y - y^)^2
+
+  - A loss function for classification
+    L(y, y^) = 0   if y = y^
+               1   otherwise
+
+Use the probabilistic model of learning
+There is some unknown probability distribution p over instance/label pairs
+called the data generating distribution
+
+
+Learning Problem defined by
+  loss function: measures of performance
+  data generating distribution: what data do we expect to see
+    characterizes experience
+
+
+Problem Setting
+  set of possible instances X
+  set of possible labels Y
+  unknown target function f: X -> Y
+  set of function hypothesis: H = { h | h: X -> Y }
+Input
+  training instances drawn from the dta generating distribution p
+    { (xi, yi) }i = 1 -> n  =  { (x1, y1), ... , (xn, yn) }
+Output
+  hypothesis h in H that best approximates f
+  h should do well (as measured by the loss) on future instances
+  formally, h should have low expected (test) loss/risk
+
+    E((x,y)~p)[L(y,h(x))] = sum(x,y) p(x,y)L(y,h(x))
+
+Problem: we don't know what p is
+         but we are given samples drawn from p
+
+we instead approximate the risk by the training error/empirical risk
+  
+  1/n sum(i = i -> n) L(yi, h(xi))
+
+why is this reasonable?
+  both the training data and the test data set are generated based on
+  this distribution
+
+Problem: can make the training error zero by memorizing
+
+
+Regression
+-----------
+For regression, the common choice is squared loss
+
+  L(yi,h(xi)) = (yi - h(xi))^2
+
+Empirical loss of function h applied to training data is then
+
+  1/n sum(i = 1 -> n) L(yi,h(xi)) = 1/n sum(i = 1 -> n) (yi - h(xi))^2
+
+
+Fundamental Difficulties of Machine Learning
+---------------------------------------------
+we have access to the training error but really care about the expected loss
+our learned funciton needs to generalize beyond the training data
+
+Key Issues in Machine Learning
+-------------------------------
+Representation:  how to choose a hypothesis space?
+  - often we use prior knowledge to guide this choice
+  - the ability to answer the next two questions also affects choice
+  - which spaces have been useful in practical applications and why?
+
+Optimization:  how to find the best hypothesis within this space?
+  - (the ALGORITHMIC question), at the intersection of computer science
+    and optimization research
+  - are some learning problems computationally intractable?
+    (the COMPUTATIONAL quesion)
+
+Evaluation:  how to gauge the accuracy of a hypothesis on unseen testing data?
+  - the previous exampe showed that choosing the hypothesis which simply
+    minimizes training set error (i.e. empirical loss) is not optimal
+  - this question is the main topic of learning theory
+  - how can we have confidence in the results?
+    (the STATISTICAL question)
+
+Formulation:  how can we formulate application problems as machine learning
+              problems? (the ENGINEERING question)
+
+Machine Learning in Practice
+-----------------------------
+  +
+L | understand domain, prior knowledge, and goals
+O | data integration, selection, cleaning, pre-processing
+O | learn models
+P | interpret results
+  +
