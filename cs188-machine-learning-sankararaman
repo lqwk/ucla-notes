@@ -277,3 +277,217 @@ O | data integration, selection, cleaning, pre-processing
 O | learn models
 P | interpret results
   +
+
+
+==============
+Jan. 12, 2017
+==============
+
+Talking about probability and statistics, for uncertainty
+
+Random Variables
+-----------------
+
+Example: Toss a coin twice
+---------------------------
+
+Sample Space (omega): {HH, HT, TH, TT}
+
+P(HH) = 1/4
+P(HT) = 1/4
+P(TH) = 1/4
+P(TT) = 1/4
+
+random variable: X = number of heads observed, can be in {0, 1, 2}
+
+P(X=0) = 1/4
+P(X=1) = 1/2
+P(X=2) = 1/4
+
+P(X=0 or X=1) = P(X=0 v X=1) = P(X=0) + P(X=1) = 3/4
+
+
++--------------------------+
+|                    omega |   area(omega) = 1
+|  +------+      +------+  |
+|  |  A1  |      |  A2  |  |
+|  +------+      +------+  |
+|                          |
++--------------------------+
+
+
+Axioms of Probability
+----------------------
+omega : sample space
+A     : event
+
+(1) P(A) >= 0     for all events A
+(2) P(omega) = 1
+(3) P(A1 v A2) = P(A1) + P(A2)    for A1 ^ A2 = NIL
+
+
+Corollaries
+------------
+(1) P(A^C) = 1 - P(A)
+(2) P(A1 v A2) = P(A1) + P(A2) - P(A1 ^ A2)
+
+
+Discrete Random Variables
+--------------------------
+
+X in {x_1, ..., x_M}
+Probability Mass Function: P_X(x_m) = P(X = x_m)
+
+
+Example
+--------
+        (1)    (2)
+Box     Red    Blue
+Balls   Red    Blue
+
+Ball       Red   Blue
+Box
+    Red     6     2
+    Blue    1     3
+
+X(box)   {r, b}   {x_1, ..., x_m}
+Y(Ball)  {r, b}   {y_1, ..., y_l}
+
+       Y
+  +--------------------
+  |    |
+X |----+--------------- c_i
+  |    |
+  |    |
+  |    |
+
+      r_j
+
+
+P(X=x_i, Y=y_j)
+
+repeat N times
+
+n_ij = #{X=x_i and Y=y_j}
+c_i = #{X=x_i}
+r_j = #{Y=y_j}
+N = total number of times of experiment
+
+
+Joint Probability
+------------------
+P(X=x_i and Y=y_j)
+P(X=x_i, Y=y_j) = n_ij / N
+
+
+Marginal Probability
+---------------------
+Sum Rule of Probability
+
+  P(X=x_i) = c_i / N     with   c_i = sum{j} n_ij
+           = sum{j} n_ij / N
+           = sum{j} (n_ij / N)
+           = sum{j} P(X=x_i, Y=y_j)
+  P(Y=y_j) = sum{i} P(X=x_i, Y=y_j)
+
+
+Conditional Probability
+------------------------
+P(Y=y_j | X=x_i) = n_ij / c_i
+                 = (n_ij / N) / (c_i / N)
+                 = P(X=x_i, Y=y_j) / P(X=x_i)
+
+Summary
+--------
+    Sum Rule:  P(X) = sum{y} P(X,y)
+Product Rule:  P(X,Y) = P(Y|X)P(X)
+                      = P(X|Y)P(Y)
+Bayes Theorem: P(X|Y) = P(Y|X)P(X) / P(Y)
+
+
+Independence
+-------------
+X, Y are independent iff  P(X,Y) = P(X)P(Y)
+P(X,Y) = P(X|Y)P(Y) = P(X)P(Y)  ==>  P(X|Y) = P(X)
+
+
+Continuous Random Variables
+----------------------------
+X is in R
+P(X in [x, x+dx]) = p(x)dx
+
+Probability Density Function (PDF)
+-----------------------------------
+p(x) is the PDF for continuous random variables
+
+P(X in [a,b]) = integrate{a -> b} p(x)dx
+
+(1) p(x) >= 0
+(2) integrate{-infty -> +infty} p(x)dx = 1
+
+Cumulative Density Function (CDF)
+----------------------------------
+probability that X is less than or equal to some chosen value x
+
+P(X <= x)
+
+
+given X,Y, want to find
+P(X in [x1,x2], Y in [y1,y2])
+= integrate{x1 -> x2} integrate{y1 -> y2} p(x,y)dxdy
+
+p(x,y) : joint probability density function
+
+
+Expectation & Variance
+-----------------------
+random variable X with distribution p(x): X ~ p(x)
+
+Let X in {x_1, ... , x_M}
+
+Expectation: E[X] = sum{m=1 -> M} x_m * p(x_m)
+
+             E[X] = integrate{-infty -> +infty} x * p(x) * dx
+
+
+Variance: Var[X] = sum{m=1 -> M} (x_m - E[X])^2 * p(x_m)
+                 = E[ (X - E[X])^2 ]
+
+          Var[X] = integrate{-infty -> +infty} (x - E[X])^2 * p(x) * dx
+
+
+E[g(X)] = sum{m=1 -> M} g(x_m) * p(x_m)
+g(x) can be any function
+  g(x) = (x-E[X])^2  ->  Variance
+
+
+---------------------------------
+Discrete: Binary Random Variable
+Bernoulli Distribution
+---------------------------------
+
+X ~ Bern(p)
+
+P(X=0) & P(X=1)   with   P(X=0) + P(X=1) = 1
+
+usually we have P(X=1) = p   (0 <= p <= 1)
+
+probability mass function = {   p   x = 1     }
+                            { 1-p   x = 0     }
+                            {   0   x = others}
+
+Parameters: p
+
+
+-----------------------------------------
+Continuous: Normal/Guassian Distribution
+-----------------------------------------
+
+X  is in  R
+
+PDF: p(x) = 1/sqrt(2 * pi * sigma^2) * exp( (-1)/(2 * sigma^2) (x - mu)^2 )
+
+Parameters: (mu, sigma)
+
+E[X] = mu
+Var[X] = sigma^2
