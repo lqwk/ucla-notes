@@ -466,7 +466,7 @@ Discrete: Binary Random Variable
 Bernoulli Distribution
 ---------------------------------
 
-X ~ Bern(p)
+X ~ Ber(p)
 
 P(X=0) & P(X=1)   with   P(X=0) + P(X=1) = 1
 
@@ -491,3 +491,52 @@ Parameters: (mu, sigma)
 
 E[X] = mu
 Var[X] = sigma^2
+
+
+==============
+Jan. 17, 2017
+==============
+
+X ~ Ber(p)
+X is in {0,1}
+
+P(X = 1) = p
+P(X = 0) = 1-p
+
+
+statistics: inverse probability
+--------------------------------
+probability :  parameters  ---->  samples/data
+  
+  bernoulli distribution  :      p         ---->  X
+  normal distribution     : (mu, sigma^2)  ---->  X
+
+  general distribution    :         theta  ---->  X
+
+
+Example 1
+----------
+Toss a coin 5 times, observe 3 heads
+Goal: find p
+
+likelihood
+-----------
+X1, X2, X3, X4, X5
+
+likelihood function
+L(theta) = P(X1, X2, X3, X4, X5; theta)
+
+each toss is a Bernoulli random variable
+
+Xi = 1  if toss landed heads
+   = 0  otherwise
+
+Xi ~ Ber(p)
+
+we have 5 independent tosses
+
+X1  X2  X3  X4  X5
+1   0   1   1   0
+
+
+
