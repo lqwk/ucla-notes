@@ -538,5 +538,108 @@ we have 5 independent tosses
 X1  X2  X3  X4  X5
 1   0   1   1   0
 
+L(theta) = P(X1, X2, X3, X4, X5 | theta)
+         = P(X1;theta)P(X2;theta)P(X3;theta)P(X4;theta)P(X5;theta)
+         = theta * (1-theta) * theta * theta * (1-theta)
+         = theta^3 (1-theta)^2
+
+find theta that maximizes the likelihood: L(theta)
+
+* ^theta = argmax L(theta)
+    ^theta: Maximum Likelihood Estimator (MLE)
+
+^theta = 3/5
 
 
+Probabilistic/Statistical Models
+---------------------------------
+P(X; theta)
+
+for coin tossing we have a Bernoulli model, other models for others
+
+data/observation: samples drawn from the model
+
+D = {x1, x2, ... , xn}
+xi ~ P(xi, theta)
+   ^
+   |
+   |
+    drawn independently from the model
+
+likelihood
+-----------
+L(theta) = P(x1, ... , xN; theta)
+         = prod{i=1 -> n} P(xi; theta)
+
+
+Optimization
+-------------
+max f(x)
+ x
+
+          ^
+     f(x) |
+          |
+          |               global max
+          |                  ----
+          |                 /    \
+          |   local max    /      \
+          |      ----     /        \---
+          |     /    \   /
+          | ---/      \-/
+          |
+          +-------------------------------> x
+
+
+Fermat's Theorem: all optima of f(x) occrs where f'(x) = 0
+
+
+Example 2
+----------
+X ~ N(mu, sigma^2)
+      ^   ^
+      |   |
+      |   |
+   mean   variance
+
+
+p(x; (mu, sigma^2)) = 1/sqrt(2*pi*sigma^2) ((-1/2*sigma^2) * (x-mu)^2)
+
+x1, x2, ... , xN
+xn ~ N(mu, sigma^2)
+   ^
+   |
+   |
+    independent
+
+theta = (    mu   )
+        ( sigma^2 )
+
+likelihood: L(mu, sigma^2) = P(x1, ... , xN; (mu, sigma^2))
+                           = prod{n=1 -> N} P(xn; (mu, sigma^2))
+
+(^mu, ^sigma^2) = argmax L(mu, sigma^2)
+                (mu, sigma^2)
+
+  need to optimize
+  optimization is an important field in ML
+
+l(mu, sigma^2) = log(L(mu, sigma^2))
+               = log( prod{i=1 -> N} P(xn; (mu, sigma^2)) )
+               = sum{n=1 -> N} log( p(xn; (mu, sigma^2)) )
+
+(^mu, ^sigma^2) = argmax l(mu, sigma^2)
+                (mu, sigma^2)
+
+l(mu, sigma^2) = sum{n=1 -> N} log{ (1/sqrt(2*pi*sigma^2)) e^(-(xn-mu)/(2*sigma^2)) }
+               = sum{n=1 -> N} { ((-1/2*sigma^2)(xn-mu)^2) - (1/2)log(2*pi*sigma^2) }
+
+     dl/d(mu) (mu, sigma^2) = 0
+dl/d(sigma^2) (mu, sigma^2) = 0
+
+
+dl/d(mu) (mu, sigma^2) = sum{n=1 -> N} d/d(mu) (-1/2*sigma^2)(xn-mu)^2
+                       = sum{n=1 -> N} (xn-mu)/sigma^2 = 0
+
+     ^mu = (sum{n=1 -> N} xn) / N = bar(x)     [sample mean]
+^sigma^2 = (sum{n=1 -> N} (xn-bar(x))^2) / N   [sample variance]
