@@ -643,3 +643,462 @@ dl/d(mu) (mu, sigma^2) = sum{n=1 -> N} d/d(mu) (-1/2*sigma^2)(xn-mu)^2
 
      ^mu = (sum{n=1 -> N} xn) / N = bar(x)     [sample mean]
 ^sigma^2 = (sum{n=1 -> N} (xn-bar(x))^2) / N   [sample variance]
+
+
+==============
+Jan. 19, 2017
+==============
+
+Sample Dataset
+---------------
+columns denote features/attributes and labels/targets
+rows denote instance-label pairs (xn,yn)
+class label denotes whether tennis game was played
+
+binary classification problem
+
+For each decision tree
+  each internal node: test one feature
+  each edge: select one value for the feature
+  each leaf: predict class
+
+  allows to make a series of questions and choose next question to
+  get to the results we want
+
+Tree
+             * <--------- root node
+            /  \ <------- edge
+           *    *  <----- internal node
+               /  \
+              *    * <--- leaf
+
+a decision tree partitions the feature space
+
+
+Decision Tree Learning
+-----------------------
+
+setup
+
+  set of possible instances X
+    each instance x in X is a feature vector
+    (humidity=low, wind=weak, outlook=rain, temp=hot)
+  set of possible labels Y
+    Y is discrete valued
+  unknown target function f: X -> Y
+  model/hypothesis: H = {h|h: X -> Y}
+  each hypothesis h is a decision tree
+
+goal : train/induce/learn a function h that maps instance to label
+
+three things to learn
+----------------------
+(1) structure of the tree
+(2) threshold values (theta_i)
+(3) values for the leaves (A, B, ...)
+
+
+-------------------
+Learning Algorithms
+-------------------
+
+Ockham's Razor
+---------------
+The simplest consistent explanation is the best.
+  a form of inductive bias
+  find smallest decision tree that correctly classifies all training examples
+  NP-hard
+  instead, greedily construct a decision tree that is pretty small
+
+
+Algorithm 1
+------------
+DecisionTreeTrain(data, features)
+  guess <- the most frequest label in data
+  if all labels in data are the same then
+    return LEAF(guess)
+  else
+    f <- the "best" feature in features
+    NO  <- the subset of data on which f = NO
+    YES <- the subset of data on which f = YES
+    left  <- DecisionTreeTrain(NO, features \ {f})
+    right <- DecisionTreeTrain(YES, features \ {f})
+    return NODE(f, left, right)
+  endif
+
+
+how to choose the best feature
+-------------------------------
+possibilities
+  random: select a feature at random
+  highest accuracy: select feature with largest accuracy
+  max-gain: select feature with largest information gain
+
+ID3 algorithm: one algorithm for decision tree learning
+  select the feature with largest information gain
+
+
+which attribute to split at the root
+  idea: use information gain to choose the attribute
+
+
+Entropy
+--------
+idea: gaining information reduces uncertainty
+
+if a random variable X has K different values a_1, a_2, ..., a_K
+it's entropy is given by
+
+  H[X] = -sum{k=1 -> K} P(X=a_k) * log(P(X=a_k))
+                                   ^
+                                   |
+                                  if the base is 2, the unit of the entropy
+                                  is called "bit"
+
+this measures the amount of uncertainty of a random variable with a
+specific probability distribution
+the higher it is, the less confident we are in its outcome
+
+Conditional Entropy
+--------------------
+given two random variables X and Y
+
+  H[Y|X] = sum{k} P(X=a_k) * H[Y|X=a_k]
+
+  X : the attribute to be split
+  Y : outcome (binary)
+
+information gain
+
+  GAIN = H[Y] - H[Y|X]
+
+when H[Y] is fixed, we only need to compare conditional entropy
+
+mutual information between Y and X
+  the expected reduction in entropy of the target variable Y due to
+  sorting on the feature X
+
+    example
+    -------
+    GAIN[Y,Patrons] = H[Y] - H[Y|Patrons]
+                    = 1 - 0.45
+                    = 0.55
+    GAIN[Y,Type] = H[Y] - H[Y|Type]
+                 = 1 - 1
+                 = 0
+
+
+Algorithm 2
+------------
+DecisionTreeTrain(data, features)
+  guess <- the most frequest label in data
+  if all labels in data are the same then
+    return LEAF(guess)
+  else if features is empty then
+    return LEAF(guess)
+  else
+    f <- the "best" feature in features
+    NO  <- the subset of data on which f = NO
+    YES <- the subset of data on which f = YES
+    left  <- DecisionTreeTrain(NO, features \ {f})
+    right <- DecisionTreeTrain(YES, features \ {f})
+    return NODE(f, left, right)
+  endif
+
+
+we need to careful to pick an appropriate tree depth
+if the tree is too deep, we can overfit (memorize training data)
+if the tree is too shallow, we underfit (not learn enough)
+max depth is a hyperparameter that should be tuned by the data
+
+a hyperparameter is
+  a parameter that controls the other parameters of the tree
+  max depth of 0     : underfitting
+  max depth of infty : overfitting
+
+
+Reasons for Overfitting
+------------------------
+noisy data
+  two instances have the same feature values but different class labels
+  some of the feature or label values are incorrect
+some features are irrelevant to classification
+target variable is non-deterministic in the features
+  in general we cannot measure all the variables needed to predict
+  so target variable is not uniquely determined by the input feature values
+training error is not guaranteed to be zero
+
+* our decision tree learning procedure always increases traning set accuracy
+* though training accuracy is increasing, test accuracy can decrease
+
+
+how to get a realistic estimate of accuracy
+--------------------------------------------
+train model on training data
+compute accuracy on test data
+DOWNSIDE: throwing out some data
+
+
+Cross-Validation (CV)
+----------------------
+don't just choose one particular split of the data
+
+in principle, we should do this multiple times since performance may
+be different for each split
+
+K-Fold Cross Validation (e.g. K = 10)
+  randomly partition full data set of N instances into K disjoint subsets
+    each roughly of size N/K
+  choose each fold in turn as the test set
+  train model on the other folds and evaluate
+  compute average statistics over K test performances
+  can also do leave-one-out CV where K = N
+
+recipe
+-------
+split training data into K equal parts
+denote each part as D_k^{TRAIN}
+for every k in [1,K]
+  train a model using D = D^{TRAIN} - D_k^{TRAIN}
+  evaluate the performance of the model on D_k^{TRAIN}
+average the K performance metrics
+
+
+Avoid Overfitting
+------------------
+get more training data
+remove irrelevant features
+decision tree pruning
+  prune while building tree (early stopping)
+  prune after building tree (post pruning)
+
+
+Controlling the Size of the Tree
+---------------------------------
+if we cut the tree, not all traning sample would be classified correctly
+we label the leaves of this smaller tree with the majority of traning
+samples' labels
+
+  example
+  -------
+         ******  <-- Wait: Yes
+         ******  <-- Wait: No
+        Patrons?
+    /      |      \
+  None   Some    Full
+         ****    **
+   **            ****  <-- choose Wait: No
+
+
+==============
+Jan. 31, 2017
+==============
+
+special case: binary classification
+  instance (feature vectors): x in R^D
+  label: y in {-1, +1}
+  model/hypothesis:
+    H = {h|h: X -> Y, h(x) = sign(sum{})}
+
+
+Perceptron Prediction
+----------------------
+input: x in R^D, w in R^D, b in R   (D = dimensions)
+
+a = sum{d=1 -> D} w_d * x_d + b = w^T * x + b
+^y = sign(a)
+
+output: ^y
+sum{d=1 -> D} w_d * x_d + b: hyperplane in D dimensions with parameters (w,b)
+w: weights
+b: bias
+a: activation
+
+
+Hyperplane in D dimensions
+---------------------------
+x in R^D
+
+  sum{d=1 -> D} w_d * x_d + b = 0
+
+x that satisfies the equation above is in the hyperplane
+the set of points that satisfies the equation makes the hyperplane
+
+
+D+1 dimensions
+---------------
+~x^T = (1, x_1, ..., x_D)
+~w^T = (b, w_1, ..., w_D)
+
+  ~w^T * ~x = 0
+
+
+Perceptron Learning
+--------------------
+iteratively solving one case at a time
+
+  REPEAT
+
+    pick a data point x_n
+    compute a = w^T * x_n, using current w
+    if ay_n > 0, do nothing
+    else
+
+      w <- w + y_n * x_n
+
+  UNTIL converged
+
+
+Properties of Perceptron Learning
+----------------------------------
+this is an online algorithm - looks at one instance at a time
+convergence
+  if training data is not linearly separable, the algorithm does not converge
+  if the training data is linearly separable, the algorithm stops in a finite
+  number of steps (converges)
+how long to convergence?
+  depends on the difficulty of the problem
+    how far apart are the neg and pos samples
+
+
+instead of predicting the class, predict the probability of instance being
+in a class
+
+perceptron does not produce probability estimates
+
+
+Logistic Classification
+------------------------
+setup for binary classification
+
+  input: x in R^D
+  output: y in {0,1}
+  training data: data = {(x_n, y_n), n = 1,2,...,N}
+  hypothesis/model:
+
+    h_w,b(x) = p(y=1 | x; b,w) = sigma(a(x))
+
+  where
+
+    a(x) = b + sum{d} w_d * x_d = b + w^T * x
+
+  and sigma() stands for the sigmoid function
+
+    sigma(a) = 1 / (1 + e^{-a})
+
+  where a = b + w^T * x
+
+    the sigmoid function will take the output and
+    map it to a number between 0 and 1
+
+  given training data N samples/instances:
+    data^train = {(x1, y1), ..., (x_N, y_N)}
+    train/learn/induce h_w,b
+    find values for (w,b)
+
+
+  properties of the sigmoid function
+  -----------------------------------
+  bounded between 0 and 1  <- thus, interpretable as probability
+  monotonically increasing, thus, usable to derive classification rules
+    sigma(a) > 0.5, positive (classify as '1')
+    sigma(a) < 0.5, negative (classify as '0')
+    sigma(a) = 0.5, undecidable
+  nice computational properties
+
+Linear or Nonlinear?
+---------------------
+sigma(a) is nonlinear, however, the decision boundary is determined by
+
+  sigma(a) = 0.5
+
+
+Likelihood Function
+--------------------
+Let X1, ..., X_N be IID (independent and identically distributed) with PDF
+p(x|theta) (also written as p(x;theta)).
+
+The likelihood function is defined by L(theta)
+
+  L(theta) = p(X_1, ..., X_N; theta) = prod{i=1 -> N} p(X_i; theta)
+
+Notes: the likelihood function is just the joint density of the data, except
+that we treat it as a function of the parameter theta.
+
+order of data doesn't matter -> independence between variables
+
+
+Maximum Likelihood Estimator
+-----------------------------
+Definition: the maximum likelihood estimator (MLE) ^theta
+is the value of theta that maximizes L(theta)
+
+The log-likelihood function is defined by l(theta) = log(L(theta)).
+Its maximum occurs at the same place as that of the likelihood function
+
+  using logs simplifies mathematical expressions
+    converts exponents to products and products to sums
+  using logs helps with numerical stability
+
+the same is true of the likelihood function times any constant
+thus we shall drop constants in the likelihood function
+
+
+Likelihood Function for Logistic Regression
+--------------------------------------------
+probability of a single training sample (x_n, y_n)
+
+  p(y_n|x_n; w) = { h_w,b = sigma(b + w^T * x_n)             if y_n = 1  }
+                  { 1 - h_w,b(x) = 1 - sigma(b + w^T * x_n)  otherwise   }
+
+compact expression, exploring that y_n is either 1 or 0
+
+  p(y_n|x_n; w) = h_w,b(x_n)^{y_n} [1 - h_w,b(x_n)]^{1-y_n}
+
+Also
+
+  y_n ~ Ber(h_w,b(x_n))
+
+-----------------------------------
+ example
+-----------------------------------
+  X_1, ..., X_N
+  X_n ~ Ber(p)   n = 1, ..., N
+
+  l(p) = log( P(X1, ..., X_n; p) )
+-----------------------------------
+
+l(w,b) = log(L(w,b))
+
+L(w,b) = prod{n=1 -> N} P(y_n | x_n; w,b)
+       = prod{n=1 -> N} h_w,b(x_n)^{y_n} (1 - h_w,b(x_n))^{1-y_n}
+
+l(w,b) = log( prod{n=1 -> N} P(y_n | x_n; w,b) )
+       = sum{n=1 -> N} log(P(y_n | x_n; w,b))
+       = sum{n=1 -> N} log(h_w,b(x_n)^{y_n} (1 - h_w,b(x_n))^{1-y_n})
+       = sum{n=1 -> N} log(h_w,b(x_n)^{y_n}) + log(1-h_w,b(x_n))^{1-y_n}
+       = sum{n=1 -> N} y_n * log(h_w,b(x_n)) + (1-y_n) * log(1-h_w,b(x_n))
+
+
+we can ignore the distinction between bias and weights for convenience
+
+  append 1 to x
+
+    x <- [1 x_1 x_2 ... x_D]
+
+  append b to w
+
+    theta <- [b w_1 w_2 ... w_D]
+
+  J(theta) = -sum{n} (y_n * log(h_theta(x_n)) + (1-y_n) * log(1-h_theta(x_n)))
+
+we would like to minimize this negative log likelihood
+
+
+one way to minimize a function f
+---------------------------------
+gradient descent
+  gives information on whether function is inc or dec
+  start at a random point
+  determine a descent direction
+  pick a point and follow the gradient
