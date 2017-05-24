@@ -20,7 +20,13 @@
 \begin{multicols*}{3}
 
 
-{\bf TCP}
+{\bf Processing Delay}: Time to examine packet's header, determine where to direct the packet, check for bit-level errors in the packet, etc.
+
+{\bf Queuing Delay}: Packet waits to be transmitted onto link. Depends on number of earlier packets. Queuing delay is 0 if queue empty. be zero. Queuing delay long if traffic heavy.
+
+{\bf Transmission Delay}: Length of the packet = $L$ bits, transmission rate of the link from router A to router B = $R$ bits/sec, Transmission delay is $\frac{L}{R}$.
+
+{\bf Propagation Delay}: Time for bit to propagate from start of link to other router. Depends on medium of link.
 
 
 \end{multicols*}
