@@ -58,3 +58,10 @@ Qingwei Lan
 - Computer Science M151B **Computer Systems Architecture** (*Reinman, G.D.*)
 - Computer Science M152A **Introductory Digital Design Laboratory** (*Gu, H.*)
 - Computer Science 188 **Introduction to Machine Learning** (*Sankararaman, S.*)
+
+## Spring 2017
+
+- Computer Science 112 **Modeling Uncertainty in Information Systems** (*Sanadidi, M.Y.*)
+- Computer Science 118 **Computer Network Fundamentals** (*Afanasyev, A.*)
+- Chinese 50 **Chinese Civilization** (*Wu, Y.*)
+- Classics 30 **Classical Mythology** (*Purves, A.C.*)
