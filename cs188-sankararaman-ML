@@ -1102,3 +1102,12 @@ gradient descent
   start at a random point
   determine a descent direction
   pick a point and follow the gradient
+
+
+=============
+Feb. 7, 2017
+=============
+
+How to minimize the cost function (residual sum of squares)?
+-------------------------------------------------------------
+gradient descent

@@ -1,0 +1,285 @@
+\documentclass[10pt]{article}
+
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{ragged2e}
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\usepackage{geometry}
+\geometry{letterpaper, left=.3in, right=.3in, top=.3in, bottom=.3in}
+\usepackage{multicol}
+
+\pagenumbering{gobble}
+\setlength{\parskip}{0.5em}
+\setlength\parindent{0pt}
+
+\begin{document}
+\raggedright
+\begin{multicols*}{3}
+
+
+
+{\bf Taylor Series}
+
+$\frac{1}{x} = \sum_{n=0}^{\infty}x^n$
+
+$e^x = \sum_{n=0}^{\infty}\frac{x^n}{n!}$
+
+$\cos x = \sum_{n=0}^{\infty}(-1)^n\frac{x^{2n}}{(2n)!}$
+
+$\sin x = \sum_{n=0}^{\infty}(-1)^n\frac{x^{2n+1}}{(2n+1)!}$
+
+$\ln(1+x) = \sum_{n=1}^{\infty}(-1)^{n+1}\frac{x^n}{n}$
+
+
+
+{\bf Permutations and Combinations}
+
+$P(n,k)=\frac{n!}{(n-k)!}$
+
+$C(n,k) = {n\choose k} = \frac{n!}{(n-k)!k!}$
+
+
+
+{\bf Laplace Transforms}
+
+$F^*(s)=\int_0^\infty f(t)e^{-st}dt$
+
+$f(t) = \int_0^\infty F^*(s)e^{st}ds$
+
+
+
+{\bf Convolution Property}
+
+$f(t)*g(t)=\int_0^t f(t-x)g(x)dx \leftrightarrow F^*(s)G^*(s)$
+
+
+
+{\bf Z-Transform}
+
+Mapping of discrete function $f_n$ into complex fuction with variable $z$.
+
+$F(z)=\sum_{n=0}^{\infty}f_nz^n$
+
+
+
+{\bf Probability and Conditional}
+
+$P(A\cup B) = P(A) + P(B) - P(A\cap B)$
+
+$P(A|B) = \frac{P(A\cap B)}{P(B)}$
+
+$A$, $B$ are independent if $P(A,B)=P(A)P(B)$
+
+
+
+{\bf Total Probability}
+
+$P(B) = \sum_{i} P(A_i)P(B|A_i)$
+
+
+
+{\bf Bayes' Rule}
+
+$P(A_i|B) = \frac{P(A_i\cap B)}{P(B)} = \frac{P(A_i)P(B|A_i)}{P(B)} = \frac{P(A_i)P(B|A_i)}{\sum_jP(A_j)P(B|A_j)}$
+
+
+
+{\bf PMF (Probability Mass Function)}
+
+$p_X(x)=p(\{s\in \Omega\text{ s.t. }X(s)=x\})$
+
+$\sum_xp_X(x)=1$
+
+
+
+{\bf Bernoulli Random Variable}
+
+$X=1$ on success, $X=0$ on failure.
+
+$p(X=x) = p$, if $x=1$
+
+$p(X=x) = 1-p$, if $x=0$
+
+
+
+{\bf Geometric Random Variable}
+
+Counts \#trials until first success.
+
+$p_X(x)=(1-p)^{x-1}p$, $x=1,2,\cdots$
+
+$p(X\geq s+1|X\geq t)=p(X\geq s)$
+
+
+
+{\bf Binomial Random Variable}
+
+Counts \#success in $n$ identical independent experiments.
+
+$p_X(x)={n\choose x}p^x(1-p)^{n-x}$, when $0\leq x\leq n$
+
+$p_X(x)=0$, otherwise
+
+
+
+{\bf Poisson Random Variable}
+
+Model occurrence of event over time interval assuming event happens at rate $\lambda$
+
+$p_X(x)=e^{-\lambda}\frac{\lambda^x}{x!}$, when $x=0,1,\cdots$
+
+
+
+{\bf PDF (Probability Density Function)}
+
+$\int_{-\infty}^\infty f_X(x)dx=1$
+
+
+
+{\bf CDF (Cumulative Distribution Function)}
+
+$F_X(x)=P(X\leq x)$
+
+$\lim_{x\to -\infty}F_X(x)=0$
+
+$\lim_{x\to\infty}F_X(x)=1$
+
+$P(a<X\leq b)=F_X(b)-F_X(a)$
+
+
+
+{\bf Uniform Distribution}
+
+$f_X(x)=\frac{1}{b-a}$, when $a\leq x\leq b$
+
+$f_X(x)=0$, otherwise
+
+
+
+{\bf Exponential Distribution}
+
+Memoryless continuous distribution.
+
+$f_X(x)=\lambda e^{-\lambda x}$, when $x\geq 0$
+
+$F_X(x)= 1-e^{-\lambda x}$, when $x\geq 0$
+
+$F_X(x)=0$, otherwise
+
+$P(X>x)=e^{-\lambda x}$
+
+
+
+{\bf Expectation}
+
+$E[X] = \sum_xxp(x)$
+
+$E[X] = \int_{-\infty}^{\infty}xf_X(x)dx$
+
+If $Y=g(X)$, $E[Y] = \sum_xg(x)p(x)$, $E[Y] = \int_{-\infty}^{\infty}g(x)f_X(x)dx$
+
+$E[X+Y] = E[X] + E[Y]$
+
+$E[aX] = aE[X]$
+
+$E[XY] = E[X]E[Y]$, if $X$,$Y$ are independent.
+
+For $X$, $Y$ with joint PMF $p(x,y)$ or PDF $f_{X,Y}(x,y)$, $E[XY] = \sum_{(x,y)}xyp(x,y)$, $E[XY] = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty}xyf_{X,Y}(x,y)dxdy$
+
+
+
+{\bf Conditional Expectation}
+
+$X$,$Y$ are random variables, $E[Y|X] = \sum_yyP(Y=y|X=x)=\sum_yyp_{Y|X}(y|x)$, $E[Y|X] = \int_{-\infty}^{\infty}yf_{Y|X}(y|x)dy$
+
+
+
+{\bf Unconditional Expectation}
+
+$E[Y] = \sum_xE[Y|X]p_X(x)$
+
+$E[Y] = \int_{\infty}^{\infty}E[Y|X]f_X(x)dx$
+
+
+
+{\bf Variance}
+
+$Var[X] = E[(X-E[X])^2] = \sum_x(x-E[X])^2p(x) = \int_{\infty}^{\infty}(x-E[X])^2f_X(x)dx$
+
+$Var[X]=E[X^2]-E[X]^2$
+
+$Var[X+Y]=Var[X]+Var[Y]$, if $X$,$Y$ are independent.
+
+
+
+{\bf Expectations and Variances}
+
+Binomial: $np$, $np(1-p)$
+
+Geometric: $\frac{1}{p}$, $\frac{1-p}{p^2}$
+
+Uniform: $\frac{a+b}{2}$, $\frac{(b-a)^2}{12}$
+
+Exponential: $\frac{1}{\lambda}$, $\frac{1}{\lambda^2}$
+
+Poisson: $\lambda$, $\lambda$
+
+
+
+{\bf Covariance}: measure of joint probability
+
+$Cov(X,Y) = E[(X-E[X])(Y-E[Y])]$
+
+$Cov(X,Y) = E[XY] - E[X]E[Y]$
+
+If $X$,$Y$ are independent, $Cov(X,Y)=0$
+
+
+
+{\bf Correlation}: scaled version of covariance
+
+$\rho(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$, range $[-1,1]$
+
+
+
+{\bf Q1}: A given program has an execution time that is uniformly distributed between 10 and 20 seconds. The number of interrupts that occur during execution is a Poisson random variable with parameter λt where t is the program execution time. The probability distribution of the number of interrupts is therefore $P(N = k) = (\lambda t)ke^{−\lambda t}$.
+
+(a) What is $E[N|T = t]$, where $N$ is the number of interrupts the program experiences, and $T$ is the running time of the program.
+
+$E[N|T = t] = \lambda t$, since for fixed running time, the number of interrupts is a Poisson random variable with mean $\lambda t$.
+
+(b) Find the expected number of interrupts the program experiences during a randomly
+selected execution.
+
+$E[N] = \int_{10}^{20} E[N|T=t]f_T(t)dt = \int_{10}^{20}\frac{\lambda t}{10}dt = 15\lambda$
+
+
+
+{\bf Q2}: Suppose that you made a webpage and you are collecting the statistics from the visitors. There are $m$ types of visitors. Each visit is equally likely to be any of the $m$ types. Find the expected number of visitors needed in order to have at least one of each type. Hint: Let $X$ denote the number of visitors needed. It is useful to represent $X$ by $X=\sum_{i=1}^mX_i$ where each $X_i$ is a geometric random variable.
+
+Suppose the current visitor pool contains $i$ different types. Let $X_i$ denote the number of additional visitors needed until it contains $i + 1$ types. The $X_i$ is are independent geometric random variables with parameter $(m - i)/m$, $i = 0, 1, \cdots, m-1$. $E[X]=E[\sum_{i=1}^mX_i]=\sum_{i=1}^mE[X_i]=\sum_{i=1}^m\frac{m}{m-i}$
+
+
+
+{\bf Q3}: A Markov chain $\{X_n,n \geq 0\}$ with states 0, 1, 2, has the transition probability matrix $\begin{bmatrix}\frac{1}{2} & \frac{1}{3} & \frac{1}{6} \\ 0 & \frac{1}{3} & \frac{2}{3} \\ \frac{1}{2} & 0 & \frac{1}{2}\end{bmatrix}$ If $P[X_0 = 0] = P[X_0 = 1] = 1$, find the state probability vector $P[X_3 = 2]$.
+
+Cubing the transition probability matrix, we obtain $P^3 = \begin{bmatrix}\frac{13}{36} & \frac{11}{54} & \frac{47}{108} \\ \frac{4}{9} & \frac{4}{27} & \frac{11}{27} \\ \frac{5}{12} & \frac{2}{9} & \frac{13}{36}\end{bmatrix}$
+$P[X_3=2]=\frac{1}{4}\cdot\frac{47}{108}+\frac{1}{4}\cdot\frac{11}{27}+\frac{1}{2}\cdot\frac{13}{36}$
+
+
+
+{\bf Q4}: A workstation tries to transmit frames through Ethernet. Suppose that whether or not collision occurs in the current transmission depends on the result of the last two trans- missions the workstation had. That is, suppose that if collisions have occurred in both of the past two transmissions, then with probability 0.7 a collision will occur in the current transmission; if a collision occurs in last transmission but not the transmission before the last one, then a collision will occur in the current transmission with probability 0.5; if a collision occurred in the transmission before the last one but not the last one, then one will occur in the current transmission with probability 0.4; if there have been no collision in the past two transmissions, then a collision will occur in the current transmission with probability 0.2. (Hint: Note that the state description needs to include status of last two transmissions).
+
+(b) Find the transition probability matrix.
+
+$P=\begin{bmatrix}0.7 & 0 & 0.3 & 0 \\ 0.5 & 0 & 0.5 & 0 \\ 0 & 0.4 & 0 & 0.6 \\ 0 & 0.2 & 0 & 0.8\end{bmatrix}$
+
+(c) What fraction of frames suffer a collision?
+
+Solve $\pi = \pi P$ to obtain the stationary state probabilities. Then the fraction of frames suffering a collision is $\pi_0 + \pi_2$ (or $\pi_0 + \pi_1$).
+
+\end{multicols*}
+\end{document}
