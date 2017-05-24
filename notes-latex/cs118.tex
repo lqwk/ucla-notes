@@ -18,7 +18,7 @@
 \usepackage{multicol}
 
 \pagenumbering{gobble}
-\setlength{\parskip}{0.5em}
+\setlength{\parskip}{0.2em}
 \setlength\parindent{0pt}
 
 \begin{document}
@@ -33,6 +33,22 @@
 {\bf Transmission Delay}: Length of the packet = $L$ bits, transmission rate of the link from router A to router B = $R$ bits/sec, Transmission delay is $\frac{L}{R}$.
 
 {\bf Propagation Delay}: Time for bit to propagate from start of link to other router. Depends on medium of link.
+
+{\bf Traffic Intensity}: Average rate packets arrive at queue = $\alpha$ packets/sec. Transmission rate (bits pushed out of queue) is $R$ bits/sec. All packets consist of $L$ bits. Average rate bits arrive at queue is $L\alpha$ bits/sec. Assume queue can hold infinite bits, $\frac{L\alpha}{R}$ is traffic intensity.
+
+{\bf End-to-End Delay}: $d_{end-end} = N(d_{proc}+d_{trans}+d_{prop})$, $d_{trans}=\frac{L}{R}$ where $L$ is packet size.
+
+{\bf Internet Protocol Stack}
+
+{\bf Application Layer}: Support data exchange. FTP, SMTP, HTTP.
+
+{\bf Transport Layer}: Handle delivery reliability, multiplex within host. TCP, UDP.
+
+{\bf Network Layer}: Forward packets from source to destination. IP, routing protocols.
+
+{\bf Link Layer}: Transfer data between directly connected network elements. Ethernet protocol.
+
+{\bf Physical Layer}: Bits ``on the wire".
 
 
 \end{multicols*}
