@@ -1,10 +1,10 @@
-NOTES = cs112.pdf
+NOTES = cs112.pdf cs118.pdf
 
 all: $(NOTES)
 	rm -rf *.aux *.log
 
-cs112.pdf: cs112.tex
-	pdflatex cs112.tex
+%.pdf: %.tex
+	pdflatex $^
 
 clean:
 	rm -rf *.aux *.log *.pdf
