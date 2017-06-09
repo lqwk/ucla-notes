@@ -253,6 +253,40 @@ $\rho(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$, range $[-1,1]$
 
 
 
+{\bf CTMC}: State transitions are permitted at arbitrary time instances. The amount of time spent in a state is exponentially distributed.
+
+{\bf State Transition Probability}: $p_{ij}(t) = p(X(\tau+t)=j|X(\tau)=i)$
+
+{\bf Chapman-Kolmogorov Equation}: $p_{ij}(s+t) = \sum_kp_{ik}(s)p_{kj}(t)$
+
+{\bf Transition Probability $H(t)$}:
+$H(t) = \{p_{ij}(t)\}$ \\
+$H(s+t) = H(s)H(t)$ \\
+$H(t+\Delta t) = H(t)H(\Delta t)$ \\
+$H(t+\Delta t) = H(t)[H(\Delta t)-I]$ \\
+$\frac{dH(t)}{dt} = H(t)\lim_{\Delta t\to 0}[\frac{H(\Delta t) - I}{\Delta t}]$ \\
+$Q = \lim_{\Delta t\to 0}[\frac{H(\Delta t)-I}{\Delta t}]$ \\
+$\frac{dH(t)}{dt} = H(t)Q$
+
+{\bf Transition Rate Matrix}: $Q$, infinitesimal generator of $H(t)$. $H(t)=e^{Qt}$.
+
+Diagonal elements $\leq 0$. $q_{ii}=\lim_{\Delta t\to 0}[\frac{p_{ii}(\Delta t)-1}{\Delta t}]$.
+
+Off-diagonal elements $\geq 0$. $q_{ij}=\lim_{\Delta t\to 0}[\frac{p_{ij}(\Delta t)-0}{\Delta t}]$, for $i\neq j$.
+
+In each row, sum of off-diagonal = magnitude of diagonal: $q_{ii}=-\sum_{i\neq j}q_{ij}$
+
+{\bf State Probabilities}:\\ $\pi(t)=\pi(0)H(t)$, $\;\pi(t)=\pi(0)e^{Qt}$
+
+{\bf Stationary Distribution}: $\pi Q=0$, $\;\sum_j\pi_j=1$
+
+
+
+{\bf ==========================}
+
+% QUESTIONS
+
+
 {\bf Q1}: A given program has an execution time that is uniformly distributed between 10 and 20 seconds. The number of interrupts that occur during execution is a Poisson random variable with parameter λt where t is the program execution time. The probability distribution of the number of interrupts is therefore $P(N = k) = (\lambda t)ke^{−\lambda t}$.
 
 (a) What is $E[N|T = t]$, where $N$ is the number of interrupts the program experiences, and $T$ is the running time of the program.
