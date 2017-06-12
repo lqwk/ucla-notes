@@ -40,17 +40,11 @@
 
 {\bf End-to-End Delay}: $d_{end-end} = N(d_{proc}+d_{trans}+d_{prop})$, $d_{trans}=\frac{L}{R}$ where $L$ is packet size.
 
-{\bf Internet Protocol Stack}
+{\bf Internet Protocol Stack}: {\bf Application Layer}: Support data exchange. FTP, SMTP, HTTP. {\bf Transport Layer}: Handle delivery reliability, multiplex within host. TCP, UDP. {\bf Network Layer}: Forward packets from source to destination. IP, routing protocols. {\bf Link Layer}: Transfer data between directly connected network elements. Ethernet protocol. {\bf Physical Layer}: Bits ``on the wire".
 
-{\bf Application Layer}: Support data exchange. FTP, SMTP, HTTP.
+{\bf IPv4 a.b.c.d/x}: {\bf \#bits}: x, {\bf \#endpoint addr}: $2^{32-\text{x}}$, {\bf net addr}: a.b.c.d, {\bf net mask}: leading x 1s the rest 0s, {\bf broadcast addr}: (addr $|$ ($\sim$mask))
 
-{\bf Transport Layer}: Handle delivery reliability, multiplex within host. TCP, UDP.
-
-{\bf Network Layer}: Forward packets from source to destination. IP, routing protocols.
-
-{\bf Link Layer}: Transfer data between directly connected network elements. Ethernet protocol.
-
-{\bf Physical Layer}: Bits ``on the wire".
+{\bf Routing Table}: Match prefix to outgoing link. Exists on every host and router. {\bf Longest Prefix Matching}: Longest net addr prefix with net mask. Routing table next-hop.
 
 
 \end{multicols*}
