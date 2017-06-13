@@ -219,7 +219,9 @@ $Var[X] = E[(X-E[X])^2] = \sum_x(x-E[X])^2p(x) = \int_{\infty}^{\infty}(x-E[X])^
 
 $Var[X]=E[X^2]-E[X]^2$
 
-$Var[X+Y]=Var[X]+Var[Y]$, if $X$,$Y$ are independent.
+$Var[X+Y]=Var[X]+Var[Y]+2Cov(X,Y)$
+
+$Var[XY]=E[X^2Y^2]-E^2[XY] = E[X^2]E[Y^2]+Cov(X^2,Y^2)-(E[X]E[Y]+Cov(X,Y))^2$
 
 
 
@@ -252,27 +254,54 @@ If $X$,$Y$ are independent, $Cov(X,Y)=0$
 $\rho(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$, range $[-1,1]$
 
 
+{\bf Stationary Process}: $F_X(\bm{x};\bm{t})=F_X(\bm{x};\bm{t}+\tau)$
 
-{\bf CTMC}: State transitions are permitted at arbitrary time instances. The amount of time spent in a state is exponentially distributed.
+{\bf Independent Processs}: $F_X(\bm{x};\bm{t})=F_{X_1}(x_1,t_1)F_{X_2}(x_2,t_2)\cdots F_{X_n}(x_n,t_n)$ \\
+$f_X(\bm{x},\bm{t})=\prod_{i=1}^nf_{X_i}(x_i,x_t)$ {\bf (Continuous State)} \\
+$p_X(\bm{x},\bm{t})=\prod_{i=1}^np_{X_i}(x_i,t_i)$ {\bf (Discrete State)}
+
+{\bf Markovian Property}: $P[X(t_{n+1})\leq x_{n+1}|X(t_n)=x_n,X(t_{n+2})=x_{n+2},\cdots,X(t_0)=x_0]=P[X(t_{n+1})\leq x_{n+1}|X(t_n)=x_n]$
+
+
+{\bf Discrete Time Markov Chains (DTMC)}: $p_{ij} = P[X_n=j|X_{n-1}=i]$ {\bf (Homogenenous)} \\
+$\bm{P}=(p_{ij})=\begin{bmatrix}
+p_{00} & p_{01} & \cdots \\
+p_{10} & p_{11} & \cdots \\
+\vdots & \vdots & \vdots \\
+\end{bmatrix}$\\
+$\sum_jp_{ij}=1$ for each row.
+
+{\bf Initial State Probabilities}: $\bm{\pi}^{(0)}=(\pi_0^{(0)},\pi_1^{(0)},\cdots)$, where $\pi_j^{(0)}=P[X_0=j]$
+
+{\bf $n$-Step Transition Probabilities}: $p_{ij}^{(n)}=P[X_n=j|X_0=i]=P[X_{n+k}=j|X_k=i]$
+
+{\bf Chapman-Kolmogorov}: $p_{ij}^{(n)}=\sum_kp_{ik}^{(n-1)}p_{kj}$
+
+{\bf Limiting Distribution}: $\pi=\lim_{n\to\infty}\pi^{(0)}P^n$ \\
+$\pi=\pi\bm{P}$ and $\sum_j\pi_j=1$
+
+
+
+{\bf Continuous Time Markov Chains (CTMC)}: State transitions permitted at arbitrary time instances. Time spent in a state is exponentially distributed.
 
 {\bf State Transition Probability}: $p_{ij}(t) = p(X(\tau+t)=j|X(\tau)=i)$
 
 {\bf Chapman-Kolmogorov Equation}: $p_{ij}(s+t) = \sum_kp_{ik}(s)p_{kj}(t)$
 
-{\bf Transition Probability $H(t)$}:
-$H(t) = \{p_{ij}(t)\}$ \\
-$H(s+t) = H(s)H(t)$ \\
-$H(t+\Delta t) = H(t)H(\Delta t)$ \\
-$H(t+\Delta t) = H(t)[H(\Delta t)-I]$ \\
-$\frac{dH(t)}{dt} = H(t)\lim_{\Delta t\to 0}[\frac{H(\Delta t) - I}{\Delta t}]$ \\
-$Q = \lim_{\Delta t\to 0}[\frac{H(\Delta t)-I}{\Delta t}]$ \\
-$\frac{dH(t)}{dt} = H(t)Q$
+{\bf Transition Probability}:
+$\bm{H}(t) = \{p_{ij}(t)\}$ \\
+$\bm{H}(s+t) = \bm{H}(s)\bm{H}(t)$ \\
+$\bm{H}(t+\Delta t) = \bm{H}(t)\bm{H}(\Delta t)$ \\
+$\bm{H}(t+\Delta t) = \bm{H}(t)[\bm{H}(\Delta t)-I]$ \\
+$\frac{d\bm{H}(t)}{dt} = \bm{H}(t)\lim_{\Delta t\to 0}[\frac{\bm{H}(\Delta t) - I}{\Delta t}]$ \\
+$\bm{Q} = \lim_{\Delta t\to 0}[\frac{\bm{H}(\Delta t)-I}{\Delta t}]$ \\
+$\frac{d\bm{H}(t)}{dt} = \bm{H}(t)\bm{Q}$
 
-{\bf Transition Rate Matrix}: $Q$, infinitesimal generator of $H(t)$. $H(t)=e^{Qt}$.
+{\bf Transition Rate Matrix}: $\bm{Q}$, infinitesimal generator of $\bm{H}(t)$. $\bm{H}(t)=e^{\bm{Q}t}$.
 
-Diagonal elements $\leq 0$. $q_{ii}=\lim_{\Delta t\to 0}[\frac{p_{ii}(\Delta t)-1}{\Delta t}]$.
+{\bf Diagonal Elements} $\leq 0$. $q_{ii}=\lim_{\Delta t\to 0}[\frac{p_{ii}(\Delta t)-1}{\Delta t}]$.
 
-Off-diagonal elements $\geq 0$. $q_{ij}=\lim_{\Delta t\to 0}[\frac{p_{ij}(\Delta t)-0}{\Delta t}]$, for $i\neq j$.
+{\bf Off-Diagonal Elements} $\geq 0$. $q_{ij}=\lim_{\Delta t\to 0}[\frac{p_{ij}(\Delta t)-0}{\Delta t}]$, for $i\neq j$.
 
 In each row, sum of off-diagonal = magnitude of diagonal: $q_{ii}=-\sum_{i\neq j}q_{ij}$
 
@@ -281,39 +310,63 @@ In each row, sum of off-diagonal = magnitude of diagonal: $q_{ii}=-\sum_{i\neq j
 {\bf Stationary Distribution}: $\pi Q=0$, $\;\sum_j\pi_j=1$
 
 
+{\bf Birth-Death Process}: At state $k$, $\lambda_k$, $\mu_k$ are birth and death rates. {\bf Transition Matrix}: $Q=\begin{bmatrix}
+-\lambda_0 & \lambda_0 & 0 & 0 & \cdots & \cdots \\
+\mu_1 & -(\lambda_1+\mu_1) & \lambda_1 & 0 & \cdots & \cdots \\
+0 & \mu_2 & -(\lambda_2+\mu_2) & \lambda_2 & 0 & \cdots \\
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots
+\end{bmatrix}$
+
+{\bf Equilibrium Solution}: $\pi\bm{Q}=0$ and $\sum_j\pi_j=1$
+
+{\bf Differential Difference Equations}: $\frac{\partial\pi_k(t)}{\partial t} = \lambda_{k-1}\pi_{k-1}(t)+\mu_{k+1}\pi_{k+1}(t)-(\lambda_k+\mu_k)\pi_k(t)$ \\
+$\frac{\partial\pi_0(t)}{\partial t} = \mu_1\pi_1(t) - \lambda_0\pi_0(t)$ \\
+$\frac{\partial\pi_k(t)}{\partial t} = $ flow in - flow out \\
+flow in $=\lambda_{k-1}\pi_{k-1}+\mu_{k+1}\pi_{k+1}$ \\
+flow out $= (\lambda_k+\mu_k)\pi_k$
+
+
 
 {\bf ==========================}
 
 % QUESTIONS
 
 
-{\bf Q1}: A given program has an execution time that is uniformly distributed between 10 and 20 seconds. The number of interrupts that occur during execution is a Poisson random variable with parameter λt where t is the program execution time. The probability distribution of the number of interrupts is therefore $P(N = k) = (\lambda t)ke^{−\lambda t}$.
+{\bf Q1}: Program has execution time uniformly distributed between 10 \& 20 seconds. Number of interrupts during execution is Poisson random variable with parameter $\lambda t$ where $t$ is program execution time. Probability distribution of the number of interrupts is $P(N = k) = (\lambda t)ke^{−\lambda t}$.
 
-(a) What is $E[N|T = t]$, where $N$ is the number of interrupts the program experiences, and $T$ is the running time of the program.
+(a) What is $E[N|T = t]$, where $N$ is the number of interrupts, and $T$ is running time.
 
 $E[N|T = t] = \lambda t$, since for fixed running time, the number of interrupts is a Poisson random variable with mean $\lambda t$.
 
-(b) Find the expected number of interrupts the program experiences during a randomly
-selected execution.
+(b) Expected number interrupts during randomly selected execution.
 
 $E[N] = \int_{10}^{20} E[N|T=t]f_T(t)dt = \int_{10}^{20}\frac{\lambda t}{10}dt = 15\lambda$
 
 
 
-{\bf Q2}: Suppose that you made a webpage and you are collecting the statistics from the visitors. There are $m$ types of visitors. Each visit is equally likely to be any of the $m$ types. Find the expected number of visitors needed in order to have at least one of each type. Hint: Let $X$ denote the number of visitors needed. It is useful to represent $X$ by $X=\sum_{i=1}^mX_i$ where each $X_i$ is a geometric random variable.
+{\bf Q2}: We have $m$ types of visitors with equal probability. Find expected visitors to have one of each type. Hint: Let $X$ denote number of visitors needed. Represent $X$ by $X=\sum_{i=1}^mX_i$ where each $X_i$ is a geometric random variable.
 
 Suppose the current visitor pool contains $i$ different types. Let $X_i$ denote the number of additional visitors needed until it contains $i + 1$ types. The $X_i$ is are independent geometric random variables with parameter $(m - i)/m$, $i = 0, 1, \cdots, m-1$. $E[X]=E[\sum_{i=1}^mX_i]=\sum_{i=1}^mE[X_i]=\sum_{i=1}^m\frac{m}{m-i}$
 
 
 
-{\bf Q3}: A Markov chain $\{X_n,n \geq 0\}$ with states 0, 1, 2, has the transition probability matrix $\begin{bmatrix}\frac{1}{2} & \frac{1}{3} & \frac{1}{6} \\ 0 & \frac{1}{3} & \frac{2}{3} \\ \frac{1}{2} & 0 & \frac{1}{2}\end{bmatrix}$ If $P[X_0 = 0] = P[X_0 = 1] = 1$, find the state probability vector $P[X_3 = 2]$.
+{\bf Q3}: A Markov chain $\{X_n,n\geq0\}$ with states 0, 1, 2 has transition probability matrix $\begin{bmatrix}
+1/2 & 1/3 & 1/6 \\
+0 & 1/3 & 2/3 \\
+1/2 & 0 & 1/2
+\end{bmatrix}$
+If $P[X_0=0]=P[X_0=1]=\frac{1}{4}$, find state probability vector $P[X_3=2]$.
 
-Cubing the transition probability matrix, we obtain $P^3 = \begin{bmatrix}\frac{13}{36} & \frac{11}{54} & \frac{47}{108} \\ \frac{4}{9} & \frac{4}{27} & \frac{11}{27} \\ \frac{5}{12} & \frac{2}{9} & \frac{13}{36}\end{bmatrix}$
+Cubing transition probability matrix $P^{(3)}=\begin{bmatrix}
+13/36 & 11/54 & 47/108 \\
+4/9 & 4/27 & 11/27 \\
+5/12 & 2/9 & 13/36
+\end{bmatrix}$
 $P[X_3=2]=\frac{1}{4}\cdot\frac{47}{108}+\frac{1}{4}\cdot\frac{11}{27}+\frac{1}{2}\cdot\frac{13}{36}$
 
 
 
-{\bf Q4}: A workstation tries to transmit frames through Ethernet. Suppose that whether or not collision occurs in the current transmission depends on the result of the last two trans- missions the workstation had. That is, suppose that if collisions have occurred in both of the past two transmissions, then with probability 0.7 a collision will occur in the current transmission; if a collision occurs in last transmission but not the transmission before the last one, then a collision will occur in the current transmission with probability 0.5; if a collision occurred in the transmission before the last one but not the last one, then one will occur in the current transmission with probability 0.4; if there have been no collision in the past two transmissions, then a collision will occur in the current transmission with probability 0.2. (Hint: Note that the state description needs to include status of last two transmissions).
+{\bf Q4}: Whether or not collision occurs depends on result of last two transmissions If collisions occurred in both of the past two, collision will occur with probability 0.7; collision occurs in last but not the transmission before the last one, then a collision will occur with probability 0.5; collision occurred in transmission before the last one but not the last one, collision with probability 0.4; no collision in the past two transmissions, collision with probability 0.2.
 
 (b) Find the transition probability matrix.
 
@@ -322,6 +375,29 @@ $P=\begin{bmatrix}0.7 & 0 & 0.3 & 0 \\ 0.5 & 0 & 0.5 & 0 \\ 0 & 0.4 & 0 & 0.6 \\
 (c) What fraction of frames suffer a collision?
 
 Solve $\pi = \pi P$ to obtain the stationary state probabilities. Then the fraction of frames suffering a collision is $\pi_0 + \pi_2$ (or $\pi_0 + \pi_1$).
+
+
+
+{\bf Q5}: A shop has room for 2 customers. Customers arrive at Poisson rate 3/hour and service times are exponential random variables with mean 0.25 hours.
+
+(a) Average number of customers in shop?
+
+We have birth-death process with $\lambda=3$ and $\mu=4$. $E[k] = \sum_{k=0}^2k\pi_k$. Solve for $\pi_k$, $\pi_1=\frac{\lambda}{\mu}\pi_0$, $\pi_2=\frac{\lambda}{\mu}\pi_1$, $\sum_{j=0}^2\pi_j=1$, so $\pi_0=16/37$, $E[k]=30/37$.
+
+(b) What is proportion of customers who get serviced? $\pi_0+\pi_1=28/37$.
+
+
+
+{\bf Q6}: Packets arrive at router Poisson rate 3/ms and time to foward exponential with mean 0.2 ms. Fraction of time buffer empty?
+
+State is num packets in router, $\lambda=3$, $\mu=5$. Solve $p_1=\frac{\lambda}{\mu}p_0$, $p_2=\frac{\lambda}{\mu}p_1$, ..., $p_{k+1}=\frac{\lambda}{\mu}p_k$, $\sum_{k=0}^\infty p_k=1$, thus $p_0=2/5$.
+
+
+
+{\bf Q7}: 2 machines produce products at $n$ products/hour. Lifetime of machine follows exponential with mean $1/x$ hours, time to fix machine folows exponential with mean $1/y$ hours. Expected long term producing rate?
+
+State is num machines working. $\lambda_0=\lambda_1=y$, $\mu_1=x$, $\mu_2=2x$ bc if either machine fails, num working machines reduce from 2 to 1. Solve $p_1=\frac{y}{x}p_0$, $p_2=\frac{y}{2x}p_1$, $p_0+p_1+p_2=1$, thus $p_0=\frac{2x^2}{2x^2+2xy+y^2}$. Expected num products produced per hour: $p_0\times 0+p_1\times n+p_2\times 2n$
+
 
 \end{multicols*}
 \end{document}
