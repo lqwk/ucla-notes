@@ -326,10 +326,77 @@ flow in $=\lambda_{k-1}\pi_{k-1}+\mu_{k+1}\pi_{k+1}$ \\
 flow out $= (\lambda_k+\mu_k)\pi_k$
 
 
+{\bf Queueing Theory}: Analyze different systems. Poisson distribution model arrival process, exponential distribution model service times.
+
+{\bf Poisson Process}: {\bf ArrivalRate of $\lambda$}: $p(n\text{ arrivals in interval } T)=\frac{(\lambda T)^ne^{-\lambda T}}{n!}$\\
+{\bf Exponential Inter-Arrival Time}: $p(\text{inter-arrival}\leq T) = 1-e^{-\lambda T}$
+
+{\bf Merging Property}: Let $A_1$, $A_2$, ..., $A_k$ be independent Poisson processes with rates $\lambda_1$, $\lambda_2$, ..., $\lambda_k$, then $A=\sum_iA_i$ is also Poisson process with rate $\lambda=\sum_i\lambda_i$
+
+{\bf Splitting Property}: Suppose every arrival is randomly routed with probability $p$ to stream 1 and $(1-p)$ to stream 2. Stream 1 and 2 are Poisson with rates $p\lambda$ and $(1-p)\lambda$.
+
+{\bf Kendall's Notation: A/B/C/D} \\
+A: inter-arrival time distribution\\
+B: service time distribution\\
+C: number of servers\\
+D: maximum number of jobs possible\\
+M:exponential, D: deterministic, G: general\\
+
+$\alpha(t)$: number of arrivals in (0, $t$)\\
+$\beta(t)$: number of departures in (0, $t$)\\
+$N(t)$: number of customers in system at $t$\\
+$T(t)$: average time in system for customer up to $t$\\
+$N$: average number of customers in system. $N=N_q+N_s$\\
+$T$: average waiting time in system. $T=T_q+T_s$
+
+{\bf Little's Law}: $N=\lambda T$
+
+{\bf Utilization Factor (Traffic Intensity Factor)}: $\rho=\text{Work Arrival Rate } / \text{ Server Capacity}$\\
+System is {\bf unstable} if $\rho>1$\\
+{\bf Single Server System} \\ $\rho$ is fraction of time server is busy\\
+{\bf Multi-Server System} \\ $\rho$ is fraction of busy servers
+
+
+{\bf M/M/1 Model}: Assume state independent arrival $\lambda$, service rate $\mu$. At equilibrium, flow in $=$ flow out, $\lambda\pi_0=\mu\pi_1\to\pi_1=\frac{\lambda}{\mu}\pi_0$, $\pi_1=\rho\pi_0$. Similarly $\lambda\pi_2=\rho\pi_1=\rho^2\pi_0$. In general $\pi_n=\rho^n\pi_0$. $\sum_i\pi_i=1\to\pi_0=1-\rho$, $\pi_n=(1-\rho)\rho^n$
+
+{\bf Average Number Customers in System $N$}: $\sum_kk\pi_k=\sum_kk(1-\rho)\rho^k=\frac{\rho}{1-\rho}=\frac{\lambda}{\mu-\lambda}$
+
+{\bf Average Time in System $T$}: \\
+$T=N/\lambda$ (with Little's Law), $T=\frac{1}{\mu-\lambda}$
+
+{\bf Average Time in Queue $T_q$}: $T_q=T-T_s=\frac{1}{\mu-\lambda}-\frac{1}{\mu}$
+
+{\bf Average Number of Customers in Queue}: $N_q=\lambda T_q=N-\rho$ (with Little's Law)
+
+{\bf Discouraged Arrivals}: Arrival rates decrease with customers in system, $\lambda_k=\frac{\alpha}{k+1}$, $\mu_k=\mu$ Equilibrium state, $p_k=p_0(\frac{\alpha}{\mu})^k\frac{1}{k!}$. Since $\sum_{k=0}^\infty p_k=1$ we find that $p_0=e^{-\alpha/\mu}$. So $p_k=((\frac{\alpha}{\mu})^ke^{-\frac{\alpha}{\mu}})/k!$. {\bf Utilization} $\rho=1-p_0=1-e^{-\frac{\alpha}{\mu}}$
+
+Expected number of customers in system: $N=E[k]=\alpha/\mu$. Expected time in system $T=N/\lambda$. $\lambda_{\text{eff}}$ is expected (effective) arrival rate, $\lambda_{\text{eff}}=\mu\rho=\mu(1-e^{-\alpha/\mu})$, so $T=\alpha/\mu^2(1-e^{-\alpha/\mu})$
+
+
+{\bf M/M/$\infty$ Model}: Service rate (number of servers) scales linarly with number of customers in system. $\to$ No waiting time, served immediately. $\lambda_k=\lambda$, $\mu_k=k\mu$. Equilibrium state, $p_k=(\frac{\lambda}{\mu})^ke^{-\lambda/\mu}/k!$, $p_0=e^{-\lambda/\mu}$ (same as discouraged arrival system). Expected number of customers $N=E[k]=\lambda/\mu$. Expected time in system $T=N/\lambda=1/\mu$.
+
+
+{\bf M/M/m Model}: Unlimited waiting room, constant arrival rate $\lambda$, maximum of $m$ servers. Each server has service rate $\mu$. $\lambda_k=\lambda$, $\mu_k=k\mu$ ($k<m$), $m\mu$ ($k\geq m$). Equilibrium distribution, $p_k=\frac{(m\rho)^k}{k!}p_0$ ($k<m$), $\frac{(m\rho)^k}{m!}\frac{1}{m^{k-m}}p_0$ ($k\geq m$) where $\rho=\lambda/m\mu$. When $\rho<1$, $p_0=\Big[\sum_{k=0}^{m-1}\frac{(m\rho)^k}{k!}+\frac{(m\rho)^m}{m!(1-\rho)}\Big]^{-1}$
+
+
+{\bf M/M/1/K Model}: System has single server and maximum of K customers. Equilibrium state, $p_k=p_0(\frac{\lambda}{\mu})^k$ ($k\leq K$), 0 ($k>K$), where $p_0=\Big(1-\frac{\lambda}{\mu}\Big)/\Big(1-(\frac{\lambda}{\mu})^{K+1}\Big)$
+
+
+{\bf Finite Population Systems}: World has finite users and each user is either in system or to arrive with exponential time with mean $1/\mu$. $\lambda_k=\lambda(M-k)$ ($0\leq k<M$), 0 (otherwise). $\mu_k=\mu$ ($1\leq k\leq M$), 0 (otherwise). Equilibrium state, $p_k=p_0(\frac{\lambda}{\mu})^k\frac{M!}{(M-k)!}$ ($0\leq k\leq M$), 0 (otherwise). $p_0=\Big[\sum_{k=0}^M(\frac{\lambda}{\mu})^k\frac{M!}{(M-k)!}\Big]^{-1}$
+
+
 
 {\bf ==========================}
 
 % QUESTIONS
+
+
+{\bf Q0}: Using Laplace Transform, solve differential equations $x(t)=\frac{dx(t)}{dt}+2\frac{d^2x(t)}{dt^2}$, $x(0)=1$, $x'(0)=1/2$.
+
+$L\{x'(t)\}=sX(s)-x(0)$\\
+$L\{x''(t)=s^2X(x)-sx(0)-x'(0)\}$\\
+$X(s)=sX(s)-x(0)+2[s^2X(x)-sx(0)-x'(0)]$\\
+$X(s)=1/(s-\frac{1}{2})$, $x(t)=e^{1/2t}$
 
 
 {\bf Q1}: Program has execution time uniformly distributed between 10 \& 20 seconds. Number of interrupts during execution is Poisson random variable with parameter $\lambda t$ where $t$ is program execution time. Probability distribution of the number of interrupts is $P(N = k) = (\lambda t)ke^{−\lambda t}$.
