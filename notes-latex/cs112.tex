@@ -499,21 +499,22 @@ Modeled as M/M/2 with $\lambda=90$, $\mu=50$. $\rho=\lambda/\mu=1.8$. $\rho/m=1.
 
 {\bf Q12}: Computing server has finite buffer with size = 6 requests (excluding the one being handled). Assuming arrival rate of incoming requests is Poisson with average 9 reqs/min, and exponentially distributed service time with average 8 seconds.
 
-What is the average number of request in the the server? What is the average number of requests waiting?
+{\bf (a)} What is the average number of request in the the server? What is the average number of requests waiting?
 
+M/M/1/K model with $K-6$, $\lambda=9$, $\mu=7.5$, $\rho=\lambda/\mu=1.2$. Average num requests, $N_s=\sum_{n=0}^7np_n=4.24$. Average waiting requests, $N_q=\sum_{n=1}^7=N_s-(1-p_0)=3.485$
 
+{\bf (b)} If the fee of one request is 0.25\$ and the server works 12 hours a day, how much money is gained on average each day? How much gain is lost (due to discarded requests) ?
 
-If the fee of one request is 0.25\$ and the server works 12 hours a day, how much money is gained on average each day? How much gain is lost (due to discarded requests) ?
+Requests are received with effective arrival rate $\lambda_e=\lambda(1-p_7)=7.047$. $E$[Money Collected on a Day] $=0.25\times\lambda_e\times12\times60=1268.46\$$.
+$E$[Money Lost on a Day] $=0.25\times(\lambda\times p_7)\times12\times60=351.54\$$
 
+{\bf (c)} On average, how long does a request have to wait until being handled?
 
+Expected time in queue = $N_q/\lambda_e=0.4945$ (min).
 
-On average, how long does a request have to wait until being handled?
+{\bf (d)} The server administrators decided that they should buy another server, if the old server works more than 85\% of time. should they buy a new one?
 
-
-
-The server administrators decided that they should buy another server, if the old server works more than 85\% of time. should they buy a new one?
-
-
+Percentage of time busy handling reqs = $1-p_0=93.9\%$. Should buy.
 
 
 \end{multicols*}
