@@ -493,6 +493,8 @@ Modeled as M/M/$\infty$ system with $\lambda=10\cdot 0.7=7$, $\mu=0.5$. No stude
 
 {\bf Q11}: Two servers. 90 reqs/hour and placed in single buffer one server becomes free. Service time 1.2 minutes. Assuming inter-arrival times and service times exponential. Determine probability  no requests in the system. Expected number of requests in the system. Expected time request waits in buffer.
 
+Modeled as M/M/2 with $\lambda=90$, $\mu=50$. $\rho=\lambda/\mu=1.8$. $\rho/m=1.8/2=0.9<1$. Thus system is stable. $P$[No Requests] $=\Big[\frac{\rho^m}{m!}\frac{m}{m-\rho}+\sum_{n=0}^{m-1}\frac{\rho^n}{n!}\Big]^{-1}$. Expected number of reqs, $N_s=\sum_{n=0}^\infty np_n=\sum_{n=0}^{m-1}np_n+\sum_{n=m}^\infty np_n$, $N_s=\sum_{n=0}^{m-1}n\frac{p^n}{m!}p_0+\sum_{n=m}^\infty \frac{p_n}{m!m^{n-m}p_0}$. Expected time in buffer, $T_q=T_s-1.2(\text{min})$, where $T_s=N_s/\lambda$. $T_q=5.117$ (min).
+
 
 
 
