@@ -14,7 +14,7 @@
 \usepackage{ragged2e}
 \usepackage[font=footnotesize,labelfont=bf]{caption}
 \usepackage{geometry}
-\geometry{letterpaper, left=.1in, right=.1in, top=.05in, bottom=.05in}
+\geometry{letterpaper, left=.1in, right=.1in, top=.05in, bottom=.07in}
 \usepackage{multicol}
 
 \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
@@ -475,11 +475,19 @@ Steady state probabilities are $\pi_0 = 1 − \rho$, $\pi_k =\rho^k(1−\rho)$ w
 
 {\bf Q9}: $M$ customers go to single-server. When customer arrives, enters service if the server is free or joins queue. Upon leaving, customer returns after exponential time with rate $\lambda$. Service time exponentially distributed $\mu$.
 
-(a) Define states and set up the balance equations.
+(a) Define states and set up the balance equations. States are \# customers in server. Balance equations $M\lambda\pi_0=\mu\pi_1$\\$((M-i)\lambda+\mu)\pi_i=(M0i+1)\lambda\pi_{i-1}+\mu\pi_{i+1}$ for $i=1,2,\cdots,M-1$
 
-(b) The average rate at which customers enter the station.
+(b) Average rate customers enter the station. $\lambda_{\text{avg}}=\sum_{i=0}^M(M-i)\lambda\pi_i$
 
-(c) The average time that a customer spends.
+(c) Average time customer spends. Avg \# customers $N=\sum_{i=0}^Mi\pi_i$. Avg time $T=N/\lambda_{\text{avg}}$
+
+
+
+{\bf Q10}: UCLA receives 10 average applications. Each has $0.7$ probability getting accepted. Program takes 2 years. Assume Poisson arrival, exponential time for time length.
+
+What is probability no students in program? What is average number of students in program each year?
+
+Modeled as M/M/$\infty$ system with $\lambda=10\cdot 0.7=7$, $\mu=0.5$. No students in program: $p_0=e^{-\lambda/\mu}$ Average number of students $N=\lambda/\mu=14$.
 
 
 
