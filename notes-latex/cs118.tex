@@ -36,15 +36,170 @@
 
 {\bf Propagation Delay}: Time for bit to propagate from start of link to other router. Depends on medium of link.
 
-{\bf Traffic Intensity}: Average rate packets arrive at queue = $\alpha$ packets/sec. Transmission rate (bits pushed out of queue) is $R$ bits/sec. All packets consist of $L$ bits. Average rate bits arrive at queue is $L\alpha$ bits/sec. Assume queue can hold infinite bits, $\frac{L\alpha}{R}$ is traffic intensity.
+{\bf Traffic Intensity}: Average rate packets arrive at queue = $\alpha$ packets/sec. Transmission rate (bits pushed out of queue) is $R$ bits/sec. All packets consist of $L$ bits. Average rate bits arrive at queue is $L\alpha$ bits/sec. Assume queue can hold infinite bits, $L\alpha / R$ is traffic intensity.
 
-{\bf End-to-End Delay}: $d_{end-end} = N(d_{proc}+d_{trans}+d_{prop})$, $d_{trans}=\frac{L}{R}$ where $L$ is packet size.
+{\bf End-to-End Delay}: $d_{\text{end-end}} = N(d_{\text{proc}}+d_{\text{trans}}+d_{\text{prop}})$, $d_{\text{trans}}=L/R$ where $L$ is packet size.
 
 {\bf Internet Protocol Stack}: {\bf Application Layer}: Support data exchange. FTP, SMTP, HTTP. {\bf Transport Layer}: Handle delivery reliability, multiplex within host. TCP, UDP. {\bf Network Layer}: Forward packets from source to destination. IP, routing protocols. {\bf Link Layer}: Transfer data between directly connected network elements. Ethernet protocol. {\bf Physical Layer}: Bits ``on the wire".
 
-{\bf IPv4 a.b.c.d/x}: {\bf \#bits}: x, {\bf \#endpoint addr}: $2^{32-\text{x}}$, {\bf net addr}: a.b.c.d, {\bf net mask}: leading x 1s the rest 0s, {\bf broadcast addr}: (addr $|$ ($\sim$mask))
+
+{\bf Estimated Round Trip Time}:
+
+$\text{EstimatedRTT}=(1-\alpha)\cdot\text{EstimatedRTT}+\text{SampleRTT}$\\
+$\text{DevRTT}=(1-\beta)\cdot\text{DevRTT}+|\text{SampleRTT}-\text{EstimatedRTT}|$\\
+$\text{TimeoutInterval}=\text{EstimatedRTT}+4\cdot\text{DevRTT}$ \\
+Typically $\alpha=\frac{1}{8}, \beta=\frac{1}{4}$
+
+
+{\bf TCP Congestion Control}: Add ``Congestion Control Window" \texttt{cwnd}: \texttt{LastByteSent - LastByteAdded} $\leq$ \texttt{cwnd}.
+
+{\bf ``Slow" Start (\texttt{cwnd} $<$ \texttt{ssh-thresh})}: (1) \texttt{cwnd} = 1 MSS (2) Send packets (3) If packets got ACKed, \texttt{cwnd} $=2\cdot$ \texttt{cwnd} (3) goto 2
+(4) If not ACKed, \texttt{ss-thresh} = \texttt{cwnd} / 2, \texttt{cwnd} = 1 MSS, goto 2.
+
+{\bf Congestion Avoidance (\texttt{cwnd} $\geq$ \texttt{ssh-thresh})}: (1) If packets got ACKed, \texttt{cwnd} = \texttt{cwnd} + 1 MSS (2) Otherwise \texttt{cnwd} = \texttt{cnwd} / 2.
+
+{\bf Fast Recovery / Retransmit (Reno)}: If loss detected through 3 dup ACKs, reduce \texttt{cwnd} by half and quickly recover from loss.
+
+
+{\bf IPv4 a.b.c.d/x (CIDR)}: {\bf \#bits}: x, {\bf \#endpoint addr}: $2^{32-\text{x}}$, {\bf net addr}: a.b.c.d, {\bf net mask}: leading x 1s the rest 0s, {\bf broadcast addr}: (addr $|$ ($\sim$mask))
+
+{\bf IPv4 Datagram}:
+{\bf Version (4)}: IP protocol version.
+{\bf Header Length (4)}: Length of header (32 bit words).
+{\bf Type of Service (8)}: Low delay, high throughput, reliability, etc.
+{\bf Datagram Length (16)}: Header + data, in bytes.
+{\bf Identifier, Flags, Fragmentation Offset (32)} : For IP fragmentation.
+{\bf Time-to-Live (8)}: Ensure datagrams don't circulate forever.
+{\bf Protocol (8)}: Type of transport-layer protocol. 6: TCP, 17: UDP.
+{\bf Header Checksum (16)}: Computed with IP header.
+{\bf Source, Destination Address}: IP address of source and destination.
+{\bf Options}: Allows header to be extended.
+{\bf Data}: Payload.
+
+
+{\bf IP Fragmentation}: MTU (maximum transmission unit) is max data that link-layer can transfer. (1) Stamps with identification (same for all fragments) (2) Set flag = 1 (last fragment flag = 0) (3) Offset field specifies where fragment fits in original IP datagram.
+
 
 {\bf Routing Table}: Match prefix to outgoing link. Exists on every host and router. {\bf Longest Prefix Matching}: Longest net addr prefix with net mask. Routing table next-hop.
+
+{\bf ICMP (Internet Control Message Protocol)}: \begin{tabular}{c|c|c}
+type & code & message \\
+\hline
+0 & 0 & echo reply \\
+8 & 0 & echo request \\
+3 & 0 & dest net unreachable \\
+3 & 3 & dest port unreachable \\
+11 & 0 & TTL expired \\
+12 & 0 & IP header bad
+\end{tabular}
+
+{\bf Link-State (Dijkstra)}: Router computes shortest paths to all dest. \\
+\texttt{c(x,y)}: cost from \texttt{x} to \texttt{y} \\
+\texttt{D(v)}: current path cost from source to \texttt{v} \\
+\texttt{p(v)}: node right before \texttt{v} on least-cost path \\
+\texttt{N'}: set of nodes with least cost paths found
+\begin{verbatim}
+Initialization (source = A):
+  N' = {A}
+  for all nodes v
+    if v adjacent to A
+      then D(v) = c(A,v)
+    else D(v) = infty
+LOOP
+  find w not in N' st D(w) is min
+    add w to N'
+    update D(v) for all v adjacent to w
+      and not in N'
+    D(v) = min(D(v),D(w)+c(w,v)), p(v) = w
+UNTIL all nodes in N'
+\end{verbatim}
+
+{\bf Distance-Vector (Bellman-Ford)}: Router computes shortest paths based on shortest paths of all neighbors. \\
+$D_x(y)$: cost of best path from $x$ to $y$. \\
+$D_x(y)=\min\{c(x,v)+D_v(y)\}$, with min over all neighbors $v$ of $x$.\\
+{\bf Node $x$}: - knows cost to neighbor $v$, $c(x,v)$\\
+- maintains distance vector $\bm{D_x}=\{D_x(y):y\in N\}$ \\
+- sends $\bm{D_x}$ to all neighbors\\
+- $\bm{D_v}$ from each neighbor $v$ \\
+- calculates $D'_x(y)=\min\{c(x,v)+D_v(y)\}$ \\
+-- If $D'_x(y)<D_x(y)$: $D_x(y) = D'_x(y)$, next hop to $y=v$, send out updated $\bm{D_x}$
+
+{\bf Poisoned Reverse}: Node $z$ will advertise to $y$ that $D_x(z)=\infty$ if $z$ goes through $y$ to get to $x$. Thus $y$ will never route through $z$ to get to $x$.
+
+
+{\bf OSPF (Open Shortest Path First)}: Each node knows neighbors \& link distance to each neighbor. Each node periodically broadcasts link-state to entire network. \\
+Sends LSP (Link-State Packet) with (1) ID of node (2) list of neighbors with link cost to each (3) sequence (SEQ) for LSP (4) time-to-live (TTL) for information in LSP.
+
+{\bf BGP (Border Gateway Protocol)}: BGP routers establish BGP session over semi-permanent TCP connection to exchange routing info (propagate reachable IP prefixes), advertising paths to dest network prefixes (``path vector" protocol) \\
+Provides each AS (Autonomous Systems) means to (1) obtain subnet reachability (IP address prefix) from neighbors AS (2) propagate reachability info to all internal routers (3) determine ``good" routes to dest prefix based on reachability info (4) advertise its own prefixes to internet.
+
+{\bf eBGP}: Session between different AS.
+
+{\bf iBGP}: Session between routers in same AS.
+
+{\bf Prefix + Atrributes = ``Route"}, {\bf Atributes}: (1) {\bf AS-PATH}: list of ASes through which prefix has passed (2) {\bf NEXT-HOP}: specific internal-AS router to next-hop AS (3) {\bf Local Preference}: policy preference in path selection, injected into BGP update at border router.
+
+{\bf BGP Routing Policy}: Provider advertises all prefixes to customer AS. Customer does not advertise prefix between providers.
+
+
+{\bf Sequence-Number-Controlled Flooding}: Source node puts its address \& broadcase sequence number in broadcast packet. Each node maintains list of source address \& sequence number of packets received. If in list, drop packet.
+
+{\bf RPF (Reverse Path Forwarding)}: Router accepts packets that is on shortest unicast path back to source.
+
+{\bf Spanning-Tree Broadcast}: Each node generate minimum spanning tree. Broadcast packet only on tree links.
+
+
+{\bf IGMP (Internet Group Management Protocol)}: {\bf Membership Query}: Sent by router to all hosts on attached interface to determine set of all multicast groups that have been joined by hosts on that interface. {\bf Membership Report}: Response to membership query by host. Also sent when application first joins multicast group without waiting for membership query. {\bf Leave Group}: To leave group. Optional bc router infers if host doesn't respond to membership query.
+
+
+{\bf HDLC Byte Stuffing}: Frame delimitter \texttt{01111110}. Adds extra \texttt{0} after sequence of five \texttt{1} bits.
+
+{\bf PPP Byte Stuffing}: Frame delimitter \texttt{01111110}. Replaces \texttt{0x7e} (\texttt{01111110}) with ``control sequence" \texttt{0x7d 0x5e}. Replaces \texttt{0x7d} with \texttt{0x7d 0x5d}.
+
+{\bf COBS(Consistent Overhead Byte Stuffing)}: Frame delimitter \texttt{0x00}. Adds byte representing \# non-zero bytes in stream+1, adds non-zero bytes, adds byte representing \# non-zero bytes to follow + 1, ...
+
+{\bf Link Access}: MAC (Medium Access Control) specifies how frames are transmitted onto link.
+
+{\bf Random Access Protocols (RAP)}
+
+{\bf ALOHA \& Slotted ALOHA}: Retransmit with probability $p$. Otherwise wait certain time period (next time slot Slotted ALOHA).
+
+
+{\bf Carrier Sense Multiple Access (CSMA)}: If channel is idle then transmit.
+
+{\bf 1-persistent}: Retransmit immediately.
+
+{\bf p-persistent}: Retransmit immediately with probability $p$.
+
+{\bf non-persistent}: Retransmit after random interval.
+
+
+{\bf ARP (Address Resolution Protocol)}: If IP-MAC not in ARP table, send ARP request, wait for ARP response, then cache IP-MAC-TTL in ARP table.
+
+
+{\bf Switches}: Build forwarding table by self learning.
+
+(1) If frame source MAC address not in table, record source MAC address, interface, timestamp.
+
+(2) If table entry found for dest: if dest on segment from which frame arrived, drop frame, otherwise forward to outgoing interface.
+
+(3) If table entry not found for dest: forward to all interfaces except source (broadcast frame).
+
+
+{\bf Switch v. Router}: Switch is layer 2 (link), forward with MAC address. Router is layer 3 (network).
+
+
+{\bf 802.11 Architecture}:
+{\bf Basic Service Set (BSS)}: Contains wireless stations and central {\bf base station}, or {\bf Access Point (AP)}. The APs in each BSS are connected to interconnecition device (switch, router).
+
+{\bf Passive Scanning}: 802.11 requires AP periodically send {\bf  beacon frames}, including AP's SSID (Service Set Identifier) and MAC addr.
+
+{\bf Active Scanning}: Probe Request frame broadcast from host. Probes Response sent from APs.
+
+{\bf Collision Avoidance}: Host sends {\bf Request to Send (RTS)} frame to reserve access to channel. AP broadcasts {\bf Clear to Send (CTS)} frame to sender to give permission and tells other senders to not send. Once done, send ACK and notify other senders free to send.
+
+{\bf 802.11 Frame}: {\bf Addr 1}: MAC of receiver. {\bf Addr 2}: MAC of sender. {\bf Addr 3}: MAC of router in BSS. {\bf Addr 4}: Only for ad hoc. {\bf Sequence Number}: Used for sending ACKs. 
+
 
 
 \end{multicols*}
