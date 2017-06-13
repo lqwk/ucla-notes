@@ -466,5 +466,22 @@ State is num packets in router, $\lambda=3$, $\mu=5$. Solve $p_1=\frac{\lambda}{
 State is num machines working. $\lambda_0=\lambda_1=y$, $\mu_1=x$, $\mu_2=2x$ bc if either machine fails, num working machines reduce from 2 to 1. Solve $p_1=\frac{y}{x}p_0$, $p_2=\frac{y}{2x}p_1$, $p_0+p_1+p_2=1$, thus $p_0=\frac{2x^2}{2x^2+2xy+y^2}$. Expected num products produced per hour: $p_0\times 0+p_1\times n+p_2\times 2n$
 
 
+
+{\bf Q8}: M/M/1 queueing system. Jobs arrive to be scheduled at rate $\lambda$ jobs/ms. Single core serving jobs at rate of $\mu$ jobs/ms. Suppose that the we want the average time spent in waiting queue to be no more than 3 milliseconds. If $\lambda = 10$ jobs/ms, find minimum of $\mu$.
+
+Steady state probabilities are $\pi_0 = 1 − \rho$, $\pi_k =\rho^k(1−\rho)$ where $\rho=\lambda/\mu$. Average customers $N=\frac{\rho}{1-\rho}$. By Little's Law, $N = \lambda\cdot T\to T=N$ where $T$ is average time in system. Average waiting time $W=T-1/\mu$, so we need $W=\frac{\rho}{\lambda(1-\rho)}-\frac{1}{\mu}=\frac{1}{\mu-\lambda}-\frac{1}{\mu}\leq 3$
+
+
+
+{\bf Q9}: $M$ customers go to single-server. When customer arrives, enters service if the server is free or joins queue. Upon leaving, customer returns after exponential time with rate $\lambda$. Service time exponentially distributed $\mu$.
+
+(a) Define states and set up the balance equations.
+
+(b) The average rate at which customers enter the station.
+
+(c) The average time that a customer spends.
+
+
+
 \end{multicols*}
 \end{document}
